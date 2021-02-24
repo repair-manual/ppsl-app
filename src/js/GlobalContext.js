@@ -110,12 +110,12 @@ self.saveDataToStorage = (type, data) => {
 
 const _defaultSettings = {
   repo: {
-    owner: 'kararty',
-    name: 'OR-TEST'
+    owner: 'repair-manual',
+    name: 'ppsl-data'
   },
   commentsRepo: {
-    owner: 'kararty',
-    name: 'OR-TEST-COMMENTS'
+    owner: 'repair-manual',
+    name: 'ppsl-discussion'
   },
   wikiURL: 'https://wiki2.rossmanngroup.com/'
 }
