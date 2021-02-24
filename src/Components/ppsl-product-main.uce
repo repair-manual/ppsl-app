@@ -1,0 +1,420 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-product-main">
+  <div class="card">
+    <div class="card-header">{{this.titleHTML}}</div>
+    <div class="card-content">{{this.contentHTML}}</div>
+  </div>
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    props: {
+      contentHTML: null,
+      selectedData: {
+        product: null,
+        problem: null,
+        solution: null,
+        link: null
+      }
+    },
+
+    async loadLoop (type, arr, page = 1) {
+      const { elements, editedData, data } = self.GlobalContext
+      const selectedData = elements.product.selectedData[elements.product.selectedProduct]
+
+      if (!arr) {
+        // Get all in a branch.
+        let foundData
+        try {
+          foundData = await self.getBranchDirectoryContent(type)
+        } catch (error) {
+          foundData = editedData[type]
+        }
+
+        arr = foundData.map(res => res.label)
+      }
+
+      const parentType = getParentType(type)
+      
+      const parentTypePlural = parentType + 's'
+
+      const resultArr = []
+
+      const existingEditedData = editedData[type]
+
+      const entriesPerPage = 25
+
+      const maxPages = Math.ceil(arr.length / entriesPerPage)
+
+      const paginate = (arr.length > entriesPerPage) && typeof page === 'number'
+
+      // Sort based on newest first (High entry = Newer)
+      arr.sort((a, b) => {
+        return b - a
+      })
+
+      // Add data from Github
+      for (let index = (paginate ? ((page - 1) * entriesPerPage) : 0); (paginate ? (index < (page * entriesPerPage)) : true) && index < arr.length; index++) {
+        const id = arr[index]
+
+        const existingData = existingEditedData.find(res => res._id === id)
+        if (existingData === undefined || existingData.new === undefined) {
+          // Load from Github!
+          let indexInCache = await self.loadFromGithub(type, id)
+          if (indexInCache !== null) {
+            resultArr.push(data[type][indexInCache])
+          } else {
+            resultArr.push({ _id: id, content: {} })
+          }
+        }
+      }
+
+      // Add existing data
+      const editedDataParent = editedData[parentTypePlural].find(res => res._id === selectedData[parentType])
+      
+      if (editedDataParent) {
+        const editedDataParentArr = editedDataParent.content[type]
+
+        for (let index = 0; index < editedDataParentArr.length; index++) {
+          const id = editedDataParentArr[index]
+        
+          const existingData = existingEditedData.find(res => res._id === id)
+        
+          if (existingData) {
+            const existIndex = resultArr.findIndex(res => res._id === existingData._id)
+            // const resData = { ...editedData[index], edited: existIndex > -1 } ???
+            resultArr[existIndex > -1 ? existIndex : resultArr.length] = existingData
+          }
+        }
+      }
+
+      return paginate ? { results: resultArr, maxPages, currentPage: page } : resultArr
+    },
+
+    create (type, id, data) {
+      const pluralType = type + 's'
+      this.titleHTML = html`
+        <p class="card-header-title">Creating new ${type} for "${id}"</p>
+      `
+
+      this.contentHTML = html`
+        <div is="ppsl-product-create"
+          type="${pluralType}"
+          .data=${data}
+          .customPreviousClick=${{ label: `Return to ${pluralType} list`, func: () => this.showPrevious(pluralType) }}
+          .customNextClick=${{ label: `Add from existing ${type}s`, func: this[pluralType].bind(this) }}
+        ></div>
+      `
+    },
+
+    showPrevious (type, id) {
+      const { elements, editedData, data } = self.GlobalContext
+      const selectedData = elements.product.selectedData[elements.product.selectedProduct]
+
+      const parentType = getParentType(type)
+
+      let foundData
+      if (parentType !== undefined) {
+        const parentTypePlural = parentType + 's'
+
+        const id = selectedData[parentType]
+
+        foundData = editedData[parentTypePlural].find(res => res._id === id)
+
+        if (foundData === undefined) {
+          foundData = data[parentTypePlural].find(res => res._id === id)
+        }
+      } else {
+        const typePlural = type + 's'
+
+        const id = selectedData[type]
+
+        foundData = editedData[typePlural].find(res => res._id === id)
+
+        if (foundData === undefined) {
+          foundData = data[typePlural].find(res => res._id === id)
+        }
+      }
+
+      return this[type](foundData)
+    },
+
+    cloneOrCopy (event, resData, type, clone = false) {
+      event.preventDefault()
+
+      const { elements, editedData, data } = self.GlobalContext
+      const selectedData = elements.product.selectedData[elements.product.selectedProduct]
+
+      const typePlural = type + 's'
+
+      const parentType = getParentType(typePlural)
+      const parentTypePlural = parentType + 's'
+
+      if (clone) {
+        // Clone
+        const existingDataIndex = editedData[parentTypePlural].findIndex(res => res._id === selectedData[parentType])
+
+        if (existingDataIndex === -1) {
+          const githubData = JSON.parse(JSON.stringify(data[parentTypePlural].find(res => res._id === selectedData[parentType])))
+          githubData.content[typePlural].push(resData._id)
+
+          const arr = new Set(githubData.content[typePlural])
+          githubData.content[typePlural] = [...arr]
+
+          const newDataIndex = editedData[parentTypePlural].push(githubData)
+
+          editedData[parentTypePlural][newDataIndex - 1].edited = true
+        } else {
+          const existingData = editedData[parentTypePlural][existingDataIndex]
+          existingData.content[typePlural].push(resData._id)
+
+          const arr = new Set(existingData.content[typePlural])
+          existingData.content[typePlural] = [...arr]
+
+          existingData.edited = true
+        }
+
+        self.saveDataToStorage('editedData', editedData)
+
+        this.showPrevious(typePlural)
+      } else {
+        // Copy
+        this.create.bind(this)(type, selectedData[parentType], resData.content)
+      }
+    },
+
+    async problems (product, page) {
+      this.contentHTML = self.GlobalContext.elements.root.loaderTemplate(3)
+
+      let htmlContent
+      if (product) {
+        // Show menu with problems related to product.
+        this.titleHTML = html`
+          <p class="card-header-title">Problems for "${product._id}"</p>
+          <a class="card-header-icon" onclick=${() => this.create.bind(this)('problem', product._id)}>
+            <span is="ppsl-icon" icon="plus-square"></span>
+          </a>
+        `
+
+        const problems = await this.loadLoop('problems', product.content.problems, page)
+
+        htmlContent = html`
+          <div is="ppsl-product-menu"
+            .data="${problems.results || problems}"
+            .customNextClick=${{ func: this.problem.bind(this) }}
+            .paginationClick=${problems.results ? { func: this.problems.bind(this), currentPage: problems.currentPage, maxPages: problems.maxPages } : undefined}
+          ></div>
+        `
+      } else {
+        // Show ALL problems.
+        this.titleHTML = html`
+          <p class="card-header-title">All problems</p>
+          <a class="card-header-icon" onclick=${() => this.showPrevious('problems') }>
+            <span is="ppsl-icon" icon="x"></span>
+          </a>
+        `
+
+        const problems = await this.loadLoop('problems', null, page)
+
+        htmlContent = html`
+          <div is="ppsl-product-menu"
+            .data="${problems.results || problems}"
+            type="problem"
+            .createOnClick="${true}"
+            .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}
+            .paginationClick=${problems.results ? { func: this.problems.bind(this), currentPage: problems.currentPage, maxPages: problems.maxPages } : undefined}
+          ></div>
+        `
+      }
+
+      this.contentHTML = htmlContent
+    },
+
+    problem (problem) {
+      // Show problem description with link to solutions for said problem.
+      this.titleHTML = html`
+        <p class="card-header-title">Problem - "${problem.content.label}"</p>
+        <a class="card-header-icon" onclick=${this.toggleEdit.bind(this)}>
+          <span is="ppsl-icon" icon="edit"></span>
+        </a>
+      `
+
+      this.selectedData.problem = problem._id
+      self.GlobalContext.elements.product.selectedData[this.productId].problem = problem._id
+
+      this.contentHTML = html`
+        <div is="ppsl-product-description"
+          .data="${problem}"
+          type="problems"
+          .customPreviousClick=${{ label: 'Return to problems list', func: () => this.showPrevious('problems') }}
+          .customNextClick=${{ label: 'Show solutions', func: this.solutions.bind(this) }}
+        ></div>
+      `
+    },
+
+    async solutions (problem, page) {
+      this.contentHTML = self.GlobalContext.elements.root.loaderTemplate(3)
+
+      let htmlContent
+      if (problem) {
+        // Show menu with solutions related to problem.
+        const solutions = await this.loadLoop('solutions', problem.content.solutions)
+
+        this.titleHTML = html`
+          <p class="card-header-title">Solutions for "${problem.content.label}"</p>
+          <a class="card-header-icon" onclick=${() => this.create.bind(this)('solution', problem.content.label)}>
+            <span is="ppsl-icon" icon="plus-square"></span>
+          </a>
+        `
+
+        htmlContent = html`
+          <div is="ppsl-product-menu"
+            .data="${solutions.results || solutions}"
+            .customPreviousClick=${{ label: 'Return to problem', func: () => this.showPrevious('problem') }}
+            .customNextClick=${{ func: this.solution.bind(this) }}
+            .paginationClick=${solutions.results ? { func: this.solutions.bind(this), currentPage: solutions.currentPage, maxPages: solutions.maxPages } : undefined}
+          ></div>
+        `
+      } else {
+        // Show ALL solutions.
+        this.titleHTML = html`
+          <p class="card-header-title">All solutions</p>
+          <a class="card-header-icon" onclick=${() => this.showPrevious('solutions') }>
+            <span is="ppsl-icon" icon="x"></span>
+          </a>
+        `
+
+        const solutions = await this.loadLoop('solutions', null, page)
+
+        htmlContent = html`
+          <div is="ppsl-product-menu"
+            .data="${solutions.results || solutions}"
+            type="solution"
+            .createOnClick="${true}"
+            .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}
+            .paginationClick=${solutions.results ? { func: this.solutions.bind(this), currentPage: solutions.currentPage, maxPages: solutions.maxPages } : undefined}
+          ></div>
+        `
+      }
+
+      this.contentHTML = htmlContent
+    },
+
+    solution (solution) {
+      // Show solution description with link to links for said solution.
+      this.titleHTML = html`
+        <p class="card-header-title">Solution - "${solution.content.label}"</p>
+        <a class="card-header-icon" onclick=${this.toggleEdit.bind(this)}>
+          <span is="ppsl-icon" icon="edit"></span>
+        </a>
+      `
+
+      this.selectedData.solution = solution._id
+      self.GlobalContext.elements.product.selectedData[this.productId].solution = solution._id
+
+      this.contentHTML = html`
+        <div is="ppsl-product-description"
+          .data="${solution}"
+          type="solutions"
+          .customPreviousClick=${{ label: 'Return to solutions list', func: () => this.showPrevious('solutions')}}
+          .customNextClick=${{ label: 'Show links', func: this.links.bind(this) }}
+        ></div>
+      `
+    },
+
+    async links (solution, page) {
+      this.contentHTML = self.GlobalContext.elements.root.loaderTemplate(3)
+
+      let htmlContent
+
+      if (solution) {
+        // Show menu with links related to solution.
+        this.titleHTML = html`
+          <p class="card-header-title">Links for solution "${solution.content.label}"</p>
+          <a class="card-header-icon" onclick=${() => this.create.bind(this)('link', solution.content.label)}>
+            <span is="ppsl-icon" icon="plus-square"></span>
+          </a>
+        `
+
+        const links = await this.loadLoop('links', solution.content.links)
+
+        htmlContent = html`
+          <div is="ppsl-product-menu"
+            .data="${links}"
+            .customPreviousClick=${{ label: 'Return to solution', func: () => this.showPrevious('solution') }}
+            .customNextClick=${{ func: this.link.bind(this) }}
+            .paginationClick=${links.results ? { func: this.links.bind(this), entry: solution, currentPage: links.currentPage, maxPages: links.maxPages } : undefined}
+          ></div>
+        `
+      } else {
+        // Show ALL links.
+        this.titleHTML = html`
+          <p class="card-header-title">All links</p>
+          <a class="card-header-icon" onclick=${() => this.showPrevious('links') }>
+            <span is="ppsl-icon" icon="x"></span>
+          </a>
+        `
+
+        const links = await this.loadLoop('links', null, page)
+
+        htmlContent = html`
+          <div is="ppsl-product-menu"
+            .data="${links.results}"
+            type="link"
+            .createOnClick="${true}"
+            .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}
+            .paginationClick=${links.results ? { func: this.links.bind(this), currentPage: links.currentPage, maxPages: links.maxPages } : undefined}
+          ></div>
+        `
+      }
+
+      this.contentHTML = htmlContent
+    },
+
+    link (link) {
+      // Show link description.
+      this.titleHTML = html`
+        <p class="card-header-title">Link - "${link.content.label}"</p>
+        <a class="card-header-icon" onclick=${this.toggleEdit.bind(this)}>
+          <span is="ppsl-icon" icon="edit"></span>
+        </a>
+      `
+
+      this.selectedData.link = link._id
+      self.GlobalContext.elements.product.selectedData[this.productId].link = link._id
+
+      this.contentHTML = html`
+        <div is="ppsl-product-description"
+          .data="${link}"
+          type="links"
+          .customPreviousClick=${{ label: 'Return to links list', func: () => this.showPrevious('links')}}
+          .customNextClick=${{ label: 'Open link', func: (res) =>
+            Object.assign(document.createElement('a'), { target: res.content.label, href: res.content.url}).click()
+          }}
+        ></div>
+      `
+    },
+
+    toggleEdit (ev) {
+      if (ev) {
+        ev.preventDefault()
+        ev.stopPropagation()
+      }
+
+      const isEdit = self.GlobalContext.elements.productDescription.toggleEdit()
+
+      this.querySelector('.card-header-icon span').icon = isEdit ? 'x' : 'edit'
+    },
+
+    setup (element) {
+      element.id = 'productmain'
+
+      // Show problems on setup.
+      element.showPrevious.bind(element)('problems')
+    }
+  }
+//# sourceURL=ppsl-product-main.js
+</script>

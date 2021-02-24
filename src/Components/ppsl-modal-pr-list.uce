@@ -1,0 +1,70 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-modal-pr-list">
+  <div class="modal-card-head">
+    <div class="modal-card-title">
+      <div class="level is-mobile">
+        <div class="level-left">
+          <span is="ppsl-icon" icon="git-pull-request" class="level-item"></span>
+          <span class="level-item">Your pull requests (PRs)</span>
+        </div>
+        <div class="level-right">
+          <a class="button is-text level-item" onclick="{{() => this.showPRList(true)}}">
+            <span is="ppsl-icon" icon="refresh-cw"></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-card-body">
+    {{this.contentHTML}}
+  </div>
+  <div class="modal-card-foot">
+    <button class="button is-text" onclick="{{this.closeModal}}">Close</button>
+  </div>
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    props: {
+      contentHTML: null
+    },
+
+    
+    async showPRList (useCacheBuster) {
+      this.contentHTML = self.GlobalContext.elements.root.loaderTemplate(1)
+
+      const { elements, prData } = self.GlobalContext
+
+      // Call checkIfPRIsMergedOrClosed on prData.number
+      let prDataResult = []
+      for (let index = 0; index < prData.length; index++) {
+        const pr = prData[index]
+        
+        const data = await self.checkIfPRIsMergedOrClosed(pr.number, useCacheBuster)
+
+        prDataResult.push({
+          ...data,
+          pr,
+          content: { label: `#${pr.number}` }
+        })
+      }
+
+      this.contentHTML = html`
+        <div is="ppsl-product-menu"
+          .data="${prDataResult}"
+          .customNextClick=${{ func: (data) => elements.modal.openPRModal(data) }}
+        ></div>
+      `
+    },
+
+    setup(element) {
+      element.classList.add('modal-card')
+
+      element.connected = element.showPRList
+    }
+  }
+//# sourceURL=ppsl-modal-pr-list.js
+</script>

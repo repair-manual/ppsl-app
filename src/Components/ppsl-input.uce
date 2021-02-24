@@ -1,0 +1,36 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-input">
+  <p class="control">
+    <label class="label">{{this.props.label}}</label>
+    <input type="{{this.props.type}}" class="input" placeholder="{{this.props.placeholder}}" name="{{this.props.name}}">
+  </p>
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    props: {
+      type: 'text',
+      label: 'Input',
+      placeholder: null,
+      value: null,
+      name: null
+    },
+
+    setup(element) {
+      element.classList.add('field')
+
+      element.connected = () => {
+        const input = element.querySelector('input')
+        input.value = element.value || ''
+      }
+
+      return {
+        props: this.props
+      }
+    }
+  }
+//# sourceURL=ppsl-input.js
+</script>

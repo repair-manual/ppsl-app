@@ -1,0 +1,79 @@
+@charset "utf-8";
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: optional;
+  src: local('Fira Sans Regular'), local('FiraSans-Regular'), url('./FiraSans-Regular.ttf') format('truetype');
+}
+$family-sans-serif: 'Fira Sans', sans-serif;
+
+// Brand colors
+// Unset.
+
+// Global variables overwrite
+// $menu-item-color: whitesmoke;
+
+/*! bulma.io v0.8.2 | MIT License | github.com/jgthms/bulma */
+@import "../node_modules/bulma/sass/utilities/_all.sass";
+
+@import "../node_modules/bulma/sass/base/_all.sass";
+
+@import "../node_modules/bulma/sass/helpers/_all.sass";
+
+@import "../node_modules/bulma/sass/elements/_all.sass";
+
+@import "../node_modules/bulma/sass/form/_all.sass";
+
+@import "../node_modules/bulma/sass/grid/columns.sass";
+@import "../node_modules/bulma/sass/grid/tiles.sass";
+
+// @import "../node_modules/bulma/sass/layout/_all.sass";
+@import "../node_modules/bulma/sass/layout/hero.sass";
+
+// @import "../node_modules/bulma/sass/components/_all.sass";
+@import "../node_modules/bulma/sass/components/card.sass";
+@import "../node_modules/bulma/sass/components/pagination.sass";
+// @import "../node_modules/bulma/sass/components/tabs.sass";
+@import "../node_modules/bulma/sass/components/level.sass";
+@import "../node_modules/bulma/sass/components/navbar.sass";
+@import "../node_modules/bulma/sass/components/menu.sass";
+@import "../node_modules/bulma/sass/components/modal.sass";
+
+.has-background-unset {
+  background-color: unset !important;
+}
+
+.unalign {
+  align-items: unset !important;
+}
+
+.utterances {
+  margin: unset;
+}
+
+.menu.is-dark .menu-list a {
+  color: $light;
+}
+
+.menu.is-dark .menu-list a:hover {
+  color: $dark;
+}
+
+.content p {
+  white-space: break-spaces;
+  overflow-wrap: break-word;
+}
+
+.loader {
+  margin: auto;
+  border: thick solid goldenrod;
+  border-radius: 290486px;
+  border-right-color: transparent;
+  border-top-color: transparent;
+}
+
+html {
+  background-color: black;
+}

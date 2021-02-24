@@ -1,0 +1,33 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-root">
+  <div is="ppsl-topnavbar"></div>
+  <div class="hero-body is-paddingless unalign">
+    <div class="container">
+      <div class="columns is-marginless">
+        <div is="ppsl-leftmenu"></div>
+        <div is="ppsl-product"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    githubError: (error) => html`
+      <strong class="has-text-light">There's been an issue connecting to Github.</strong>
+      <p>${error.message} ${error.code}</p>
+      <pre>${error.stack}</pre>
+    `,
+
+    loaderTemplate: (size) => html`<span class="${`loader${size ? ` is-size-${size}` : ''}`}"></span>`,
+
+    setup (element) {
+      element.classList.add('hero', 'is-fullheight', 'is-dark', 'is-bold')
+      self.GlobalContext.elements.root = element
+    }
+  }
+//# sourceURL=ppsl-root.js
+</script>

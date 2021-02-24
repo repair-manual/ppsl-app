@@ -1,0 +1,175 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-product-settings">
+  <form name="product">
+    <div class="tile is-ancestor">
+      <div class="tile is-horizontal">
+        <div class="tile is-parent">
+          <div class="tile is-child card">
+            <div class="card-header">
+              <p class="card-header-title">Product settings</p>
+            </div>
+            <div class="card-content">
+              {{ this.productSettings() }}
+            </div>
+          </div>
+        </div>
+        <div class="tile is-parent">
+          <div class="tile is-child card">
+            <div class="card-header">
+              <p class="card-header-title">Product description</p>
+            </div>
+            <div class="card-content">
+              {{ this.productDescription() }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    props: {
+      product: null,
+      editEnabled: false
+    },
+
+    toggleEdit () {
+      this.editEnabled = !this.editEnabled
+    },
+
+    getData () {
+      const data = JSON.parse(JSON.stringify(this.product))
+
+      const form = document.forms['product']
+      const {
+        // label,
+        description,
+        number,
+        year
+      } = form.elements
+
+      data.content.description = description.value
+      data.content.number = number.value
+      data.content.year = year.value
+
+      return data
+    },
+
+    edit (ev) {
+      ev.preventDefault()
+
+      const { editedData, data } = self.GlobalContext
+
+      const newData = this.getData()
+
+      const githubData = data.products.find(res => res._id === newData._id)
+
+      const newDataToText = Object.values(newData.content).join()
+      const existingDataToText = Object.values(this.product.content).join()
+      if (newDataToText === existingDataToText) {
+        const originalDataToText = Object.values(githubData.content).join()
+        if (newDataToText === originalDataToText) {
+          delete newData.edited
+          const index = editedData.products.findIndex(res => res._id === newData._id)
+          if (index > -1) {
+            editedData.products[index] = newData
+            this.product = newData
+            self.saveDataToStorage('editedData', editedData)
+          }
+        }
+
+        this.toggleEdit()
+        return
+      }
+
+      if (!newData.new) {
+        newData.edited = true
+      }
+
+      const originalDataToText = Object.values(githubData.content).join()
+      if (newDataToText === originalDataToText) {
+        delete newData.edited
+      }
+
+      const index = editedData.products.findIndex(res => res._id === newData._id)
+
+      if (index > -1) {
+        editedData.products[index] = newData
+      } else {
+        editedData.products.push(newData)
+      }
+
+      this.product = newData
+
+      self.saveDataToStorage('editedData', editedData)
+
+      this.toggleEdit()
+    },
+
+    productSettings () {
+      const { elements, settings } = self.GlobalContext
+
+      const githubURL = `https://github.com/${settings.repo.owner}/${settings.repo.name}/blob/main/Products/${this.product._id}.yaml`
+      const wikiURL = `https://wiki2.rossmanngroup.com/index.php?title=${this.product._id}`
+
+      return html`
+        ${this.editEnabled ? html`
+          <div is="ppsl-input" .props=${{ label: 'Product number', name: 'number' }} .value="${this.product.content.number}"></div>
+          <div is="ppsl-input" .props=${{ label: 'Product year', name: 'year' }} .value="${this.product.content.year}"></div>
+        ` : html`
+          <h3 class="is-size-3">${this.product._id}</h3>
+          <p>
+            <strong>Number:</strong> ${this.product.content.number}
+            <br><strong>Year:</strong> ${this.product.content.year}
+          </p>
+          <br>
+        `}
+        <div class="buttons">
+          ${this.editEnabled ? html`
+            <button class="button is-success" onclick=${(ev) => this.edit(ev)}>
+              <span is="ppsl-icon" icon="save"></span>
+              <span>Update</span>
+            </button>
+            <a class="button" onclick="${
+              () => elements.modal.openDiffModal(this.product.content, this.getData().content)
+            }">
+              <span is="ppsl-icon" icon="hash"></span>
+              <span>Open diff</span>
+            </a>
+          ` : html`
+            <button class="button is-success" onclick=${this.toggleEdit.bind(this)}>
+              <span is="ppsl-icon" icon="edit"></span>
+              <span>Edit</span>
+            </button>
+          `}
+          <a class="button" target="_blank" href="${githubURL}">
+            <span is="ppsl-icon" icon="github"></span>
+            <span>Open in Github</span>
+          </a>
+          <a class="button" target="_blank" href="${wikiURL}">
+            <span is="ppsl-icon" icon="book-open"></span>
+            <span>Open in Wiki</span>
+          </a>
+        </div>
+      `
+
+      // <div is="ppsl-input" .props=${{ label: 'Product label' , name: 'label'}} .value="${this.product._id}"></div>
+    },
+
+    productDescription () {
+      return html`
+        ${this.editEnabled ? html`
+          <textarea class="textarea" name="description" rows="8">${this.product.content.description || ''}</textarea>
+        ` : html`
+          <p>${this.product.content.description || ''}</p>
+        `}
+      `
+    }
+  }
+//# sourceURL=ppsl-product-settings.js
+</script>

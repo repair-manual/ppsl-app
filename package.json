@@ -1,0 +1,35 @@
+{
+  "name": "ppsl-app",
+  "version": "1.0.0b",
+  "private": true,
+  "scripts": {
+    "debug": "serve -p 8080 ./src",
+    "serve": "serve -p 8080 ./public",
+    "build": "rimraf ./public && npm run build:css && npm run build:diff && npm run build:js-yaml && npm run build:uce && npm run build:uce-loader && npm run copy:* && npm run build:html",
+    "build:css": "node-sass sass/stylesheet.scss src/assets/stylesheet.css --output-style compressed",
+    "build:uce": "copyfiles node_modules/uce-template/min.js src/js/uce-template -f",
+    "build:uce-loader": "copyfiles node_modules/uce-loader/min.js src/js/uce-loader -f",
+    "build:diff": "copyfiles node_modules/diff/dist/diff.js src/js/diff -f",
+    "build:js-yaml": "copyfiles node_modules/js-yaml/dist/js-yaml.min.js src/js/js-yaml -f",
+    "copy:*": "copyfiles \"src/**/*\" public/ -u 1 -e \"src/Components/*\"",
+    "build:html": "uce-template src/Components -o public/Components"
+  },
+  "dependencies": {
+    "bulma": "^0.9.2",
+    "diff": "^5.0.0",
+    "js-yaml": "^4.0.0",
+    "uce-loader": "^2.0.0",
+    "uce-template": "^0.5.1"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.4.1",
+    "node-sass": "^5.0.0",
+    "serve": "^11.3.2",
+    "eslint": "7.20.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-promise": "4.3.1"
+  },
+  "license": "MIT"
+}

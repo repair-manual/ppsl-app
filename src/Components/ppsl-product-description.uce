@@ -1,0 +1,190 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-product-description">
+  {{ this.showDescription() }}
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    props: {
+      data: null,
+      type: null,
+      customNextClick: null,
+      customPreviousClick: null,
+      editEnabled: false
+    },
+
+    toggleEdit () {
+      this.editEnabled = !this.editEnabled
+
+      return this.editEnabled
+    },
+
+    getData () {
+      const data = JSON.parse(JSON.stringify(this.data))
+
+      const form = document.forms['edit']
+      const { label, description, url }  = form.elements
+
+      data.content.label = label.value
+      data.content.description = description.value
+
+      if (url) data.content.url = url.value
+
+      return data
+    },
+
+    edit (el) {
+      el.preventDefault()
+
+      const { elements, editedData, data } = self.GlobalContext
+      const selectedData = elements.product.selectedData[elements.product.selectedProduct]
+
+      const newData = this.getData()
+
+      const githubData = data[this.type].find(res => res._id === newData._id)
+
+      if (newData.content.label.length === 0) {
+        return
+      }
+
+      const newDataToText = Object.values(newData.content).join()
+      const existingDataToText = Object.values(this.data.content).join()
+      if (newDataToText === existingDataToText) return
+
+      if (!newData.new) {
+        newData.edited = true
+
+        const originalDataToText = Object.values(githubData.content).join()
+        if (newDataToText === originalDataToText) {
+          delete newData.edited
+        }
+      }
+
+      // Save locally.
+      const existingDataIndex = editedData[this.type].findIndex(res => res._id === this.data._id)
+
+      if (existingDataIndex > -1) {
+        editedData[this.type][existingDataIndex] = newData
+      } else {
+        editedData[this.type].push(newData)
+      }
+
+      const parentType = getParentType(this.type)
+
+      const parentTypePlural = parentType + 's'
+
+      // Add parent to editedData
+      let indexOfParent = editedData[parentTypePlural].findIndex(res => res._id === selectedData[parentType])
+      if (indexOfParent === -1) {
+        const existingData = data[parentTypePlural].find(res => res._id === selectedData[parentType])
+        indexOfParent = editedData[parentTypePlural].push(JSON.parse(JSON.stringify(existingData))) - 1
+      }
+
+      if (!editedData[parentTypePlural][indexOfParent].content[this.type].includes(newData._id)) {
+        editedData[parentTypePlural][indexOfParent].content[this.type].push(newData._id)
+      }
+
+      this.data = newData
+
+      self.saveDataToStorage('editedData', editedData)
+
+      document.getElementById('productmain').toggleEdit()
+    },
+
+    unlink (el) {
+      el.preventDefault()
+
+      const { elements, editedData, data } = self.GlobalContext
+      const selectedData = elements.product.selectedData[elements.product.selectedProduct]
+
+      const parentType = getParentType(this.type)
+
+      const parentTypePlural = parentType + 's'
+
+      // Add parent to editedData
+      let indexOfParent = editedData[parentTypePlural].findIndex(res => res._id === selectedData[parentType])
+      if (indexOfParent === -1) {
+        existingData = data[parentTypePlural].find(res => res._id === selectedData[parentType])
+        indexOfParent = editedData[parentTypePlural].push(JSON.parse(JSON.stringify(existingData))) - 1
+      }
+
+      const index = editedData[parentTypePlural][indexOfParent].content[this.type].findIndex(res => res === this.data._id)
+
+      editedData[parentTypePlural][indexOfParent].content[this.type].splice(index, 1)
+
+      editedData[parentTypePlural][indexOfParent].edited = true
+
+      self.saveDataToStorage('editedData', editedData)
+
+      this.customPreviousClick.func()
+    },
+
+    showDescription () {
+      const hasButton = this.data.content.solutions || this.data.content.links || this.data.content.url
+
+      return html`
+        <div class="columns is-multiline">
+          <div class="column">
+            <a class="button is-fullwidth" onclick="${this.customPreviousClick.func}">
+              <span is="ppsl-icon" icon="chevron-left"></span>
+              <span>${this.customPreviousClick.label}</span>
+            </a>
+          </div>
+          ${hasButton ? html`
+            <div class="column">
+              <a class="button is-fullwidth" onclick="${() => this.customNextClick.func(this.data)}">
+                <span>${this.customNextClick.label}</span>
+                <span is="ppsl-icon" icon=${this.data.content.url === undefined ? 'chevron-right' : 'external-link'}></span>
+              </a>
+            </div>
+          ` : null}
+        </div>
+        <hr>
+        ${this.editEnabled ? html`
+          <form name="edit">
+            ${this.data.content.url ? html`
+              <div is="ppsl-input" .props=${{ label: 'URL', name: 'url' }} .value="${this.data.content.url}"></div>
+            ` : undefined}
+            <div is="ppsl-input" .props=${{ label: 'Label', name: 'label' }} .value="${this.data.content.label}"></div>
+            <div is="ppsl-textarea" .props=${{ label: 'Description', name: 'description' }} .value="${this.data.content.description}"></div>
+            <div class="columns is-multiline">
+              <div class="column">
+                <button class="button is-fullwidth is-success" onclick=${this.edit.bind(this)}>
+                  <span is="ppsl-icon" icon="save"></span>
+                  <span>Update</span>
+                </button>
+              </div>
+              <div class="column">
+                <a class="button is-fullwidth" onclick="${
+                  () => self.GlobalContext.elements.modal.openDiffModal(this.data.content, this.getData().content)
+                }">
+                  <span is="ppsl-icon" icon="hash"></span>
+                  <span>Open diff</span>
+                </a>
+              </div>
+              <div class="column is-12">
+                <button class="button is-fullwidth is-danger" onclick=${this.unlink.bind(this)}>
+                  <span is="ppsl-icon" icon="paperclip"></span>
+                  <span>Unlink</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        ` : html`
+          <div class="content">
+            <h3>${this.data.content.label}</h3>
+            <p>${this.data.content.description}</p>
+          </div>
+        `}
+      `
+    },
+
+    setup (element) {
+      self.GlobalContext.elements.productDescription = element
+    }
+  }
+//# sourceURL=ppsl-product-description.js
+</script>

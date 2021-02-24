@@ -1,0 +1,76 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-leftmenu">
+  <div class="menu is-dark">
+    <p class="menu-label has-text-light">Products</p>
+    <ul class="menu-list">
+      {{this.contentHTML}}
+    </ul>
+  </div>
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html, render } from '@uce'
+
+  export default {
+    props: {
+      contentHTML: null
+    },
+
+    async loadProduct (ev) {
+      const productSHA = ev.currentTarget.dataset.sha
+      const productLabel = ev.currentTarget.innerText
+      
+      const productIndex = await self.loadFromGithub('products', productLabel, productSHA)
+
+      // Rehydrate ppsl-product
+      const productDiv = self.GlobalContext.elements.product
+      productDiv.setProduct(productIndex)
+    },
+
+    async products () {
+      let { elements, offline, editedData } = self.GlobalContext
+
+      this.contentHTML = html`<p>Logging into Github...</p>`
+
+      try {
+        await self.loginToOctoKit(self.getPersonalAccessToken())
+      } catch (error) {
+        offline = error
+        elements.product.contentHTML = html`
+          <p>Something went wrong while attempting to login to Github. Enabling offline mode.</p>
+        `
+      }
+
+      this.contentHTML = elements.root.loaderTemplate(4)
+
+      let products = []
+      try {
+        // Online
+        products = await self.getBranchDirectoryContent('products')
+      } catch (error) {
+        products = editedData.products
+        // Offline
+      }
+
+      this.contentHTML = html`${
+        products.map((product, index) => {
+          const label = product.label || product._id
+
+          return html`
+            <li>
+              <a onclick=${this.loadProduct} data-sha="${product.sha}">${label}</a>
+            </li>
+          `
+        })}
+      `
+    },
+
+    setup(element) {
+      element.classList.add('column', 'is-2')
+
+      element.connected = element.products
+    }
+  }
+//# sourceURL=ppsl-leftmenu.js
+</script>

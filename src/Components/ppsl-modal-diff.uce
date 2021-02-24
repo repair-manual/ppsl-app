@@ -1,0 +1,43 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-modal-diff">
+  <div class="modal-card-body">
+    {{ this.contentHTML }}
+  </div>
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+
+    props: {
+      contentHTML: null,
+      oldChangeObj: null,
+      newChangeObj: null
+    },
+
+    showDiffEl () {
+      let oldChange = this.oldChangeObj
+      let newChange = this.newChangeObj
+
+      if (typeof this.oldChangeObj !== 'string' && typeof this.newChangeObj !== 'string') {
+        oldChange = window.jsyaml.dump(this.oldChangeObj, { schema: window.jsyaml.JSON_SCHEMA })
+        newChange = window.jsyaml.dump(this.newChangeObj, { schema: window.jsyaml.JSON_SCHEMA })
+      }
+
+      this.contentHTML = html`
+        <div is="ppsl-diff" .oldChange="${oldChange}" .newChange="${newChange}"></div>
+      `
+    },
+
+    setup (element) {
+      element.classList.add('modal-card')
+
+      element.contentHTML = self.GlobalContext.elements.root.loaderTemplate(3)
+
+      element.connected = element.showDiffEl
+    }
+  }
+//# sourceURL=ppsl-modal-diff.js
+</script>

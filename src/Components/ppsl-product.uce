@@ -1,0 +1,70 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-product">
+  <div class="columns is-multiline">
+    {{ this.settingsHTML }}
+    {{ this.mainHTML }}
+    {{ this.commentsHTML }}
+  </div>
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    props: {
+      settingsHTML: null,
+      mainHTML: null,
+      commentsHTML: null,
+      selectedProduct: null,
+      selectedData: {}
+    },
+
+    setProduct (productIndex) {
+      const { elements, editedData, data, settings } = self.GlobalContext
+
+      // Find product in editedData
+      let product = editedData.products[productIndex]
+
+      if (product === undefined) {
+        product = data.products[productIndex]
+      }
+
+      if (!this.selectedData[product._id]) {
+        this.selectedData[product._id] = {
+          product: product._id,
+          problem: null,
+          solution: null,
+          link: null
+        }
+      }
+
+      let selectedData = this.selectedData[product._id]
+
+      this.selectedProduct  = product._id
+
+      this.settingsHTML = html`<div is="ppsl-product-settings" class="column is-12" .product=${product}></div>`
+      this.mainHTML = html.for(this.selectedData, product._id)`<div is="ppsl-product-main" class="column is-12" .selectedData=${selectedData} .productId=${product._id}></div>`
+      this.commentsHTML = html`<div is="ppsl-product-comments" class="column is-12" .label="${product._id}" .repo=${settings.commentsRepo}></div>`
+    },
+
+    setup (element) {
+      element.classList.add('column')
+
+      self.GlobalContext.elements.product = element
+
+      element.mainHTML = html`
+        <div class="column has-text-centered">
+          <strong class="has-text-light">Select a product to display its information.</strong>
+        </div>
+      `
+
+      // element.connected = () => {
+      //   if (self.GlobalContext.error) {
+      //     element.contentHTML = self.GlobalContext.elements.root.githubError(error)
+      //   }
+      // }
+    }
+  }
+//# sourceURL=ppsl-product.js
+</script>

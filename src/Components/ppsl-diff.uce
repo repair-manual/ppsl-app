@@ -1,0 +1,67 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-diff">
+  {{ this.contentHTML }}
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    props: {
+      contentHTML: null,
+      newChange: null,
+      oldChange: null
+    },
+
+    async showDiff () {
+      await import('/js/diff/diff.js')
+
+      const diff = Diff.diffChars(this.oldChange, this.newChange)
+      let newDiffElements = []
+      let oldDiffElements = []
+
+      for (let index = 0; index < diff.length; index++) {
+        const part = diff[index]
+        const color = part.added
+          ? 'green'
+          : part.removed
+            ? 'red'
+            : 'grey'
+      
+        const htmlEl = html`
+          <span style="${color !== 'grey' ? `background-color:${color};color:#fff;` : ''}">${part.value}</span>
+        `
+      
+        if (part.added) newDiffElements.push(htmlEl)
+        else if (part.removed) oldDiffElements.push(htmlEl)
+        else {
+          newDiffElements.push(htmlEl)
+          oldDiffElements.push(htmlEl)
+        }
+      }
+
+      this.contentHTML = html`
+        ${oldDiffElements.length > 0 ? html`
+          <div class="column is-clipped is-12-mobile">
+            <strong>Existing:</strong>
+            <pre>${oldDiffElements}</pre>
+          </div>
+        ` : undefined}
+        <div class="column is-clipped is-12-mobile">
+          <strong>New:</strong>
+          <pre>${newDiffElements}</pre>
+        </div>
+      `
+    },
+
+    setup (element) {
+      element.classList.add('columns', 'is-multiline')
+
+      element.connected = element.showDiff
+
+      element.contentHTML = self.GlobalContext.elements.root.loaderTemplate(3)
+    }
+  }
+//# sourceURL=ppsl-diff.js
+</script>

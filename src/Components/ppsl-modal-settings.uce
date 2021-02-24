@@ -1,0 +1,91 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-modal-settings">
+  <div class="modal-card-head">
+    <p class="modal-card-title">Settings</p>
+  </div>
+  <div class="modal-card-body">
+    {{ fields }}
+    <hr>
+    <p>If you've changed your Github token, make sure to reload the page to relogin.</p>
+  </div>
+  <div class="modal-card-foot">
+    <button class="button is-success" onclick="{{this.saveSettings.bind(this)}}">Save settings</button>
+    <button class="button is-text" onclick="{{this.closeModal}}">Close</button>
+  </div>
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    saveSettings () {
+      let { settings } = self.GlobalContext
+  
+      const form = this.querySelector('.form')
+
+      const { pat, repo, commentsRepo } = form
+
+      const repoArr = repo.value.split('/')
+      if (repoArr.length === 2) {
+        const [owner, name] = repoArr
+        settings.repo = {
+          owner,
+          name
+        }
+      }
+
+      const commentsRepoArr = commentsRepo.value.split('/')
+      if (commentsRepoArr.length === 2) {
+        const [owner, name] = commentsRepoArr
+        settings.commentsRepo = {
+          owner,
+          name
+        }
+      }
+
+      self.saveDataToStorage('settings', settings)
+
+      // TODO DISPLAY ERRORS
+      self.savePersonalAccessToken(pat.value)
+    },
+
+    deleteOfflineData (ev) {
+      ev.preventDefault()
+      self.saveDataToStorage('editedData', _emptyData)
+      self.saveDataToStorage('prData', _emptyPRData)
+      self.saveDataToStorage('settings', _defaultSettings)
+
+      window.location.reload()
+    },
+
+    setup(element) {
+      element.classList.add('modal-card')
+
+      const { settings } = self.GlobalContext
+
+      const fields = html`
+        <form class="form">
+          <div is="ppsl-input" .props="${
+            { type: 'password', name: 'pat', label: 'Github Personal Access Token' }
+          }" .value="${self.getPersonalAccessToken()}"></div>
+          <div is="ppsl-input" .props="${
+            { type: 'text', name: 'repo', label: 'Data repository owner & name' }
+          }" .value="${`${settings.repo.owner}/${settings.repo.name}`}"></div>
+          <div is="ppsl-input" .props="${
+            { type: 'text', name: 'commentsRepo', label: 'Comments repository owner & name' }
+          }" .value="${`${settings.commentsRepo.owner}/${settings.commentsRepo.name}`}"></div>
+          <div class="field">
+            <p class="control">
+              <button class="button is-danger" onclick=${this.deleteOfflineData}>Delete all offline data</button>
+              <p class="help"><strong>Will delete your local cache of products, problems, solutions, links and PR data.</strong> This action cannot be undone.</p>
+            </p>
+          </div>
+        </form>
+      `
+
+      return { fields }
+    }
+  }
+//# sourceURL=ppsl-modal-settings.js
+</script>

@@ -1,0 +1,115 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-product-create">
+  {{ this.showCreateFields() }}
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    props: {
+      type: null,
+      data: null,
+      customPreviousClick: null
+    },
+
+    getData () {
+      const data = {
+        _id: Date.now().toString(),
+        content: {},
+        new: true
+      }
+  
+      const form = document.forms['create']
+
+      const { label, description, url }  = form.elements
+
+      data.content = {
+        label: label.value,
+        description: description.value
+      }
+
+      if (url) data.content.url = url.value
+
+      const arrayToAdd = getChildType(this.type)
+
+      if (arrayToAdd) {
+        data.content[arrayToAdd] = []
+      }
+
+      return data
+    },
+
+    create (el) {
+      const { elements, editedData, data } = self.GlobalContext
+      const selectedData = elements.product.selectedData[elements.product.selectedProduct]
+
+      el.preventDefault()
+
+      const newData = this.getData()
+
+      if (newData.content.label.length === 0) {
+        return
+      }
+
+      const parentType = getParentType(this.type)
+
+      const parentTypePlural = parentType + 's'
+
+      // Save locally first.
+      editedData[this.type].push(newData)
+
+      // Add parent to editedData
+      let indexOfParent = editedData[parentTypePlural].findIndex(res => res._id === selectedData[parentType])
+      if (indexOfParent === -1) {
+        const existingData = JSON.parse(JSON.stringify(data[parentTypePlural].find(res => res._id === selectedData[parentType])))
+        existingData.edited = true
+        // TODO: What if parent has .pr tag?
+        indexOfParent = editedData[parentTypePlural].push(existingData) - 1
+      }
+
+      editedData[parentTypePlural][indexOfParent].content[this.type].push(newData._id)
+
+      editedData[parentTypePlural][indexOfParent].edited = true
+
+      self.saveDataToStorage('editedData', editedData)
+
+      this.customPreviousClick.func()
+    },
+
+    showCreateFields (el) {
+      const showButton = this.type !== 'problems'
+
+      return html`
+        <div class="columns">
+          <div class="column">
+            <a class="button is-fullwidth" onclick="${this.customPreviousClick.func}">
+              <span is="ppsl-icon" icon="chevron-left"></span>
+              <span>${this.customPreviousClick.label}</span>
+            </a>
+          </div>
+          <div class="column">
+            <a class="button is-fullwidth" onclick="${() => this.customNextClick.func()}">
+              <span>${this.customNextClick.label}</span>
+              <span is="ppsl-icon" icon="chevron-right"></span>
+            </a>
+          </div>
+        </div>
+        <hr>
+        <form name="create">
+          ${this.type === 'links' ? html`
+            <div is="ppsl-input" .value=${this.data ? this.data.url : '' } .props=${{ label: 'URL', name: 'url' }}></div>
+          ` : undefined}
+          <div is="ppsl-input" .value=${this.data ? this.data.label : ''} .props=${{ label: 'Label', name: 'label' }}></div>
+          <div is="ppsl-textarea" .value=${this.data ? this.data.description : ''} .props=${{ label: 'Description', name: 'description' }}></div>
+          <button class="button is-success is-fullwidth" onclick=${this.create.bind(this)}>
+            <span is="ppsl-icon" icon="plus-square"></span>
+            <span>Create</span>
+          </button>
+        </form>
+      `
+    }
+  }
+//# sourceURL=ppsl-product-create.js
+</script>

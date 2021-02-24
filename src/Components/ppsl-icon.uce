@@ -1,0 +1,39 @@
+<!-- The HTML layout of the element -->
+<span is="ppsl-icon">
+  {{ this.contentHTML }}
+</span>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html, svg } from '@uce'
+
+  export default {
+    props: {
+      contentHTML: null,
+      icon: null,
+      size: null
+    },
+
+    async showIcon () {
+      await import('/js/Icons.js')
+
+      let size
+      if (this.size !== null) {
+        this.classList.add(`is-${this.size}`)
+        if (this.size === 'large') size = 64
+        if (this.size === 'medium') size = 32
+      }
+
+      this.contentHTML = icons(svg, size || undefined)[this.icon]
+    },
+
+    setup (element) {
+      element.classList.add('icon')
+
+      element.contentHTML = self.GlobalContext.elements.root.loaderTemplate()
+
+      element.connected = element.showIcon
+    }
+  }
+//# sourceURL=ppsl-icon.js
+</script>

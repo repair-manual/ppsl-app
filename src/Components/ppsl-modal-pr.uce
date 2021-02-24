@@ -1,0 +1,143 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-modal-pr">
+  <div class="modal-card-head">
+    {{this.titleHTML}}
+  </div>
+  <div class="modal-card-body">
+    {{this.contentHTML}}
+  </div>
+  <div class="modal-card-foot">
+    <button class="button is-text" onclick="{{this.closeModal}}">Close</button>
+  </div>
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    props: {
+      data: null,
+      titleHTML: null,
+      contentHTML: null
+    },
+
+    deletePRCopy () {
+      // Delete this prData object.
+      const { elements, prData } = self.GlobalContext
+
+      const index = prData.findIndex(res => res.number === this.data.pr.number)
+
+      prData.splice(index, 1)
+      
+      self.saveDataToStorage('prData', prData)
+
+      elements.modal.openPRListModal()
+    },
+
+    resetPRFiles () {
+      // Remove entries from editedData.
+      const { editedData } = self.GlobalContext
+
+      for (let index = 0; index < this.data.pr.files.length; index++) {
+        const { type, id } = this.data.pr.files[index]
+        
+        const entryIndex = editedData[type].findIndex(res => res._id === id)
+
+        editedData[type].splice(entryIndex, 1)
+      }
+
+      self.saveDataToStorage('editedData', editedData)
+    },
+
+    async showPR () {
+      const { elements, editedData, settings } = self.GlobalContext
+
+      const state = this.data.mergedAt ? 'MERGED' : this.data.state.toUpperCase()
+
+      this.titleHTML = html`
+        <div class="modal-card-title">
+          <div class="level is-mobile">
+            <div class="level-left">
+              <span is="ppsl-icon" icon="git-pull-request" class="${`level-item has-text-${state === 'CLOSED' ? 'danger' : (state === 'MERGED' ? 'success' : 'info')}`}"></span>
+              <span class="level-item">PR #${this.data.pr.number} - ${state}</span>
+            </div>
+            <div class="level-right">
+              <a class="button is-text" title="Delete local PR copy." onclick=${this.deletePRCopy.bind(this)}>
+                <span is="ppsl-icon" icon="trash"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      `
+
+      //let data = []
+      //const editedDataArr = Object.entries(editedData)
+      //for (let index = 0; index < editedDataArr.length; index++) {
+      //  const [key, value] = editedDataArr[index]
+      //
+      //  for (let index = 0; index < value.length; index++) {
+      //    const element = value[index]
+      //
+      //    if (element.pr) {
+      //      data.push({
+      //        type: key,
+      //        ...element
+      //      })
+      //    }
+      //  }
+      //}
+
+      const body = await self.GlobalContext.octokit.markdown.render({ text: this.data.body })
+
+      this.contentHTML = html`
+        <div class="columns is-mobile is-multiline">
+          <div class="column">
+            <a class="button is-fullwidth" onclick="${() => elements.modal.openPRListModal()}">
+              <span is="ppsl-icon" icon="chevron-left"></span>
+              <span>Return to PR list</span>
+            </a>
+          </div>
+          <div class="column">
+            <a class="button is-fullwidth" onclick="${() => window.open(`${this.data.pr.url}`, '_blank')}">
+              <span>Open PR</span>
+              <span is="ppsl-icon" icon="github"></span>
+            </a>
+          </div>
+          <div class="column is-12">
+            <a class="button is-fullwidth" title="Clears the edits that have been done." onclick="${this.resetPRFiles.bind(this)}">
+              <span>${state === 'MERGED' ? 'Refresh PR files' : 'Reset PR files'}</span>
+              <span is="ppsl-icon" icon="refresh-cw" size="large"></span>
+            </a>
+          </div>
+        </div>
+        <hr>
+        <div class="content"><i>${html([body.data])}</i></div>
+        <hr>
+        <div is="ppsl-product-comments" .label="${this.data.pr.number}" .isIssueNumber=${true} .repo=${settings.repo}></div>
+      `
+
+      /*
+        <strong>Files in PR:</strong>
+        <hr>
+        ${data.map(res => html`
+          <p><strong>${res.content.label || res._id}</strong> (${res.type.substr(0, 1).toUpperCase()}${res.type.substr(1)}/${res._id}.yaml)</p>
+          <pre>${window.jsyaml.dump(res.content, { schema: window.jsyaml.JSON_SCHEMA })}</pre>
+          <br>
+        `)}
+      */
+    },
+
+    setup(element) {
+      element.classList.add('modal-card')
+
+      const { elements } = self.GlobalContext
+
+      element.contentHTML = elements.root.loaderTemplate(1)
+      element.titleHTML = elements.root.loaderTemplate(4)
+
+      element.connected = element.showPR
+    }
+  }
+//# sourceURL=ppsl-modal-pr.js
+</script>

@@ -1,0 +1,51 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-product-comments">
+  <h3 class="is-size-3">Comments</h3>
+  <div class="wrapper">
+    {{ this.contentHTML }}
+  </div>
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    props: {
+      contentHTML: null,
+      repo: null,
+      label: null,
+      isIssueNumber: false
+    },
+
+    showComments () {
+      const { settings } = self.GlobalContext
+
+      const newScriptEl = document.createElement('script')
+      newScriptEl.src = 'https://utteranc.es/client.js'
+      newScriptEl.setAttribute('type', 'application/javascript')
+      newScriptEl.setAttribute('repo', `${this.repo.owner}/${this.repo.name}`)
+      // newScriptEl.setAttribute('label', 'Comments')
+
+      if (this.isIssueNumber) {
+        newScriptEl.setAttribute('issue-number', this.label)
+      } else {
+        newScriptEl.setAttribute('issue-term', this.label)
+        newScriptEl.setAttribute('theme', 'preferred-color-scheme')
+      }
+
+      newScriptEl.setAttribute('crossorigin', 'anonymous')
+      newScriptEl.async = true
+
+      this.contentHTML = newScriptEl
+    },
+
+    setup (element) {
+      if (element.label !== null) {
+        element.contentHTML = self.GlobalContext.elements.root.loaderTemplate(1)
+        element.showComments()
+      }
+    }
+  }
+//# sourceURL=ppsl-product-comments.js
+</script>

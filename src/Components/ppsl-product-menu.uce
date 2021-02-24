@@ -1,0 +1,134 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-product-menu">
+  {{ this.showReturnButton() }}
+  <ul class="menu-list">
+    {{ this.showMenu() }}
+  </ul>
+  {{ this.showPagination() }}
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    props: {
+      type: null,
+      data: null,
+      createOnClick: false
+    },
+
+    showMenu () {
+      return this.data.length > 0 ? this.data.map((object, index) => html`
+        <li>
+          ${object.sha || object.new ? html`
+          <a onclick=${() => this.createOnClick ? undefined : this.customNextClick.func(this.data[index])}>
+            <div class="level is-mobile">
+              <div class="level-left">
+                ${object.content.label.length > 64
+                  ? html`<small class="level-item" title="${object.content.label}">${`${object.content.label.substr(0, 70)}${object.content.label.length > 72 ? '...' : ''}`}</small>`
+                  : html`<span class="level-item">${object.content.label}</span>`
+                }
+                ${object.new ? html`
+                  <small class="level-item tag is-success">New</small>
+                ` : undefined}
+                ${object.edited ? html`
+                  <small class="level-item tag">Edited</small>
+                ` : undefined}
+                ${((object.state === 'closed') || object.closedAt) && !object.mergedAt ? html`
+                  <small class="level-item tag">
+                    <span is="ppsl-icon" icon="git-pull-request" class="has-text-danger"></span>
+                    <span>Closed</span>
+                  </small>
+                ` : undefined}
+                ${object.mergedAt ? html`
+                  <small class="level-item tag">
+                    <span is="ppsl-icon" icon="git-pull-request" class="has-text-success"></span>
+                    <span>Merged</span>
+                  </small>
+                ` : undefined}
+                ${object.state === 'open' ? html`
+                  <small class="level-item tag">
+                    <span is="ppsl-icon" icon="git-pull-request" class="has-text-info"></span>
+                    <span>Open</span>
+                  </small>
+                ` : undefined}
+              </div>
+              <div class="level-right">
+                ${this.createOnClick ? html`
+                  <div class="level-item">
+                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.data[index], this.type)}>
+                      <span>Copy</span>
+                      <span is="ppsl-icon" icon="copy"></span>
+                    </button>
+                  </div>
+                  <div class="level-item">
+                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.data[index], this.type, true) }}>
+                      <span>Clone</span>
+                      <span is="ppsl-icon" icon="link-2"></span>
+                    </button>
+                  </div>
+                ` : html`
+                  <div class="level-item">
+                    <span is="ppsl-icon" icon="chevron-right"></span>
+                  </div>
+                `}
+              </div>
+            </div>
+          </a>` : html`<a>Unknown entry labeled "${object.content.label || object._id}".</a>`}
+        </li>
+      `) : html`
+        <p class="has-text-centered">None available.</p>
+      `
+    },
+
+    showReturnButton () {
+      if (this.customPreviousClick !== undefined) {
+        return html`
+          <a class="button is-fullwidth" onclick=${() => this.customPreviousClick.func()}>
+            <span is="ppsl-icon" icon="chevron-left"></span>
+            <span>${this.customPreviousClick.label}</span>
+          </a>
+          <hr>
+        `
+      }
+    },
+
+    showPagination () {
+      if (!this.paginationClick) return
+  
+      const { currentPage, maxPages } = this.paginationClick
+
+      return html`
+        <hr>
+        <nav class="pagination" role="navigation" aria-label="pagination">
+          ${currentPage > 1 ? html`<a class="pagination-previous" onclick=${() => this.paginationClick.func(this.paginationClick.entry, currentPage - 1)}>Previous</a>` : undefined}
+          ${currentPage < maxPages ? html`<a class="pagination-next" onclick=${() => this.paginationClick.func(this.paginationClick.entry, currentPage + 1)}>Next page</a>` : undefined}
+          <ul class="pagination-list">
+            <li>
+              <div class="field has-addons">
+                <div class="control">
+                  <input class="input" type="number" value="${currentPage}" id="paginationsearch">
+                </div>
+                <div class="control">
+                  <a class="button is-info" onclick=${() => {
+                    this.paginationClick.func(this.paginationClick.entry, Number(document.getElementById('paginationsearch').value || 1))
+                  }}>
+                    <span is="ppsl-icon" icon="search"></span>
+                  </a>
+                </div>
+              </div>
+            </li>
+            <li><span class="pagination-ellipsis">&hellip;</span></li>
+            <li><a class="pagination-link" aria-label="${`Goto page ${maxPages}`}" onclick=${() => this.paginationClick.func(this.paginationClick.entry, maxPages)}>${maxPages}</a></li>
+          </ul>
+        </nav>
+      `
+    },
+
+    setup (element) {
+      element.classList.add('menu')
+    }
+  }
+//# sourceURL=ppsl-product-menu.js
+</script>

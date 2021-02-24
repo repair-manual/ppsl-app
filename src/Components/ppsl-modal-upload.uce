@@ -1,0 +1,272 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-modal-upload">
+  <div class="modal-card-head">
+    <p class="modal-card-title">Upload to Github</p>
+  </div>
+  <div class="modal-card-body">
+    {{ this.contentHTML }}
+  </div>
+  <div class="modal-card-foot">
+    <button class="button is-success" onclick="{{this.uploadPR.bind(this)}}">
+      <span is="ppsl-icon" icon="git-pull-request"></span>
+      <span>Upload PR</span>
+    </button>
+    <button class="button is-text" onclick="{{this.closeModal}}">Close</button>
+  </div>
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    props: {
+      filesToUpload: null,
+      prData: null,
+      uploadData: null,
+      contentHTML: null
+    },
+
+    async uploadPR (ev) {
+      ev.preventDefault()
+
+      if (this.filesToUpload.length === 0) return
+
+      const button = this.querySelector('.button.is-success')
+      if (button.disabled) return
+      button.disabled = true
+      button.firstElementChild.classList.add('loader')
+
+
+      const { elements, githubUser, prData, editedData } = self.GlobalContext
+
+      await self.createForkIfNotExists()
+
+      const branchName = `${githubUser.login}-${Date.now()}`
+
+      const branch = await self.getOrCreateBranchIfNotExists(branchName)
+
+      const commit = await self.createCommit(branch.commit ? branchData.commit.sha : branch.object.sha, branchName, this.filesToUpload)
+
+      const pr = await self.createPullRequest(branchName, this.filesToUpload)
+
+      // Open PR in new window.
+      window.open(pr.html_url, '_blank')
+
+      for (let index = 0; index < this.filesToUpload.length; index++) {
+        const uploadedFile = this.filesToUpload[index]
+
+        const id = uploadedFile.json._id
+        const typePlural = uploadedFile.type
+
+        const existingData = editedData[typePlural].find(res => res._id === id)
+
+        existingData.pr = true /*pr.number*/
+
+        // TODO: Reset
+        // if (existingData.edited) {
+        //   existingData._edited = existingData.edited
+        //   delete existingData.edited
+        // }
+
+        // if (existingData.new) {
+        //   existingData._new = existingData.new
+        //   delete existingData.new
+        // }
+      }
+
+      self.saveDataToStorage('editedData', editedData)
+
+      prData.push({
+        number: pr.number,
+        id: pr.id,
+        files: this.filesToUpload.map(res => {
+          return {
+            type: res.type,
+            id: res.json._id
+          }
+        }),
+        url: pr.html_url,
+        createdAt: pr['created_at']
+      })
+
+      self.saveDataToStorage('prData', prData)
+
+      // Open PR list modal.
+      elements.modal.openPRListModal()
+    },
+
+    parseData() {
+      // TODO: Move this elsewhere.
+      const { editedData, data } = self.GlobalContext
+
+      const editedDataArr = Object.entries(editedData)
+
+      const yaml = []
+      const pr = []
+      for (let index = 0; index < editedDataArr.length; index++) {
+        const [key, arr] = editedDataArr[index]
+
+        for (let ii = 0; ii < arr.length; ii++) {
+          const value = arr[ii]
+
+          if ((value.edited || value.new) !== true) continue
+
+          const originalObject = data[key].find(res => res._id === value._id)
+
+          const newDataToText = Object.values(value.content).join()
+          const existingDataToText = Object.values(originalObject ? originalObject.content : {}).join()
+
+          if (newDataToText === existingDataToText) continue
+
+          const dataObject = {
+            type: key,
+            ...value
+          }
+
+          if (value.pr) {
+            pr.push({
+              type: dataObject.type,
+              json: dataObject,
+              fileName: `${dataObject.type.substr(0, 1).toUpperCase()}${dataObject.type.substr(1)}/${dataObject._id}.yaml`,
+              content: window.jsyaml.dump(dataObject.content, { schema: window.jsyaml.JSON_SCHEMA }),
+              oldContent: originalObject ? window.jsyaml.dump(originalObject.content, { schema: window.jsyaml.JSON_SCHEMA }) : ''
+            })
+            continue
+          }
+
+          yaml.push({
+            type: dataObject.type,
+            json: dataObject,
+            fileName: `${dataObject.type.substr(0, 1).toUpperCase()}${dataObject.type.substr(1)}/${dataObject._id}.yaml`,
+            content: window.jsyaml.dump(dataObject.content, { schema: window.jsyaml.JSON_SCHEMA }),
+            oldContent: originalObject ? window.jsyaml.dump(originalObject.content, { schema: window.jsyaml.JSON_SCHEMA }) : ''
+          })
+        }
+      }
+
+      this.uploadData = yaml
+      this.prData = pr
+
+      this.filesToUpload = JSON.parse(JSON.stringify(yaml))
+
+      return this.showData()
+    },
+
+    showData() {
+      this.contentHTML = html`
+        ${this.showPRData()}
+        ${this.showUploadData()}
+        ${this.showFilesToUpload()}
+      `
+    },
+
+    hideSection(ev, id) {
+      ev.stopPropagation()
+      const prData = document.getElementById(id)
+      prData.classList.toggle('is-hidden')
+      const iconElement = ev.currentTarget.firstElementChild
+      iconElement.icon = prData.classList.contains('is-hidden') ? 'chevron-up' : 'chevron-down'
+      iconElement.showIcon()
+    },
+
+    showPRData() {
+      const checkboxOnChange = (ev) => {
+        ev.stopPropagation()
+
+        const checkbox = ev.currentTarget
+
+        if (checkbox.checked) {
+          const entry = this.prData.find(res => res.fileName === checkbox.dataset.fileName)
+          // Add entry.
+          this.filesToUpload.push(entry)
+        } else {
+          // Remove entry.
+          const index = this.filesToUpload.findIndex(res => res.fileName === checkbox.dataset.fileName)
+          this.filesToUpload.splice(index, 1)
+        }
+
+        this.showData()
+      }
+
+      return this.prData.length > 0 ? html.for(this.prData)`
+        <div class="level is-mobile is-marginless">
+          <div class="level-left">
+            <h3 class="level-item is-size-3 is-uppercase">Files already in a PR:</h3>
+          </div>
+          <div class="level-right">
+            <a onclick=${(ev) => this.hideSection(ev, 'prData')}>
+              <span is="ppsl-icon" icon="chevron-down" size="large"></span>
+            </a>
+          </div>
+        </div>
+        <hr>
+        <div id="prData">
+          ${this.prData.map((data, ind) => html`
+            <div class="level is-mobile is-marginless">
+              <div class="level-left">
+                <h4 class="is-size-4">${data.fileName}</h4>
+              </div>
+              <div class="level-right">
+                <input type="checkbox" data-file-name="${data.fileName}" onchange=${checkboxOnChange}>
+              </div>
+            </div>
+            <div is="ppsl-diff" .oldChange="${data.oldContent}" .newChange="${data.content}"></div>
+          `)}
+          <hr>
+        </div>
+      ` : undefined
+    },
+
+    showUploadData() {
+      return html.for(this.uploadData)`
+        <div class="level is-mobile is-marginless">
+          <div class="level-left">
+            <h3 class="level-item is-size-3 is-uppercase">Changed data:</h3>
+          </div>
+          <div class="level-right">
+            <a onclick=${(ev) => this.hideSection(ev, 'uploadData')}>
+              <span is="ppsl-icon" icon="chevron-down" size="large"></span>
+            </a>
+          </div>
+        </div>
+        <hr>
+        <div id="uploadData">
+          ${this.uploadData.length > 0 ? html`
+            ${this.uploadData.map((data, ind) => html`
+              ${ind !== 0 ? html`<hr>` : undefined}
+              <h4 class="is-size-4">${data.fileName}</h4>
+              <div is="ppsl-diff" .oldChange="${data.oldContent}" .newChange="${data.content}"></div>
+            `)}
+          ` : html`<p>Nothing here.</p>`}
+          <hr>
+        </div>
+      `
+    },
+
+    showFilesToUpload() {
+      return html.for(this.filesToUpload)`
+        <h3 class="is-size-3 is-uppercase">Files to upload:</h3>
+        <hr>
+        <div class="content">
+          ${this.filesToUpload.length > 0 ? html`
+            <ul>
+              ${this.filesToUpload.map((data, ind) => html`
+                <li><h4>${data.fileName}</h4></li>
+              `)}
+            </ul>
+          ` : html`<p>There's nothing to upload.</p>`}
+        </div>
+      `
+    },
+
+    setup(element) {
+      element.classList.add('modal-card')
+
+      element.contentHTML = self.GlobalContext.elements.root.loaderTemplate(3)
+
+      element.connected = element.parseData
+    }
+  }
+//# sourceURL=ppsl-modal-upload.js
+</script>
