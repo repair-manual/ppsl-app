@@ -43,9 +43,13 @@
 
       this.selectedProduct  = product._id
 
-      this.settingsHTML = html`<div is="ppsl-product-settings" class="column is-12" .product=${product}></div>`
-      this.mainHTML = html.for(this.selectedData, product._id)`<div is="ppsl-product-main" class="column is-12" .selectedData=${selectedData} .productId=${product._id}></div>`
-      this.commentsHTML = html`<div is="ppsl-product-comments" class="column is-12" .label="${product._id}" .repo=${settings.commentsRepo}></div>`
+      // this.settingsHTML = html``
+      this.mainHTML = html.for(this.selectedData, product._id)`
+        <div is="ppsl-product-settings" class="column is-12" .product=${product}></div>
+        <div is="ppsl-product-main" class="column is-12" .selectedData=${selectedData} .productId=${product._id}></div>
+        <div is="ppsl-product-comments" class="column is-12" .label="${product._id}" .repo=${settings.commentsRepo}></div>
+      `
+      // this.commentsHTML = html``
     },
 
     setup (element) {

@@ -19,6 +19,8 @@
     },
 
     showComments () {
+      if (this.label === null) return html``
+
       const { settings } = self.GlobalContext
 
       const newScriptEl = document.createElement('script')
@@ -41,10 +43,7 @@
     },
 
     setup (element) {
-      if (element.label !== null) {
-        element.contentHTML = self.GlobalContext.elements.root.loaderTemplate(1)
-        element.showComments()
-      }
+      element.showComments()
     }
   }
 //# sourceURL=ppsl-product-comments.js
