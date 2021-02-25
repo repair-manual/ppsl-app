@@ -1,0 +1,62 @@
+
+<div is=ppsl-modal-pr>
+<div class=modal-card-head>
+{{this.titleHTML}}
+</div>
+<div class=modal-card-body>
+{{this.contentHTML}}
+</div>
+<div class=modal-card-foot>
+<button class="button is-text" onclick={{this.closeModal}}>Close</button>
+</div>
+</div>
+<script type=module>import{html as s}from"@uce"
+export default{props:{data:null,titleHTML:null,contentHTML:null},deletePRCopy(){const{elements:s,prData:t}=self.GlobalContext,e=t.findIndex((s=>s.number===this.data.pr.number))
+t.splice(e,1),self.saveDataToStorage("prData",t),s.modal.openPRListModal()},resetPRFiles(){const{editedData:s}=self.GlobalContext
+for(let t=0;t<this.data.pr.files.length;t++){const{type:e,id:l}=this.data.pr.files[t],a=s[e].findIndex((s=>s._id===l))
+s[e].splice(a,1)}self.saveDataToStorage("editedData",s)},async showPR(){const{elements:t,editedData:e,settings:l}=self.GlobalContext,a=this.data.mergedAt?"MERGED":this.data.state.toUpperCase()
+this.titleHTML=s`
+        <div class="modal-card-title">
+          <div class="level is-mobile">
+            <div class="level-left">
+              <span is="ppsl-icon" icon="git-pull-request" class="${"level-item has-text-"+("CLOSED"===a?"danger":"MERGED"===a?"success":"info")}"></span>
+              <span class="level-item">PR #${this.data.pr.number} - ${a}</span>
+            </div>
+            <div class="level-right">
+              <a class="button is-text" title="Delete local PR copy." onclick=${this.deletePRCopy.bind(this)}>
+                <span is="ppsl-icon" icon="trash"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      `
+const i=await self.GlobalContext.octokit.markdown.render({text:this.data.body})
+this.contentHTML=s`
+        <div class="columns is-mobile is-multiline">
+          <div class="column">
+            <a class="button is-fullwidth" onclick="${()=>t.modal.openPRListModal()}">
+              <span is="ppsl-icon" icon="chevron-left"></span>
+              <span>Return to PR list</span>
+            </a>
+          </div>
+          <div class="column">
+            <a class="button is-fullwidth" onclick="${()=>window.open(`${this.data.pr.url}`,"_blank")}">
+              <span>Open PR</span>
+              <span is="ppsl-icon" icon="github"></span>
+            </a>
+          </div>
+          <div class="column is-12">
+            <a class="button is-fullwidth" title="Clears the edits that have been done." onclick="${this.resetPRFiles.bind(this)}">
+              <span>${"MERGED"===a?"Refresh PR files":"Reset PR files"}</span>
+              <span is="ppsl-icon" icon="refresh-cw" size="large"></span>
+            </a>
+          </div>
+        </div>
+        <hr>
+        <div class="content"><i>${s([i.data])}</i></div>
+        <hr>
+        <div is="ppsl-product-comments" .label="${this.data.pr.number}" .isIssueNumber=${!0} .repo=${l.repo}></div>
+      `},setup(s){s.classList.add("modal-card")
+const{elements:t}=self.GlobalContext
+s.contentHTML=t.root.loaderTemplate(1),s.titleHTML=t.root.loaderTemplate(4),s.connected=s.showPR}}
+</script>

@@ -1,0 +1,12 @@
+
+<div is=ppsl-modal-diff>
+<div class=modal-card-body>
+{{ this.contentHTML }}
+</div>
+</div>
+<script type=module>import{html as e}from"@uce"
+export default{props:{contentHTML:null,oldChangeObj:null,newChangeObj:null},showDiffEl(){let n=this.oldChangeObj,t=this.newChangeObj
+"string"!=typeof this.oldChangeObj&&"string"!=typeof this.newChangeObj&&(n=window.jsyaml.dump(this.oldChangeObj,{schema:window.jsyaml.JSON_SCHEMA}),t=window.jsyaml.dump(this.newChangeObj,{schema:window.jsyaml.JSON_SCHEMA})),this.contentHTML=e`
+        <div is="ppsl-diff" .oldChange="${n}" .newChange="${t}"></div>
+      `},setup(e){e.classList.add("modal-card"),e.contentHTML=self.GlobalContext.elements.root.loaderTemplate(3),e.connected=e.showDiffEl}}
+</script>

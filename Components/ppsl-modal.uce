@@ -1,0 +1,27 @@
+
+<div is=ppsl-modal>
+{{this.contentHTML}}
+</div>
+<script type=module>import{html as s}from"@uce"
+export default{props:{contentHTML:null},openSettingsModal(){this.contentHTML=s`
+        <div class="modal-background"></div>
+        <a class="modal-close" title="Close" onclick="${this.closeModal.bind(this)}"></a>
+        <div is="ppsl-modal-settings" .closeModal=${this.closeModal.bind(this)}></div>
+      `,this.classList.add("is-active"),document.documentElement.classList.add("is-clipped")},openGithubUploadModal(){this.contentHTML=s`
+        <div class="modal-background"></div>
+        <a class="modal-close" title="Close" onclick="${this.closeModal.bind(this)}"></a>
+        <div is="ppsl-modal-upload" .closeModal=${this.closeModal.bind(this)}></div>
+      `,this.classList.add("is-active"),document.documentElement.classList.add("is-clipped")},openDiffModal(l,i){this.contentHTML=s`
+        <div class="modal-background" onclick="${this.closeModal.bind(this)}"></div>
+        <a class="modal-close" title="Close" onclick="${this.closeModal.bind(this)}"></a>
+        <div is="ppsl-modal-diff" .oldChangeObj="${l}" .newChangeObj="${i}"></div>
+      `,this.classList.add("is-active"),document.documentElement.classList.add("is-clipped")},openPRListModal(){this.contentHTML=s`
+        <div class="modal-background"></div>
+        <a class="modal-close" title="Close" onclick="${this.closeModal.bind(this)}"></a>
+        <div is="ppsl-modal-pr-list" .closeModal=${this.closeModal.bind(this)}></div>
+      `,this.classList.add("is-active"),document.documentElement.classList.add("is-clipped")},openPRModal(l){this.contentHTML=s`
+        <div class="modal-background"></div>
+        <a class="modal-close" title="Close" onclick="${this.closeModal.bind(this)}"></a>
+        <div is="ppsl-modal-pr" .data=${l} .closeModal=${this.closeModal.bind(this)}></div>
+      `,this.classList.add("is-active"),document.documentElement.classList.add("is-clipped")},closeModal(){this.classList.remove("is-active"),document.documentElement.classList.remove("is-clipped"),this.contentHTML=s``},setup(s){s.classList.add("modal"),self.GlobalContext.elements.modal=s}}
+</script>

@@ -1,0 +1,76 @@
+
+<div is=ppsl-product-description>
+{{ this.showDescription() }}
+</div>
+<script type=module>import{html as t}from"@uce"
+export default{props:{data:null,type:null,customNextClick:null,customPreviousClick:null,editEnabled:!1},toggleEdit(){return this.editEnabled=!this.editEnabled,this.editEnabled},getData(){const t=JSON.parse(JSON.stringify(this.data)),e=document.forms.edit,{label:i,description:n,url:s}=e.elements
+return t.content.label=i.value,t.content.description=n.value,s&&(t.content.url=s.value),t},edit(t){t.preventDefault()
+const{elements:e,editedData:i,data:n}=self.GlobalContext,s=e.product.selectedData[e.product.selectedProduct],a=this.getData(),l=n[this.type].find((t=>t._id===a._id))
+if(0===a.content.label.length)return
+const d=Object.values(a.content).join()
+if(d===Object.values(this.data.content).join())return
+if(!a.new){a.edited=!0
+d===Object.values(l.content).join()&&delete a.edited}const o=i[this.type].findIndex((t=>t._id===this.data._id))
+o>-1?i[this.type][o]=a:i[this.type].push(a)
+const c=getParentType(this.type),p=c+"s"
+let u=i[p].findIndex((t=>t._id===s[c]))
+if(-1===u){const t=n[p].find((t=>t._id===s[c]))
+u=i[p].push(JSON.parse(JSON.stringify(t)))-1}i[p][u].content[this.type].includes(a._id)||i[p][u].content[this.type].push(a._id),this.data=a,self.saveDataToStorage("editedData",i),document.getElementById("productmain").toggleEdit()},unlink(t){t.preventDefault()
+const{elements:e,editedData:i,data:n}=self.GlobalContext,s=e.product.selectedData[e.product.selectedProduct],a=getParentType(this.type),l=a+"s"
+let d=i[l].findIndex((t=>t._id===s[a]));-1===d&&(existingData=n[l].find((t=>t._id===s[a])),d=i[l].push(JSON.parse(JSON.stringify(existingData)))-1)
+const o=i[l][d].content[this.type].findIndex((t=>t===this.data._id))
+i[l][d].content[this.type].splice(o,1),i[l][d].edited=!0,self.saveDataToStorage("editedData",i),this.customPreviousClick.func()},showDescription(){const e=this.data.content.solutions||this.data.content.links||this.data.content.url
+return t`
+        <div class="columns is-multiline">
+          <div class="column">
+            <a class="button is-fullwidth" onclick="${this.customPreviousClick.func}">
+              <span is="ppsl-icon" icon="chevron-left"></span>
+              <span>${this.customPreviousClick.label}</span>
+            </a>
+          </div>
+          ${e?t`
+            <div class="column">
+              <a class="button is-fullwidth" onclick="${()=>this.customNextClick.func(this.data)}">
+                <span>${this.customNextClick.label}</span>
+                <span is="ppsl-icon" icon=${void 0===this.data.content.url?"chevron-right":"external-link"}></span>
+              </a>
+            </div>
+          `:null}
+        </div>
+        <hr>
+        ${this.editEnabled?t`
+          <form name="edit">
+            ${this.data.content.url?t`
+              <div is="ppsl-input" .props=${{label:"URL",name:"url"}} .value="${this.data.content.url}"></div>
+            `:void 0}
+            <div is="ppsl-input" .props=${{label:"Label",name:"label"}} .value="${this.data.content.label}"></div>
+            <div is="ppsl-textarea" .props=${{label:"Description",name:"description"}} .value="${this.data.content.description}"></div>
+            <div class="columns is-multiline">
+              <div class="column">
+                <button class="button is-fullwidth is-success" onclick=${this.edit.bind(this)}>
+                  <span is="ppsl-icon" icon="save"></span>
+                  <span>Update</span>
+                </button>
+              </div>
+              <div class="column">
+                <a class="button is-fullwidth" onclick="${()=>self.GlobalContext.elements.modal.openDiffModal(this.data.content,this.getData().content)}">
+                  <span is="ppsl-icon" icon="hash"></span>
+                  <span>Open diff</span>
+                </a>
+              </div>
+              <div class="column is-12">
+                <button class="button is-fullwidth is-danger" onclick=${this.unlink.bind(this)}>
+                  <span is="ppsl-icon" icon="paperclip"></span>
+                  <span>Unlink</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        `:t`
+          <div class="content">
+            <h3>${this.data.content.label}</h3>
+            <p>${this.data.content.description}</p>
+          </div>
+        `}
+      `},setup(t){self.GlobalContext.elements.productDescription=t}}
+</script>

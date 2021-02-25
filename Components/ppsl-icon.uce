@@ -1,0 +1,8 @@
+
+<span is=ppsl-icon>
+{{ this.contentHTML }}
+</span>
+<script type=module>import{html as s,svg as t}from"@uce"
+export default{props:{contentHTML:null,icon:null,size:null},async showIcon(){let s
+await import("/js/Icons.js"),null!==this.size&&(this.classList.add(`is-${this.size}`),"large"===this.size&&(s=64),"medium"===this.size&&(s=32)),this.contentHTML=icons(t,s||void 0)[this.icon]},setup(s){s.classList.add("icon"),s.contentHTML=self.GlobalContext.elements.root.loaderTemplate(),s.connected=s.showIcon}}
+</script>

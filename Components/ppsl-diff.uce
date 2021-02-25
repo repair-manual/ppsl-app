@@ -1,0 +1,24 @@
+
+<div is=ppsl-diff>
+{{ this.contentHTML }}
+</div>
+<script type=module>import{html as e}from"@uce"
+export default{props:{contentHTML:null,newChange:null,oldChange:null},async showDiff(){await import("/js/diff/diff.js")
+const s=Diff.diffChars(this.oldChange,this.newChange)
+let o=[],n=[]
+for(let l=0;l<s.length;l++){const t=s[l],i=t.added?"green":t.removed?"red":"grey",d=e`
+          <span style="${"grey"!==i?`background-color:${i};color:#fff;`:""}">${t.value}</span>
+        `
+t.added?o.push(d):(t.removed||o.push(d),n.push(d))}this.contentHTML=e`
+        ${n.length>0?e`
+          <div class="column is-clipped is-12-mobile">
+            <strong>Existing:</strong>
+            <pre>${n}</pre>
+          </div>
+        `:void 0}
+        <div class="column is-clipped is-12-mobile">
+          <strong>New:</strong>
+          <pre>${o}</pre>
+        </div>
+      `},setup(e){e.classList.add("columns","is-multiline"),e.connected=e.showDiff,e.contentHTML=self.GlobalContext.elements.root.loaderTemplate(3)}}
+</script>

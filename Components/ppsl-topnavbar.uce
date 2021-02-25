@@ -1,0 +1,41 @@
+
+<div is=ppsl-topnavbar>
+<nav class=navbar>
+<div class=container>
+<div class=navbar-brand>
+<div class=navbar-item>
+<img src=./assets/logo.png alt="PPSL logo" height=32px>
+</div>
+<a class="navbar-item has-text-weight-bold has-text-light">PPSL App</a>
+</div>
+<div class="navbar-menu is-active has-background-unset">
+<div class=navbar-start>
+{{ this.ratelimitMessage }}
+</div>
+<div class=navbar-end>
+{{this.navbarItems()}}
+</div>
+</div>
+</div>
+</nav>
+</div>
+<script type=module>import{html as t}from"@uce"
+export default{props:{ratelimitTime:null,ratelimitMessage:null},setRatelimit(t){this.ratelimitTime=Number(t+"000"),this.ratelimit(0)},ratelimit(i){setTimeout((()=>{if(Date.now()>this.ratelimitTime)return this.ratelimitTime=null,void(this.ratelimitMessage=t``)
+let i=(this.ratelimitTime-Date.now())/1e3
+i=i>3600?(i/60/60).toFixed(0)+"h":i>60?(i/60).toFixed(0)+"m":i.toFixed(0)+"s",this.ratelimitMessage=t`<small class="navbar-item has-text-white has-background-danger">Ratelimited by Github! Remaining time: ${i}</small>`,this.ratelimit(1e3)}),i)},navbarItems(){const{elements:i}=self.GlobalContext
+return t`
+        <div class="navbar-item">
+          <div class="buttons">
+            <button class="button is-dark" onclick=${()=>i.modal.openPRListModal()}>
+              <span is="ppsl-icon" icon="git-pull-request" title="Settings"></span>
+            </button>
+            <button class="button is-dark" onclick=${()=>i.modal.openGithubUploadModal()}>
+              <span is="ppsl-icon" icon="upload-cloud" title="Upload" ></span>
+            </button>
+            <button class="button is-dark" onclick=${()=>i.modal.openSettingsModal()}>
+              <span is="ppsl-icon" icon="settings" title="Settings"></span>
+            </button>
+          </div>
+        </div>
+      `},setup(t){t.classList.add("hero-head"),self.GlobalContext.elements.topNavbar=t}}
+</script>

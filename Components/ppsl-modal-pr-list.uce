@@ -1,0 +1,36 @@
+
+<div is=ppsl-modal-pr-list>
+<div class=modal-card-head>
+<div class=modal-card-title>
+<div class="level is-mobile">
+<div class=level-left>
+<span is=ppsl-icon icon=git-pull-request class=level-item></span>
+<span class=level-item>Your pull requests (PRs)</span>
+</div>
+<div class=level-right>
+<a class="button is-text level-item" onclick={{}}>
+<span is=ppsl-icon icon=refresh-cw></span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<div class=modal-card-body>
+{{this.contentHTML}}
+</div>
+<div class=modal-card-foot>
+<button class="button is-text" onclick={{this.closeModal}}>Close</button>
+</div>
+</div>
+<script type=module>import{html as e}from"@uce"
+export default{props:{contentHTML:null},async showPRList(t){this.contentHTML=self.GlobalContext.elements.root.loaderTemplate(1)
+const{elements:o,prData:l}=self.GlobalContext
+let s=[]
+for(let e=0;e<l.length;e++){const o=l[e],n=await self.checkIfPRIsMergedOrClosed(o.number,t)
+s.push({...n,pr:o,content:{label:`#${o.number}`}})}this.contentHTML=e`
+        <div is="ppsl-product-menu"
+          .data="${s}"
+          .customNextClick=${{func:e=>o.modal.openPRModal(e)}}
+        ></div>
+      `},setup(e){e.classList.add("modal-card"),e.connected=e.showPRList}}
+</script>

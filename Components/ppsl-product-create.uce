@@ -1,0 +1,46 @@
+
+<div is=ppsl-product-create>
+{{ this.showCreateFields() }}
+</div>
+<script type=module>import{html as t}from"@uce"
+export default{props:{type:null,data:null,customPreviousClick:null},getData(){const t={_id:Date.now().toString(),content:{},new:!0},e=document.forms.create,{label:s,description:i,url:a}=e.elements
+t.content={label:s.value,description:i.value},a&&(t.content.url=a.value)
+const n=getChildType(this.type)
+return n&&(t.content[n]=[]),t},create(t){const{elements:e,editedData:s,data:i}=self.GlobalContext,a=e.product.selectedData[e.product.selectedProduct]
+t.preventDefault()
+const n=this.getData()
+if(0===n.content.label.length)return
+const l=getParentType(this.type),c=l+"s"
+s[this.type].push(n)
+let o=s[c].findIndex((t=>t._id===a[l]))
+if(-1===o){const t=JSON.parse(JSON.stringify(i[c].find((t=>t._id===a[l]))))
+t.edited=!0,o=s[c].push(t)-1}s[c][o].content[this.type].push(n._id),s[c][o].edited=!0,self.saveDataToStorage("editedData",s),this.customPreviousClick.func()},showCreateFields(e){this.type
+return t`
+        <div class="columns">
+          <div class="column">
+            <a class="button is-fullwidth" onclick="${this.customPreviousClick.func}">
+              <span is="ppsl-icon" icon="chevron-left"></span>
+              <span>${this.customPreviousClick.label}</span>
+            </a>
+          </div>
+          <div class="column">
+            <a class="button is-fullwidth" onclick="${()=>this.customNextClick.func()}">
+              <span>${this.customNextClick.label}</span>
+              <span is="ppsl-icon" icon="chevron-right"></span>
+            </a>
+          </div>
+        </div>
+        <hr>
+        <form name="create">
+          ${"links"===this.type?t`
+            <div is="ppsl-input" .value=${this.data?this.data.url:""} .props=${{label:"URL",name:"url"}}></div>
+          `:void 0}
+          <div is="ppsl-input" .value=${this.data?this.data.label:""} .props=${{label:"Label",name:"label"}}></div>
+          <div is="ppsl-textarea" .value=${this.data?this.data.description:""} .props=${{label:"Description",name:"description"}}></div>
+          <button class="button is-success is-fullwidth" onclick=${this.create.bind(this)}>
+            <span is="ppsl-icon" icon="plus-square"></span>
+            <span>Create</span>
+          </button>
+        </form>
+      `}}
+</script>

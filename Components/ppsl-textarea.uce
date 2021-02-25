@@ -1,0 +1,10 @@
+
+<div is=ppsl-textarea>
+<p class=control>
+<label class=label>{{this.props.label}}</label>
+<textarea class=textarea placeholder={{this.props.placeholder}} name={{this.props.name}}></textarea>
+</p>
+</div>
+<script type=module>import{html as e}from"@uce"
+export default{props:{label:"Text area",placeholder:null,value:null},setup(e){e.classList.add("field"),e.connected=()=>{e.querySelector("textarea").value=e.value||""}}}
+</script>

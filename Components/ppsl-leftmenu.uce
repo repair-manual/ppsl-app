@@ -1,0 +1,25 @@
+
+<div is=ppsl-leftmenu>
+<div class="menu is-dark">
+<p class="menu-label has-text-light">Products</p>
+<ul class=menu-list>
+{{this.contentHTML}}
+</ul>
+</div>
+</div>
+<script type=module>import{html as t,render as e}from"@uce"
+export default{props:{contentHTML:null},async loadProduct(t){const e=t.currentTarget.dataset.sha,o=t.currentTarget.innerText,n=await self.loadFromGithub("products",o,e)
+self.GlobalContext.elements.product.setProduct(n)},async products(){let{elements:e,offline:o,editedData:n}=self.GlobalContext
+this.contentHTML=t`<p>Logging into Github...</p>`
+try{await self.loginToOctoKit(self.getPersonalAccessToken())}catch(n){o=n,e.product.contentHTML=t`
+          <p>Something went wrong while attempting to login to Github. Enabling offline mode.</p>
+        `}this.contentHTML=e.root.loaderTemplate(4)
+let a=[]
+try{a=await self.getBranchDirectoryContent("products")}catch(t){a=n.products}this.contentHTML=t`${a.map(((e,o)=>{const n=e.label||e._id
+return t`
+            <li>
+              <a onclick=${this.loadProduct} data-sha="${e.sha}">${n}</a>
+            </li>
+          `}))}
+      `},setup(t){t.classList.add("column","is-2"),t.connected=t.products}}
+</script>

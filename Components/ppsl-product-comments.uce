@@ -1,0 +1,12 @@
+
+<div is=ppsl-product-comments>
+<h3 class=is-size-3>Comments</h3>
+<div class=wrapper>
+{{ this.contentHTML }}
+</div>
+</div>
+<script type=module>import{html as t}from"@uce"
+export default{props:{contentHTML:null,repo:null,label:null,isIssueNumber:!1},showComments(){if(null===this.label)return t``
+const{settings:e}=self.GlobalContext,s=document.createElement("script")
+s.src="https://utteranc.es/client.js",s.setAttribute("type","application/javascript"),s.setAttribute("repo",`${this.repo.owner}/${this.repo.name}`),this.isIssueNumber?s.setAttribute("issue-number",this.label):(s.setAttribute("issue-term",this.label),s.setAttribute("theme","preferred-color-scheme")),s.setAttribute("crossorigin","anonymous"),s.async=!0,this.contentHTML=s},setup(t){t.showComments()}}
+</script>

@@ -1,0 +1,10 @@
+
+<div is=ppsl-input>
+<p class=control>
+<label class=label>{{this.props.label}}</label>
+<input type={{this.props.type}} class=input placeholder={{this.props.placeholder}} name={{this.props.name}}>
+</p>
+</div>
+<script type=module>import{html as e}from"@uce"
+export default{props:{type:"text",label:"Input",placeholder:null,value:null,name:null},setup(e){return e.classList.add("field"),e.connected=()=>{e.querySelector("input").value=e.value||""},{props:this.props}}}
+</script>

@@ -1,0 +1,108 @@
+
+<div is=ppsl-modal-upload>
+<div class=modal-card-head>
+<p class=modal-card-title>Upload to Github</p>
+</div>
+<div class=modal-card-body>
+{{ this.contentHTML }}
+</div>
+<div class=modal-card-foot>
+<button class="button is-success" onclick={{this.uploadPR.bind(this)}}>
+<span is=ppsl-icon icon=git-pull-request></span>
+<span>Upload PR</span>
+</button>
+<button class="button is-text" onclick={{this.closeModal}}>Close</button>
+</div>
+</div>
+<script type=module>import{html as e}from"@uce"
+export default{props:{filesToUpload:null,prData:null,uploadData:null,contentHTML:null},async uploadPR(e){if(e.preventDefault(),0===this.filesToUpload.length)return
+const t=this.querySelector(".button.is-success")
+if(t.disabled)return
+t.disabled=!0,t.firstElementChild.classList.add("loader")
+const{elements:s,githubUser:a,prData:i,editedData:l}=self.GlobalContext
+await self.createForkIfNotExists()
+const o=`${a.login}-${Date.now()}`,n=await self.getOrCreateBranchIfNotExists(o),d=(await self.createCommit(n.commit?branchData.commit.sha:n.object.sha,o,this.filesToUpload),await self.createPullRequest(o,this.filesToUpload))
+window.open(d.html_url,"_blank")
+for(let e=0;e<this.filesToUpload.length;e++){const t=this.filesToUpload[e],s=t.json._id
+l[t.type].find((e=>e._id===s)).pr=!0}self.saveDataToStorage("editedData",l),i.push({number:d.number,id:d.id,files:this.filesToUpload.map((e=>({type:e.type,id:e.json._id}))),url:d.html_url,createdAt:d.created_at}),self.saveDataToStorage("prData",i),s.modal.openPRListModal()},parseData(){const{editedData:e,data:t}=self.GlobalContext,s=Object.entries(e),a=[],i=[]
+for(let e=0;e<s.length;e++){const[l,o]=s[e]
+for(let e=0;e<o.length;e++){const s=o[e]
+if(!0!==(s.edited||s.new))continue
+const n=t[l].find((e=>e._id===s._id))
+if(Object.values(s.content).join()===Object.values(n?n.content:{}).join())continue
+const d={type:l,...s}
+s.pr?i.push({type:d.type,json:d,fileName:`${d.type.substr(0,1).toUpperCase()}${d.type.substr(1)}/${d._id}.yaml`,content:window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:n?window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}):""}):a.push({type:d.type,json:d,fileName:`${d.type.substr(0,1).toUpperCase()}${d.type.substr(1)}/${d._id}.yaml`,content:window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:n?window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}):""})}}return this.uploadData=a,this.prData=i,this.filesToUpload=JSON.parse(JSON.stringify(a)),this.showData()},showData(){this.contentHTML=e`
+        ${this.showPRData()}
+        ${this.showUploadData()}
+        ${this.showFilesToUpload()}
+      `},hideSection(e,t){e.stopPropagation()
+const s=document.getElementById(t)
+s.classList.toggle("is-hidden")
+const a=e.currentTarget.firstElementChild
+a.icon=s.classList.contains("is-hidden")?"chevron-up":"chevron-down",a.showIcon()},showPRData(){const t=e=>{e.stopPropagation()
+const t=e.currentTarget
+if(t.checked){const e=this.prData.find((e=>e.fileName===t.dataset.fileName))
+this.filesToUpload.push(e)}else{const e=this.filesToUpload.findIndex((e=>e.fileName===t.dataset.fileName))
+this.filesToUpload.splice(e,1)}this.showData()}
+return this.prData.length>0?e.for(this.prData)`
+        <div class="level is-mobile is-marginless">
+          <div class="level-left">
+            <h3 class="level-item is-size-3 is-uppercase">Files already in a PR:</h3>
+          </div>
+          <div class="level-right">
+            <a onclick=${e=>this.hideSection(e,"prData")}>
+              <span is="ppsl-icon" icon="chevron-down" size="large"></span>
+            </a>
+          </div>
+        </div>
+        <hr>
+        <div id="prData">
+          ${this.prData.map(((s,a)=>e`
+            <div class="level is-mobile is-marginless">
+              <div class="level-left">
+                <h4 class="is-size-4">${s.fileName}</h4>
+              </div>
+              <div class="level-right">
+                <input type="checkbox" data-file-name="${s.fileName}" onchange=${t}>
+              </div>
+            </div>
+            <div is="ppsl-diff" .oldChange="${s.oldContent}" .newChange="${s.content}"></div>
+          `))}
+          <hr>
+        </div>
+      `:void 0},showUploadData(){return e.for(this.uploadData)`
+        <div class="level is-mobile is-marginless">
+          <div class="level-left">
+            <h3 class="level-item is-size-3 is-uppercase">Changed data:</h3>
+          </div>
+          <div class="level-right">
+            <a onclick=${e=>this.hideSection(e,"uploadData")}>
+              <span is="ppsl-icon" icon="chevron-down" size="large"></span>
+            </a>
+          </div>
+        </div>
+        <hr>
+        <div id="uploadData">
+          ${this.uploadData.length>0?e`
+            ${this.uploadData.map(((t,s)=>e`
+              ${0!==s?e`<hr>`:void 0}
+              <h4 class="is-size-4">${t.fileName}</h4>
+              <div is="ppsl-diff" .oldChange="${t.oldContent}" .newChange="${t.content}"></div>
+            `))}
+          `:e`<p>Nothing here.</p>`}
+          <hr>
+        </div>
+      `},showFilesToUpload(){return e.for(this.filesToUpload)`
+        <h3 class="is-size-3 is-uppercase">Files to upload:</h3>
+        <hr>
+        <div class="content">
+          ${this.filesToUpload.length>0?e`
+            <ul>
+              ${this.filesToUpload.map(((t,s)=>e`
+                <li><h4>${t.fileName}</h4></li>
+              `))}
+            </ul>
+          `:e`<p>There's nothing to upload.</p>`}
+        </div>
+      `},setup(e){e.classList.add("modal-card"),e.contentHTML=self.GlobalContext.elements.root.loaderTemplate(3),e.connected=e.parseData}}
+</script>
