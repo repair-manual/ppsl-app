@@ -15,7 +15,7 @@
     },
 
     async showDiff () {
-      await import('./js/diff/diff.js')
+      await import('../diff/diff.js')
 
       const diff = Diff.diffChars(this.oldChange, this.newChange)
       let newDiffElements = []
