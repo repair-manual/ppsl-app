@@ -15,7 +15,7 @@
     },
 
     async showIcon () {
-      await import('/js/Icons.js')
+      await import('./js/Icons.js')
 
       let size
       if (this.size !== null) {
