@@ -3,7 +3,7 @@
 {{ this.contentHTML }}
 </div>
 <script type=module>import{html as e}from"@uce"
-export default{props:{contentHTML:null,newChange:null,oldChange:null},async showDiff(){await import("/js/diff/diff.js")
+export default{props:{contentHTML:null,newChange:null,oldChange:null},async showDiff(){await import("./js/diff/diff.js")
 const s=Diff.diffChars(this.oldChange,this.newChange)
 let o=[],n=[]
 for(let l=0;l<s.length;l++){const t=s[l],i=t.added?"green":t.removed?"red":"grey",d=e`
