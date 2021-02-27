@@ -26,8 +26,8 @@
             <div class="level is-mobile">
               <div class="level-left">
                 ${object.content.label.length > 64
-                  ? html`<small class="level-item" title="${object.content.label}">${`${object.content.label.substr(0, 70)}${object.content.label.length > 72 ? '...' : ''}`}</small>`
-                  : html`<span class="level-item">${object.content.label}</span>`
+                  ? html`<small class="is-size-7 level-item" title="${object.content.label}">${`${this.paginationClick ? `[${object._id}] ` : ''}${object.content.label.substr(0, 70)}${object.content.label.length > 72 ? '...' : ''}`}</small>`
+                  : html`<p class="level-item">${`${this.paginationClick ? `[${object._id}] ` : ''}${object.content.label}`}</p>`
                 }
                 ${object.new ? html`
                   <small class="level-item tag is-success">New</small>

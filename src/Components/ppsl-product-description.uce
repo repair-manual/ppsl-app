@@ -175,7 +175,7 @@
           </form>
         ` : html`
           <div class="content">
-            <h3>${this.data.content.label}</h3>
+            <h3><small class="is-size-7">[${this.data._id}]</small> ${this.data.content.label}</h3>
             <p>${this.data.content.description}</p>
           </div>
         `}
