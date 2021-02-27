@@ -8,9 +8,7 @@
           <span class="level-item">Your pull requests (PRs)</span>
         </div>
         <div class="level-right">
-          <a class="button is-text level-item" onclick="{{() => this.showPRList(true)}}">
-            <span is="ppsl-icon" icon="refresh-cw"></span>
-          </a>
+          {{this.refreshPRListButton}}
         </div>
       </div>
     </div>
@@ -29,11 +27,12 @@
 
   export default {
     props: {
-      contentHTML: null
+      contentHTML: null,
+      refreshPRListButton: null
     },
 
     
-    async showPRList (useCacheBuster) {
+    async showPRList () {
       this.contentHTML = document.getElementById('root').loaderTemplate(1)
 
       const { prData } = self.GlobalContext
@@ -43,7 +42,7 @@
       for (let index = 0; index < prData.length; index++) {
         const pr = prData[index]
         
-        const data = await self.checkIfPRIsMergedOrClosed(pr.number, useCacheBuster)
+        const data = await self.checkIfPRIsMergedOrClosed(pr.number)
 
         prDataResult.push({
           ...data,
@@ -64,6 +63,12 @@
       element.classList.add('modal-card')
 
       element.connected = element.showPRList
+
+      element.refreshPRListButton = html`
+        <a class="button is-text level-item" onclick="${element.showPRList.bind(element)}">
+          <span is="ppsl-icon" icon="refresh-cw"></span>
+        </a>
+      `
     }
   }
 //# sourceURL=ppsl-modal-pr-list.js
