@@ -24,8 +24,8 @@
     async loadLoop (type, arr, page = 1) {
       arr = JSON.parse(JSON.stringify(arr))
 
-      const { elements, editedData, data } = self.GlobalContext
-      const selectedData = elements.product.selectedData[elements.product.selectedProduct]
+      const { editedData, data } = self.GlobalContext
+      const selectedData = document.getElementById('product').selectedData[document.getElementById('product').selectedProduct]
 
       const parentType = getParentType(type)
 
@@ -104,8 +104,8 @@
     },
 
     showPrevious (type, id) {
-      const { elements, editedData, data } = self.GlobalContext
-      const selectedData = elements.product.selectedData[elements.product.selectedProduct]
+      const { editedData, data } = self.GlobalContext
+      const selectedData = document.getElementById('product').selectedData[document.getElementById('product').selectedProduct]
 
       const parentType = getParentType(type)
 
@@ -138,8 +138,8 @@
     cloneOrCopy (event, resData, type, clone = false) {
       event.preventDefault()
 
-      const { elements, editedData, data } = self.GlobalContext
-      const selectedData = elements.product.selectedData[elements.product.selectedProduct]
+      const { editedData, data } = self.GlobalContext
+      const selectedData = document.getElementById('product').selectedData[document.getElementById('product').selectedProduct]
 
       const typePlural = type + 's'
 
@@ -180,7 +180,7 @@
     },
 
     async problems (product, page) {
-      this.contentHTML = self.GlobalContext.elements.root.loaderTemplate(3)
+      this.contentHTML = document.getElementById('root').loaderTemplate(3)
 
       let htmlContent
       if (product) {
@@ -236,7 +236,7 @@
       `
 
       this.selectedData.problem = problem._id
-      self.GlobalContext.elements.product.selectedData[this.productId].problem = problem._id
+      document.getElementById('product').selectedData[this.productId].problem = problem._id
 
       this.contentHTML = html`
         <div is="ppsl-product-description"
@@ -249,7 +249,7 @@
     },
 
     async solutions (problem, page) {
-      this.contentHTML = self.GlobalContext.elements.root.loaderTemplate(3)
+      this.contentHTML = document.getElementById('root').loaderTemplate(3)
 
       let htmlContent
       if (problem) {
@@ -306,7 +306,7 @@
       `
 
       this.selectedData.solution = solution._id
-      self.GlobalContext.elements.product.selectedData[this.productId].solution = solution._id
+      document.getElementById('product').selectedData[this.productId].solution = solution._id
 
       this.contentHTML = html`
         <div is="ppsl-product-description"
@@ -319,7 +319,7 @@
     },
 
     async links (solution, page) {
-      this.contentHTML = self.GlobalContext.elements.root.loaderTemplate(3)
+      this.contentHTML = document.getElementById('root').loaderTemplate(3)
 
       let htmlContent
 
@@ -377,7 +377,7 @@
       `
 
       this.selectedData.link = link._id
-      self.GlobalContext.elements.product.selectedData[this.productId].link = link._id
+      document.getElementById('product').selectedData[this.productId].link = link._id
 
       this.contentHTML = html`
         <div is="ppsl-product-description"
@@ -397,9 +397,11 @@
         ev.stopPropagation()
       }
 
-      const isEdit = self.GlobalContext.elements.productDescription.toggleEdit()
+      const isEdit = document.getElementById('productdescription').toggleEdit()
 
-      this.querySelector('.card-header-icon span').icon = isEdit ? 'x' : 'edit'
+      const iconElement =  this.querySelector('.card-header-icon span')
+      iconElement.icon = isEdit ? 'x' : 'edit'
+      iconElement.showIcon()
     },
 
     setup (element) {

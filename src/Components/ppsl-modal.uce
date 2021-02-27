@@ -75,9 +75,8 @@
     },
 
     setup (element) {
+      element.id = 'modal'
       element.classList.add('modal')
-
-      self.GlobalContext.elements.modal = element
     }
   }
 //# sourceURL=ppsl-modal.js

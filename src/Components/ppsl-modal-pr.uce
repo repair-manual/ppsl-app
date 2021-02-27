@@ -24,7 +24,7 @@
 
     deletePRCopy () {
       // Delete this prData object.
-      const { elements, prData } = self.GlobalContext
+      const { prData } = self.GlobalContext
 
       const index = prData.findIndex(res => res.number === this.data.pr.number)
 
@@ -32,7 +32,7 @@
       
       self.saveDataToStorage('prData', prData)
 
-      elements.modal.openPRListModal()
+      document.getElementById('modal').openPRListModal()
     },
 
     resetPRFiles () {
@@ -51,7 +51,7 @@
     },
 
     async showPR () {
-      const { elements, editedData, settings } = self.GlobalContext
+      const { editedData, settings } = self.GlobalContext
 
       const state = this.data.mergedAt ? 'MERGED' : this.data.state.toUpperCase()
 
@@ -93,7 +93,7 @@
       this.contentHTML = html`
         <div class="columns is-mobile is-multiline">
           <div class="column">
-            <a class="button is-fullwidth" onclick="${() => elements.modal.openPRListModal()}">
+            <a class="button is-fullwidth" onclick="${() => document.getElementById('modal').openPRListModal()}">
               <span is="ppsl-icon" icon="chevron-left"></span>
               <span>Return to PR list</span>
             </a>
@@ -131,10 +131,8 @@
     setup(element) {
       element.classList.add('modal-card')
 
-      const { elements } = self.GlobalContext
-
-      element.contentHTML = elements.root.loaderTemplate(1)
-      element.titleHTML = elements.root.loaderTemplate(4)
+      element.contentHTML = document.getElementById('root').loaderTemplate(1)
+      element.titleHTML = document.getElementById('root').loaderTemplate(4)
 
       element.connected = element.showPR
     }

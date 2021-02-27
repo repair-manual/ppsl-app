@@ -112,7 +112,7 @@
     },
 
     productSettings () {
-      const { elements, settings } = self.GlobalContext
+      const { settings } = self.GlobalContext
 
       const githubURL = `https://github.com/${settings.repo.owner}/${settings.repo.name}/blob/main/Products/${this.product._id}.yaml`
       const wikiURL = `https://wiki2.rossmanngroup.com/index.php?title=${this.product._id}`
@@ -136,7 +136,7 @@
               <span>Update</span>
             </button>
             <a class="button" onclick="${
-              () => elements.modal.openDiffModal(this.product.content, this.getData().content)
+              () => document.getElementById('modal').openDiffModal(this.product.content, this.getData().content)
             }">
               <span is="ppsl-icon" icon="hash"></span>
               <span>Open diff</span>

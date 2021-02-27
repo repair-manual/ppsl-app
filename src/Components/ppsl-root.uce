@@ -25,8 +25,8 @@
     loaderTemplate: (size) => html`<span class="${`loader${size ? ` is-size-${size}` : ''}`}"></span>`,
 
     setup (element) {
+      element.id = 'root'
       element.classList.add('hero', 'is-fullheight', 'is-dark', 'is-bold')
-      self.GlobalContext.elements.root = element
     }
   }
 //# sourceURL=ppsl-root.js

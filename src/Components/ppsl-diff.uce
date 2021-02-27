@@ -60,7 +60,7 @@
 
       element.connected = element.showDiff
 
-      element.contentHTML = self.GlobalContext.elements.root.loaderTemplate(3)
+      element.contentHTML = document.getElementById('root').loaderTemplate(3)
     }
   }
 //# sourceURL=ppsl-diff.js

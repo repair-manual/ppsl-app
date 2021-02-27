@@ -39,8 +39,8 @@
     edit (el) {
       el.preventDefault()
 
-      const { elements, editedData, data } = self.GlobalContext
-      const selectedData = elements.product.selectedData[elements.product.selectedProduct]
+      const { editedData, data } = self.GlobalContext
+      const selectedData = document.getElementById('product').selectedData[document.getElementById('product').selectedProduct]
 
       const newData = this.getData()
 
@@ -97,8 +97,8 @@
     unlink (el) {
       el.preventDefault()
 
-      const { elements, editedData, data } = self.GlobalContext
-      const selectedData = elements.product.selectedData[elements.product.selectedProduct]
+      const { editedData, data } = self.GlobalContext
+      const selectedData = document.getElementById('product').selectedData[document.getElementById('product').selectedProduct]
 
       const parentType = getParentType(this.type)
 
@@ -159,7 +159,7 @@
               </div>
               <div class="column">
                 <a class="button is-fullwidth" onclick="${
-                  () => self.GlobalContext.elements.modal.openDiffModal(this.data.content, this.getData().content)
+                  () => document.getElementById('modal').openDiffModal(this.data.content, this.getData().content)
                 }">
                   <span is="ppsl-icon" icon="hash"></span>
                   <span>Open diff</span>
@@ -183,7 +183,7 @@
     },
 
     setup (element) {
-      self.GlobalContext.elements.productDescription = element
+      element.id = 'productdescription'
     }
   }
 //# sourceURL=ppsl-product-description.js

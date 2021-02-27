@@ -42,8 +42,8 @@
     },
 
     create (el) {
-      const { elements, editedData, data } = self.GlobalContext
-      const selectedData = elements.product.selectedData[elements.product.selectedProduct]
+      const { editedData, data } = self.GlobalContext
+      const selectedData = document.getElementById('product').selectedData[document.getElementById('product').selectedProduct]
 
       el.preventDefault()
 

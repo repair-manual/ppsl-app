@@ -34,7 +34,7 @@
     setup (element) {
       element.classList.add('modal-card')
 
-      element.contentHTML = self.GlobalContext.elements.root.loaderTemplate(3)
+      element.contentHTML = document.getElementById('root').loaderTemplate(3)
 
       element.connected = element.showDiffEl
     }

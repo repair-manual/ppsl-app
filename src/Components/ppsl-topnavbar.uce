@@ -61,18 +61,16 @@
     },
 
     navbarItems () {
-      const { elements } = self.GlobalContext
-
       return html`
         <div class="navbar-item">
           <div class="buttons">
-            <button class="button is-dark" onclick=${() => elements.modal.openPRListModal()}>
+            <button class="button is-dark" onclick=${() => document.getElementById('modal').openPRListModal()}>
               <span is="ppsl-icon" icon="git-pull-request" title="Settings"></span>
             </button>
-            <button class="button is-dark" onclick=${() => elements.modal.openGithubUploadModal()}>
+            <button class="button is-dark" onclick=${() => document.getElementById('modal').openGithubUploadModal()}>
               <span is="ppsl-icon" icon="upload-cloud" title="Upload" ></span>
             </button>
-            <button class="button is-dark" onclick=${() => elements.modal.openSettingsModal()}>
+            <button class="button is-dark" onclick=${() => document.getElementById('modal').openSettingsModal()}>
               <span is="ppsl-icon" icon="settings" title="Settings"></span>
             </button>
           </div>
@@ -81,9 +79,8 @@
     },
 
     setup (element) {
+      element.id = 'topnavbar'
       element.classList.add('hero-head')
-
-      self.GlobalContext.elements.topNavbar = element
     }
   }
 //# sourceURL=ppsl-topnavbar.js

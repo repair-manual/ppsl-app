@@ -34,9 +34,9 @@
 
     
     async showPRList (useCacheBuster) {
-      this.contentHTML = self.GlobalContext.elements.root.loaderTemplate(1)
+      this.contentHTML = document.getElementById('.root').loaderTemplate(1)
 
-      const { elements, prData } = self.GlobalContext
+      const { prData } = self.GlobalContext
 
       // Call checkIfPRIsMergedOrClosed on prData.number
       let prDataResult = []
@@ -55,7 +55,7 @@
       this.contentHTML = html`
         <div is="ppsl-product-menu"
           .data="${prDataResult}"
-          .customNextClick=${{ func: (data) => elements.modal.openPRModal(data) }}
+          .customNextClick=${{ func: (data) => document.getElementById('modal').openPRModal(data) }}
         ></div>
       `
     },

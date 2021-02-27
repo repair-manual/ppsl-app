@@ -30,10 +30,10 @@
     setup (element) {
       element.classList.add('icon')
 
-      element.contentHTML = self.GlobalContext.elements.root.loaderTemplate()
+      element.contentHTML = document.getElementById('root').loaderTemplate()
 
       element.connected = element.showIcon
-    }
+    },
   }
 //# sourceURL=ppsl-icon.js
 </script>

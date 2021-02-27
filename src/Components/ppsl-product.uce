@@ -21,7 +21,7 @@
     },
 
     setProduct (productIndex) {
-      const { elements, editedData, data, settings } = self.GlobalContext
+      const { editedData, data, settings } = self.GlobalContext
 
       // Find product in editedData
       let product = editedData.products[productIndex]
@@ -53,9 +53,8 @@
     },
 
     setup (element) {
+      element.id = 'product'
       element.classList.add('column')
-
-      self.GlobalContext.elements.product = element
 
       element.mainHTML = html`
         <div class="column has-text-centered">
@@ -65,7 +64,7 @@
 
       // element.connected = () => {
       //   if (self.GlobalContext.error) {
-      //     element.contentHTML = self.GlobalContext.elements.root.githubError(error)
+      //     element.contentHTML = document.getElementById('root').githubError(error)
       //   }
       // }
     }
