@@ -23,7 +23,7 @@
 </div>
 </div>
 <script type=module>import{html as t}from"@uce"
-export default{props:{contentHTML:null},async showPRList(e){this.contentHTML=document.getElementById(".root").loaderTemplate(1)
+export default{props:{contentHTML:null},async showPRList(e){this.contentHTML=document.getElementById("root").loaderTemplate(1)
 const{prData:o}=self.GlobalContext
 let n=[]
 for(let t=0;t<o.length;t++){const l=o[t],s=await self.checkIfPRIsMergedOrClosed(l.number,e)
