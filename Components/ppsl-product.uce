@@ -5,14 +5,14 @@
 </div>
 </div>
 <script type=module>import{html as t}from"@uce"
-export default{props:{settingsHTML:null,mainHTML:null,commentsHTML:null,selectedProduct:null,selectedData:{}},setProduct(s){const{editedData:e,data:l,settings:d}=self.GlobalContext
-let i=e.products[s]
-void 0===i&&(i=l.products[s]),this.selectedData[i._id]||(this.selectedData[i._id]={product:i._id,problem:null,solution:null,link:null})
+export default{props:{settingsHTML:null,mainHTML:null,commentsHTML:null,selectedProduct:null,selectedData:{}},setProduct(s){const{editedData:e,data:d,settings:l}=self.GlobalContext
+let i=d.products[s],c=e.products.findIndex((t=>t._id===i._id))
+c>-1&&(i=e.products[c]),this.selectedData[i._id]||(this.selectedData[i._id]={product:i._id,problem:null,solution:null,link:null})
 let o=this.selectedData[i._id]
 this.selectedProduct=i._id,this.mainHTML=t.for(this.selectedData,i._id)`
         <div is="ppsl-product-settings" class="column is-12" .product=${i}></div>
         <div is="ppsl-product-main" class="column is-12" .selectedData=${o} .productId=${i._id}></div>
-        <div is="ppsl-product-comments" class="column is-12" .label="${i._id}" .repo=${d.commentsRepo}></div>
+        <div is="ppsl-product-comments" class="column is-12" .label="${i._id}" .repo=${l.commentsRepo}></div>
       `},setup(s){s.id="product",s.classList.add("column"),s.mainHTML=t`
         <div class="column has-text-centered">
           <strong class="has-text-light">Select a product to display its information.</strong>
