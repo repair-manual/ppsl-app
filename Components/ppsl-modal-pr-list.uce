@@ -8,9 +8,7 @@
 <span class=level-item>Your pull requests (PRs)</span>
 </div>
 <div class=level-right>
-<a class="button is-text level-item" onclick={{}}>
-<span is=ppsl-icon icon=refresh-cw></span>
-</a>
+{{this.refreshPRListButton}}
 </div>
 </div>
 </div>
@@ -23,14 +21,18 @@
 </div>
 </div>
 <script type=module>import{html as t}from"@uce"
-export default{props:{contentHTML:null},async showPRList(e){this.contentHTML=document.getElementById("root").loaderTemplate(1)
-const{prData:o}=self.GlobalContext
-let n=[]
-for(let t=0;t<o.length;t++){const l=o[t],s=await self.checkIfPRIsMergedOrClosed(l.number,e)
-n.push({...s,pr:l,content:{label:`#${l.number}`}})}this.contentHTML=t`
+export default{props:{contentHTML:null,refreshPRListButton:null},async showPRList(){this.contentHTML=document.getElementById("root").loaderTemplate(1)
+const{prData:e}=self.GlobalContext
+let s=[]
+for(let t=0;t<e.length;t++){const n=e[t],o=await self.checkIfPRIsMergedOrClosed(n.number)
+s.push({...o,pr:n,content:{label:`#${n.number}`}})}this.contentHTML=t`
         <div is="ppsl-product-menu"
-          .data="${n}"
+          .data="${s}"
           .customNextClick=${{func:t=>document.getElementById("modal").openPRModal(t)}}
         ></div>
-      `},setup(t){t.classList.add("modal-card"),t.connected=t.showPRList}}
+      `},setup(e){e.classList.add("modal-card"),e.connected=e.showPRList,e.refreshPRListButton=t`
+        <a class="button is-text level-item" onclick="${e.showPRList.bind(e)}">
+          <span is="ppsl-icon" icon="refresh-cw"></span>
+        </a>
+      `}}
 </script>
