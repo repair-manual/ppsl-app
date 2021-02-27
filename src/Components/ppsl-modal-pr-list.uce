@@ -34,7 +34,7 @@
 
     
     async showPRList (useCacheBuster) {
-      this.contentHTML = document.getElementById('.root').loaderTemplate(1)
+      this.contentHTML = document.getElementById('root').loaderTemplate(1)
 
       const { prData } = self.GlobalContext
 
