@@ -22,8 +22,16 @@
     },
 
     async loadLoop (type, arr, page = 1) {
+      arr = JSON.parse(JSON.stringify(arr))
+
       const { elements, editedData, data } = self.GlobalContext
       const selectedData = elements.product.selectedData[elements.product.selectedProduct]
+
+      const parentType = getParentType(type)
+
+      const parentTypePlural = parentType + 's'
+
+      const editedDataParent = editedData[parentTypePlural].find(res => res._id === selectedData[parentType])
 
       if (!arr) {
         // Get all in a branch.
@@ -37,9 +45,11 @@
         arr = foundData.map(res => res.label)
       }
 
-      const parentType = getParentType(type)
-      
-      const parentTypePlural = parentType + 's'
+      if (editedDataParent) {
+        arr.push(...editedDataParent.content[type])
+
+        arr = [...new Set([...arr])]
+      }
 
       const resultArr = []
 
@@ -61,32 +71,15 @@
         const id = arr[index]
 
         const existingData = existingEditedData.find(res => res._id === id)
-        if (existingData === undefined || existingData.new === undefined) {
+        if (existingData) {
+          resultArr.push(existingData)
+        } else if (existingData === undefined || existingData.new === undefined) {
           // Load from Github!
           let indexInCache = await self.loadFromGithub(type, id)
           if (indexInCache !== null) {
             resultArr.push(data[type][indexInCache])
           } else {
             resultArr.push({ _id: id, content: {} })
-          }
-        }
-      }
-
-      // Add existing data
-      const editedDataParent = editedData[parentTypePlural].find(res => res._id === selectedData[parentType])
-      
-      if (editedDataParent) {
-        const editedDataParentArr = editedDataParent.content[type]
-
-        for (let index = 0; index < editedDataParentArr.length; index++) {
-          const id = editedDataParentArr[index]
-        
-          const existingData = existingEditedData.find(res => res._id === id)
-        
-          if (existingData) {
-            const existIndex = resultArr.findIndex(res => res._id === existingData._id)
-            // const resData = { ...editedData[index], edited: existIndex > -1 } ???
-            resultArr[existIndex > -1 ? existIndex : resultArr.length] = existingData
           }
         }
       }
