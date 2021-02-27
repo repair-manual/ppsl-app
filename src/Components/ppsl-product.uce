@@ -23,11 +23,13 @@
     setProduct (productIndex) {
       const { editedData, data, settings } = self.GlobalContext
 
-      // Find product in editedData
-      let product = editedData.products[productIndex]
+      // Find product in data
+      let product = data.products[productIndex]
 
-      if (product === undefined) {
-        product = data.products[productIndex]
+      // Find product in editedData
+      let productEditIndex = editedData.products.findIndex(res => res._id === product._id)
+      if (productEditIndex > -1) {
+        product = editedData.products[productEditIndex]
       }
 
       if (!this.selectedData[product._id]) {
