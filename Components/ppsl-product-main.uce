@@ -6,17 +6,16 @@
 </div>
 </div>
 <script type=module>import{html as t}from"@uce"
-export default{props:{contentHTML:null,selectedData:{product:null,problem:null,solution:null,link:null}},async loadLoop(t,e,s=1){const{elements:i,editedData:n,data:o}=self.GlobalContext,l=i.product.selectedData[i.product.selectedProduct]
+export default{props:{contentHTML:null,selectedData:{product:null,problem:null,solution:null,link:null}},async loadLoop(t,e,s=1){e=JSON.parse(JSON.stringify(e))
+const{editedData:i,data:n}=self.GlobalContext,o=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],l=getParentType(t),c=i[l+"s"].find((t=>t._id===o[l]))
 if(!e){let s
-try{s=await self.getBranchDirectoryContent(t)}catch(e){s=n[t]}e=s.map((t=>t.label))}const a=getParentType(t),c=a+"s",d=[],r=n[t],p=Math.ceil(e.length/25),u=e.length>25&&"number"==typeof s
+try{s=await self.getBranchDirectoryContent(t)}catch(e){s=i[t]}e=s.map((t=>t.label))}c&&(e.push(...c.content[t]),e=[...new Set([...e])])
+const a=[],d=i[t],r=Math.ceil(e.length/25),u=e.length>25&&"number"==typeof s
 e.sort(((t,e)=>e-t))
-for(let i=u?25*(s-1):0;(!u||i<25*s)&&i<e.length;i++){const s=e[i],n=r.find((t=>t._id===s))
-if(void 0===n||void 0===n.new){let e=await self.loadFromGithub(t,s)
-null!==e?d.push(o[t][e]):d.push({_id:s,content:{}})}}const h=n[c].find((t=>t._id===l[a]))
-if(h){const e=h.content[t]
-for(let t=0;t<e.length;t++){const s=e[t],i=r.find((t=>t._id===s))
-if(i){const t=d.findIndex((t=>t._id===i._id))
-d[t>-1?t:d.length]=i}}}return u?{results:d,maxPages:p,currentPage:s}:d},create(e,s,i){const n=e+"s"
+for(let i=u?25*(s-1):0;(!u||i<25*s)&&i<e.length;i++){const s=e[i],o=d.find((t=>t._id===s))
+if(o)a.push(o)
+else if(void 0===o||void 0===o.new){let e=await self.loadFromGithub(t,s)
+null!==e?a.push(n[t][e]):a.push({_id:s,content:{}})}}return u?{results:a,maxPages:r,currentPage:s}:a},create(e,s,i){const n=e+"s"
 this.titleHTML=t`
         <p class="card-header-title">Creating new ${e} for "${s}"</p>
       `,this.contentHTML=t`
@@ -26,23 +25,23 @@ this.titleHTML=t`
           .customPreviousClick=${{label:`Return to ${n} list`,func:()=>this.showPrevious(n)}}
           .customNextClick=${{label:`Add from existing ${e}s`,func:this[n].bind(this)}}
         ></div>
-      `},showPrevious(t,e){const{elements:s,editedData:i,data:n}=self.GlobalContext,o=s.product.selectedData[s.product.selectedProduct],l=getParentType(t)
-let a
-if(void 0!==l){const t=l+"s",e=o[l]
-a=i[t].find((t=>t._id===e)),void 0===a&&(a=n[t].find((t=>t._id===e)))}else{const e=t+"s",s=o[t]
-a=i[e].find((t=>t._id===s)),void 0===a&&(a=n[e].find((t=>t._id===s)))}return this[t](a)},cloneOrCopy(t,e,s,i=!1){t.preventDefault()
-const{elements:n,editedData:o,data:l}=self.GlobalContext,a=n.product.selectedData[n.product.selectedProduct],c=s+"s",d=getParentType(c),r=d+"s"
-if(i){const t=o[r].findIndex((t=>t._id===a[d]))
-if(-1===t){const t=JSON.parse(JSON.stringify(l[r].find((t=>t._id===a[d]))))
+      `},showPrevious(t,e){const{editedData:s,data:i}=self.GlobalContext,n=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],o=getParentType(t)
+let l
+if(void 0!==o){const t=o+"s",e=n[o]
+l=s[t].find((t=>t._id===e)),void 0===l&&(l=i[t].find((t=>t._id===e)))}else{const e=t+"s",o=n[t]
+l=s[e].find((t=>t._id===o)),void 0===l&&(l=i[e].find((t=>t._id===o)))}return this[t](l)},cloneOrCopy(t,e,s,i=!1){t.preventDefault()
+const{editedData:n,data:o}=self.GlobalContext,l=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],c=s+"s",a=getParentType(c),d=a+"s"
+if(i){const t=n[d].findIndex((t=>t._id===l[a]))
+if(-1===t){const t=JSON.parse(JSON.stringify(o[d].find((t=>t._id===l[a]))))
 t.content[c].push(e._id)
 const s=new Set(t.content[c])
 t.content[c]=[...s]
-const i=o[r].push(t)
-o[r][i-1].edited=!0}else{const s=o[r][t]
+const i=n[d].push(t)
+n[d][i-1].edited=!0}else{const s=n[d][t]
 s.content[c].push(e._id)
 const i=new Set(s.content[c])
-s.content[c]=[...i],s.edited=!0}self.saveDataToStorage("editedData",o),this.showPrevious(c)}else this.create.bind(this)(s,a[d],e.content)},async problems(e,s){let i
-if(this.contentHTML=self.GlobalContext.elements.root.loaderTemplate(3),e){this.titleHTML=t`
+s.content[c]=[...i],s.edited=!0}self.saveDataToStorage("editedData",n),this.showPrevious(c)}else this.create.bind(this)(s,l[a],e.content)},async problems(e,s){let i
+if(this.contentHTML=document.getElementById("root").loaderTemplate(3),e){this.titleHTML=t`
           <p class="card-header-title">Problems for "${e._id}"</p>
           <a class="card-header-icon" onclick=${()=>this.create.bind(this)("problem",e._id)}>
             <span is="ppsl-icon" icon="plus-square"></span>
@@ -75,7 +74,7 @@ i=t`
         <a class="card-header-icon" onclick=${this.toggleEdit.bind(this)}>
           <span is="ppsl-icon" icon="edit"></span>
         </a>
-      `,this.selectedData.problem=e._id,self.GlobalContext.elements.product.selectedData[this.productId].problem=e._id,this.contentHTML=t`
+      `,this.selectedData.problem=e._id,document.getElementById("product").selectedData[this.productId].problem=e._id,this.contentHTML=t`
         <div is="ppsl-product-description"
           .data="${e}"
           type="problems"
@@ -83,7 +82,7 @@ i=t`
           .customNextClick=${{label:"Show solutions",func:this.solutions.bind(this)}}
         ></div>
       `},async solutions(e,s){let i
-if(this.contentHTML=self.GlobalContext.elements.root.loaderTemplate(3),e){const s=await this.loadLoop("solutions",e.content.solutions)
+if(this.contentHTML=document.getElementById("root").loaderTemplate(3),e){const s=await this.loadLoop("solutions",e.content.solutions)
 this.titleHTML=t`
           <p class="card-header-title">Solutions for "${e.content.label}"</p>
           <a class="card-header-icon" onclick=${()=>this.create.bind(this)("solution",e.content.label)}>
@@ -116,7 +115,7 @@ i=t`
         <a class="card-header-icon" onclick=${this.toggleEdit.bind(this)}>
           <span is="ppsl-icon" icon="edit"></span>
         </a>
-      `,this.selectedData.solution=e._id,self.GlobalContext.elements.product.selectedData[this.productId].solution=e._id,this.contentHTML=t`
+      `,this.selectedData.solution=e._id,document.getElementById("product").selectedData[this.productId].solution=e._id,this.contentHTML=t`
         <div is="ppsl-product-description"
           .data="${e}"
           type="solutions"
@@ -124,7 +123,7 @@ i=t`
           .customNextClick=${{label:"Show links",func:this.links.bind(this)}}
         ></div>
       `},async links(e,s){let i
-if(this.contentHTML=self.GlobalContext.elements.root.loaderTemplate(3),e){this.titleHTML=t`
+if(this.contentHTML=document.getElementById("root").loaderTemplate(3),e){this.titleHTML=t`
           <p class="card-header-title">Links for solution "${e.content.label}"</p>
           <a class="card-header-icon" onclick=${()=>this.create.bind(this)("link",e.content.label)}>
             <span is="ppsl-icon" icon="plus-square"></span>
@@ -158,7 +157,7 @@ i=t`
         <a class="card-header-icon" onclick=${this.toggleEdit.bind(this)}>
           <span is="ppsl-icon" icon="edit"></span>
         </a>
-      `,this.selectedData.link=e._id,self.GlobalContext.elements.product.selectedData[this.productId].link=e._id,this.contentHTML=t`
+      `,this.selectedData.link=e._id,document.getElementById("product").selectedData[this.productId].link=e._id,this.contentHTML=t`
         <div is="ppsl-product-description"
           .data="${e}"
           type="links"
@@ -166,6 +165,6 @@ i=t`
           .customNextClick=${{label:"Open link",func:t=>Object.assign(document.createElement("a"),{target:t.content.label,href:t.content.url}).click()}}
         ></div>
       `},toggleEdit(t){t&&(t.preventDefault(),t.stopPropagation())
-const e=self.GlobalContext.elements.productDescription.toggleEdit()
-this.querySelector(".card-header-icon span").icon=e?"x":"edit"},setup(t){t.id="productmain",t.showPrevious.bind(t)("problems")}}
+const e=document.getElementById("productdescription").toggleEdit(),s=this.querySelector(".card-header-icon span")
+s.icon=e?"x":"edit",s.showIcon()},setup(t){t.id="productmain",t.showPrevious.bind(t)("problems")}}
 </script>

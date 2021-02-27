@@ -4,21 +4,21 @@
 </div>
 <script type=module>import{html as e}from"@uce"
 export default{props:{contentHTML:null,newChange:null,oldChange:null},async showDiff(){await import("../diff/diff.js")
-const o=Diff.diffChars(this.oldChange,this.newChange)
-let s=[],n=[]
-for(let l=0;l<o.length;l++){const t=o[l],i=t.added?"green":t.removed?"red":"grey",d=e`
-          <span style="${"grey"!==i?`background-color:${i};color:#fff;`:""}">${t.value}</span>
+const n=Diff.diffChars(this.oldChange,this.newChange)
+let o=[],s=[]
+for(let t=0;t<n.length;t++){const l=n[t],i=l.added?"green":l.removed?"red":"grey",d=e`
+          <span style="${"grey"!==i?`background-color:${i};color:#fff;`:""}">${l.value}</span>
         `
-t.added?s.push(d):(t.removed||s.push(d),n.push(d))}this.contentHTML=e`
-        ${n.length>0?e`
+l.added?o.push(d):(l.removed||o.push(d),s.push(d))}this.contentHTML=e`
+        ${s.length>0?e`
           <div class="column is-clipped is-12-mobile">
             <strong>Existing:</strong>
-            <pre>${n}</pre>
+            <pre>${s}</pre>
           </div>
         `:void 0}
         <div class="column is-clipped is-12-mobile">
           <strong>New:</strong>
-          <pre>${s}</pre>
+          <pre>${o}</pre>
         </div>
-      `},setup(e){e.classList.add("columns","is-multiline"),e.connected=e.showDiff,e.contentHTML=self.GlobalContext.elements.root.loaderTemplate(3)}}
+      `},setup(e){e.classList.add("columns","is-multiline"),e.connected=e.showDiff,e.contentHTML=document.getElementById("root").loaderTemplate(3)}}
 </script>

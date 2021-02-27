@@ -36,7 +36,7 @@ const t=e.products.findIndex((t=>t._id===s._id))
 t>-1&&(e.products[t]=s,this.product=s,self.saveDataToStorage("editedData",e))}return void this.toggleEdit()}s.new||(s.edited=!0)
 o===Object.values(i.content).join()&&delete s.edited
 const a=e.products.findIndex((t=>t._id===s._id))
-a>-1?e.products[a]=s:e.products.push(s),this.product=s,self.saveDataToStorage("editedData",e),this.toggleEdit()},productSettings(){const{elements:e,settings:n}=self.GlobalContext,s=`https://github.com/${n.repo.owner}/${n.repo.name}/blob/main/Products/${this.product._id}.yaml`,i=`https://wiki2.rossmanngroup.com/index.php?title=${this.product._id}`
+a>-1?e.products[a]=s:e.products.push(s),this.product=s,self.saveDataToStorage("editedData",e),this.toggleEdit()},productSettings(){const{settings:e}=self.GlobalContext,n=`https://github.com/${e.repo.owner}/${e.repo.name}/blob/main/Products/${this.product._id}.yaml`,s=`https://wiki2.rossmanngroup.com/index.php?title=${this.product._id}`
 return t`
         ${this.editEnabled?t`
           <div is="ppsl-input" .props=${{label:"Product number",name:"number"}} .value="${this.product.content.number}"></div>
@@ -55,7 +55,7 @@ return t`
               <span is="ppsl-icon" icon="save"></span>
               <span>Update</span>
             </button>
-            <a class="button" onclick="${()=>e.modal.openDiffModal(this.product.content,this.getData().content)}">
+            <a class="button" onclick="${()=>document.getElementById("modal").openDiffModal(this.product.content,this.getData().content)}">
               <span is="ppsl-icon" icon="hash"></span>
               <span>Open diff</span>
             </a>
@@ -65,11 +65,11 @@ return t`
               <span>Edit</span>
             </button>
           `}
-          <a class="button" target="_blank" href="${s}">
+          <a class="button" target="_blank" href="${n}">
             <span is="ppsl-icon" icon="github"></span>
             <span>Open in Github</span>
           </a>
-          <a class="button" target="_blank" href="${i}">
+          <a class="button" target="_blank" href="${s}">
             <span is="ppsl-icon" icon="book-open"></span>
             <span>Open in Wiki</span>
           </a>

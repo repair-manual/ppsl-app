@@ -16,13 +16,6 @@ class GC {
 
     this.prData = prData
 
-    this.elements = {
-      root: null,
-      modal: null,
-      product: null,
-      productDescription: null
-    }
-
     this.editedData = data
     this.data = JSON.parse(JSON.stringify(_emptyData))
   }

@@ -19,12 +19,12 @@ export default{props:{filesToUpload:null,prData:null,uploadData:null,contentHTML
 const t=this.querySelector(".button.is-success")
 if(t.disabled)return
 t.disabled=!0,t.firstElementChild.classList.add("loader")
-const{elements:s,githubUser:a,prData:i,editedData:l}=self.GlobalContext
+const{githubUser:s,prData:a,editedData:i}=self.GlobalContext
 await self.createForkIfNotExists()
-const o=`${a.login}-${Date.now()}`,n=await self.getOrCreateBranchIfNotExists(o),d=(await self.createCommit(n.commit?branchData.commit.sha:n.object.sha,o,this.filesToUpload),await self.createPullRequest(o,this.filesToUpload))
-window.open(d.html_url,"_blank")
+const l=`${s.login}-${Date.now()}`,o=await self.getOrCreateBranchIfNotExists(l),n=(await self.createCommit(o.commit?branchData.commit.sha:o.object.sha,l,this.filesToUpload),await self.createPullRequest(l,this.filesToUpload))
+window.open(n.html_url,"_blank")
 for(let e=0;e<this.filesToUpload.length;e++){const t=this.filesToUpload[e],s=t.json._id
-l[t.type].find((e=>e._id===s)).pr=!0}self.saveDataToStorage("editedData",l),i.push({number:d.number,id:d.id,files:this.filesToUpload.map((e=>({type:e.type,id:e.json._id}))),url:d.html_url,createdAt:d.created_at}),self.saveDataToStorage("prData",i),s.modal.openPRListModal()},parseData(){const{editedData:e,data:t}=self.GlobalContext,s=Object.entries(e),a=[],i=[]
+i[t.type].find((e=>e._id===s)).pr=!0}self.saveDataToStorage("editedData",i),a.push({number:n.number,id:n.id,files:this.filesToUpload.map((e=>({type:e.type,id:e.json._id}))),url:n.html_url,createdAt:n.created_at}),self.saveDataToStorage("prData",a),document.getElementById("modal").openPRListModal()},parseData(){const{editedData:e,data:t}=self.GlobalContext,s=Object.entries(e),a=[],i=[]
 for(let e=0;e<s.length;e++){const[l,o]=s[e]
 for(let e=0;e<o.length;e++){const s=o[e]
 if(!0!==(s.edited||s.new))continue
@@ -104,5 +104,5 @@ return this.prData.length>0?e.for(this.prData)`
             </ul>
           `:e`<p>There's nothing to upload.</p>`}
         </div>
-      `},setup(e){e.classList.add("modal-card"),e.contentHTML=self.GlobalContext.elements.root.loaderTemplate(3),e.connected=e.parseData}}
+      `},setup(e){e.classList.add("modal-card"),e.contentHTML=document.getElementById("root").loaderTemplate(3),e.connected=e.parseData}}
 </script>

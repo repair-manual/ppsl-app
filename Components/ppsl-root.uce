@@ -10,10 +10,10 @@
 </div>
 </div>
 </div>
-<script type=module>import{html as e}from"@uce"
-export default{githubError:s=>e`
+<script type=module>import{html as s}from"@uce"
+export default{githubError:e=>s`
       <strong class="has-text-light">There's been an issue connecting to Github.</strong>
-      <p>${s.message} ${s.code}</p>
-      <pre>${s.stack}</pre>
-    `,loaderTemplate:s=>e`<span class="${"loader"+(s?` is-size-${s}`:"")}"></span>`,setup(e){e.classList.add("hero","is-fullheight","is-dark","is-bold"),self.GlobalContext.elements.root=e}}
+      <p>${e.message} ${e.code}</p>
+      <pre>${e.stack}</pre>
+    `,loaderTemplate:e=>s`<span class="${"loader"+(e?` is-size-${e}`:"")}"></span>`,setup(s){s.id="root",s.classList.add("hero","is-fullheight","is-dark","is-bold")}}
 </script>

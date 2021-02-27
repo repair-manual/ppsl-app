@@ -22,15 +22,15 @@
 <button class="button is-text" onclick={{this.closeModal}}>Close</button>
 </div>
 </div>
-<script type=module>import{html as e}from"@uce"
-export default{props:{contentHTML:null},async showPRList(t){this.contentHTML=self.GlobalContext.elements.root.loaderTemplate(1)
-const{elements:o,prData:l}=self.GlobalContext
-let s=[]
-for(let e=0;e<l.length;e++){const o=l[e],n=await self.checkIfPRIsMergedOrClosed(o.number,t)
-s.push({...n,pr:o,content:{label:`#${o.number}`}})}this.contentHTML=e`
+<script type=module>import{html as t}from"@uce"
+export default{props:{contentHTML:null},async showPRList(e){this.contentHTML=document.getElementById(".root").loaderTemplate(1)
+const{prData:o}=self.GlobalContext
+let n=[]
+for(let t=0;t<o.length;t++){const l=o[t],s=await self.checkIfPRIsMergedOrClosed(l.number,e)
+n.push({...s,pr:l,content:{label:`#${l.number}`}})}this.contentHTML=t`
         <div is="ppsl-product-menu"
-          .data="${s}"
-          .customNextClick=${{func:e=>o.modal.openPRModal(e)}}
+          .data="${n}"
+          .customNextClick=${{func:t=>document.getElementById("modal").openPRModal(t)}}
         ></div>
-      `},setup(e){e.classList.add("modal-card"),e.connected=e.showPRList}}
+      `},setup(t){t.classList.add("modal-card"),t.connected=t.showPRList}}
 </script>

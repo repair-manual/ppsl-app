@@ -5,15 +5,15 @@
 </div>
 </div>
 <script type=module>import{html as t}from"@uce"
-export default{props:{settingsHTML:null,mainHTML:null,commentsHTML:null,selectedProduct:null,selectedData:{}},setProduct(s){const{elements:e,editedData:l,data:d,settings:i}=self.GlobalContext
-let o=l.products[s]
-void 0===o&&(o=d.products[s]),this.selectedData[o._id]||(this.selectedData[o._id]={product:o._id,problem:null,solution:null,link:null})
-let c=this.selectedData[o._id]
-this.selectedProduct=o._id,this.mainHTML=t.for(this.selectedData,o._id)`
-        <div is="ppsl-product-settings" class="column is-12" .product=${o}></div>
-        <div is="ppsl-product-main" class="column is-12" .selectedData=${c} .productId=${o._id}></div>
-        <div is="ppsl-product-comments" class="column is-12" .label="${o._id}" .repo=${i.commentsRepo}></div>
-      `},setup(s){s.classList.add("column"),self.GlobalContext.elements.product=s,s.mainHTML=t`
+export default{props:{settingsHTML:null,mainHTML:null,commentsHTML:null,selectedProduct:null,selectedData:{}},setProduct(s){const{editedData:e,data:l,settings:d}=self.GlobalContext
+let i=e.products[s]
+void 0===i&&(i=l.products[s]),this.selectedData[i._id]||(this.selectedData[i._id]={product:i._id,problem:null,solution:null,link:null})
+let o=this.selectedData[i._id]
+this.selectedProduct=i._id,this.mainHTML=t.for(this.selectedData,i._id)`
+        <div is="ppsl-product-settings" class="column is-12" .product=${i}></div>
+        <div is="ppsl-product-main" class="column is-12" .selectedData=${o} .productId=${i._id}></div>
+        <div is="ppsl-product-comments" class="column is-12" .label="${i._id}" .repo=${d.commentsRepo}></div>
+      `},setup(s){s.id="product",s.classList.add("column"),s.mainHTML=t`
         <div class="column has-text-centered">
           <strong class="has-text-light">Select a product to display its information.</strong>
         </div>

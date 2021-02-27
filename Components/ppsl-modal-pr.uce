@@ -10,17 +10,17 @@
 <button class="button is-text" onclick={{this.closeModal}}>Close</button>
 </div>
 </div>
-<script type=module>import{html as s}from"@uce"
-export default{props:{data:null,titleHTML:null,contentHTML:null},deletePRCopy(){const{elements:s,prData:t}=self.GlobalContext,e=t.findIndex((s=>s.number===this.data.pr.number))
-t.splice(e,1),self.saveDataToStorage("prData",t),s.modal.openPRListModal()},resetPRFiles(){const{editedData:s}=self.GlobalContext
-for(let t=0;t<this.data.pr.files.length;t++){const{type:e,id:l}=this.data.pr.files[t],a=s[e].findIndex((s=>s._id===l))
-s[e].splice(a,1)}self.saveDataToStorage("editedData",s)},async showPR(){const{elements:t,editedData:e,settings:l}=self.GlobalContext,a=this.data.mergedAt?"MERGED":this.data.state.toUpperCase()
-this.titleHTML=s`
+<script type=module>import{html as t}from"@uce"
+export default{props:{data:null,titleHTML:null,contentHTML:null},deletePRCopy(){const{prData:t}=self.GlobalContext,e=t.findIndex((t=>t.number===this.data.pr.number))
+t.splice(e,1),self.saveDataToStorage("prData",t),document.getElementById("modal").openPRListModal()},resetPRFiles(){const{editedData:t}=self.GlobalContext
+for(let e=0;e<this.data.pr.files.length;e++){const{type:s,id:l}=this.data.pr.files[e],a=t[s].findIndex((t=>t._id===l))
+t[s].splice(a,1)}self.saveDataToStorage("editedData",t)},async showPR(){const{editedData:e,settings:s}=self.GlobalContext,l=this.data.mergedAt?"MERGED":this.data.state.toUpperCase()
+this.titleHTML=t`
         <div class="modal-card-title">
           <div class="level is-mobile">
             <div class="level-left">
-              <span is="ppsl-icon" icon="git-pull-request" class="${"level-item has-text-"+("CLOSED"===a?"danger":"MERGED"===a?"success":"info")}"></span>
-              <span class="level-item">PR #${this.data.pr.number} - ${a}</span>
+              <span is="ppsl-icon" icon="git-pull-request" class="${"level-item has-text-"+("CLOSED"===l?"danger":"MERGED"===l?"success":"info")}"></span>
+              <span class="level-item">PR #${this.data.pr.number} - ${l}</span>
             </div>
             <div class="level-right">
               <a class="button is-text" title="Delete local PR copy." onclick=${this.deletePRCopy.bind(this)}>
@@ -30,11 +30,11 @@ this.titleHTML=s`
           </div>
         </div>
       `
-const i=await self.GlobalContext.octokit.markdown.render({text:this.data.body})
-this.contentHTML=s`
+const a=await self.GlobalContext.octokit.markdown.render({text:this.data.body})
+this.contentHTML=t`
         <div class="columns is-mobile is-multiline">
           <div class="column">
-            <a class="button is-fullwidth" onclick="${()=>t.modal.openPRListModal()}">
+            <a class="button is-fullwidth" onclick="${()=>document.getElementById("modal").openPRListModal()}">
               <span is="ppsl-icon" icon="chevron-left"></span>
               <span>Return to PR list</span>
             </a>
@@ -47,16 +47,14 @@ this.contentHTML=s`
           </div>
           <div class="column is-12">
             <a class="button is-fullwidth" title="Clears the edits that have been done." onclick="${this.resetPRFiles.bind(this)}">
-              <span>${"MERGED"===a?"Refresh PR files":"Reset PR files"}</span>
+              <span>${"MERGED"===l?"Refresh PR files":"Reset PR files"}</span>
               <span is="ppsl-icon" icon="refresh-cw" size="large"></span>
             </a>
           </div>
         </div>
         <hr>
-        <div class="content"><i>${s([i.data])}</i></div>
+        <div class="content"><i>${t([a.data])}</i></div>
         <hr>
-        <div is="ppsl-product-comments" .label="${this.data.pr.number}" .isIssueNumber=${!0} .repo=${l.repo}></div>
-      `},setup(s){s.classList.add("modal-card")
-const{elements:t}=self.GlobalContext
-s.contentHTML=t.root.loaderTemplate(1),s.titleHTML=t.root.loaderTemplate(4),s.connected=s.showPR}}
+        <div is="ppsl-product-comments" .label="${this.data.pr.number}" .isIssueNumber=${!0} .repo=${s.repo}></div>
+      `},setup(t){t.classList.add("modal-card"),t.contentHTML=document.getElementById("root").loaderTemplate(1),t.titleHTML=document.getElementById("root").loaderTemplate(4),t.connected=t.showPR}}
 </script>

@@ -49,7 +49,7 @@ self.loginToOctoKit = async (authentication) => {
 
         const ratelimit = await octokit.rateLimit.get()
 
-        self.GlobalContext.elements.topNavbar.setRatelimit(ratelimit.data.rate.reset)
+        document.getElementById('topnavbar').setRatelimit(ratelimit.data.rate.reset)
   
         if (options.request.retryCount === 0) {
           // only retries once
@@ -82,7 +82,7 @@ self.loginToOctoKit = async (authentication) => {
 }
 
 self.getBranchDirectoryContent = async (directory) => {
-  const { elements, settings, octokit } = self.GlobalContext
+  const { settings, octokit } = self.GlobalContext
 
   try {
     const res = await octokit.request('GET /repos/:owner/:repo/contents/:path', {
