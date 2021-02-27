@@ -6,33 +6,33 @@
 </ul>
 {{ this.showPagination() }}
 </div>
-<script type=module>import{html as s}from"@uce"
-export default{props:{type:null,data:null,createOnClick:!1},showMenu(){return this.data.length>0?this.data.map(((i,a)=>s`
+<script type=module>import{html as i}from"@uce"
+export default{props:{type:null,data:null,createOnClick:!1},showMenu(){return this.data.length>0?this.data.map(((s,a)=>i`
         <li>
-          ${i.sha||i.new?s`
+          ${s.sha||s.new?i`
           <a onclick=${()=>this.createOnClick?void 0:this.customNextClick.func(this.data[a])}>
             <div class="level is-mobile">
               <div class="level-left">
-                ${i.content.label.length>64?s`<small class="level-item" title="${i.content.label}">${`${i.content.label.substr(0,70)}${i.content.label.length>72?"...":""}`}</small>`:s`<span class="level-item">${i.content.label}</span>`}
-                ${i.new?s`
+                ${s.content.label.length>64?i`<small class="is-size-7 level-item" title="${s.content.label}">${`${this.paginationClick?`[${s._id}] `:""}${s.content.label.substr(0,70)}${s.content.label.length>72?"...":""}`}</small>`:i`<p class="level-item">${`${this.paginationClick?`[${s._id}] `:""}${s.content.label}`}</p>`}
+                ${s.new?i`
                   <small class="level-item tag is-success">New</small>
                 `:void 0}
-                ${i.edited?s`
+                ${s.edited?i`
                   <small class="level-item tag">Edited</small>
                 `:void 0}
-                ${"closed"!==i.state&&!i.closedAt||i.mergedAt?void 0:s`
+                ${"closed"!==s.state&&!s.closedAt||s.mergedAt?void 0:i`
                   <small class="level-item tag">
                     <span is="ppsl-icon" icon="git-pull-request" class="has-text-danger"></span>
                     <span>Closed</span>
                   </small>
                 `}
-                ${i.mergedAt?s`
+                ${s.mergedAt?i`
                   <small class="level-item tag">
                     <span is="ppsl-icon" icon="git-pull-request" class="has-text-success"></span>
                     <span>Merged</span>
                   </small>
                 `:void 0}
-                ${"open"===i.state?s`
+                ${"open"===s.state?i`
                   <small class="level-item tag">
                     <span is="ppsl-icon" icon="git-pull-request" class="has-text-info"></span>
                     <span>Open</span>
@@ -40,48 +40,48 @@ export default{props:{type:null,data:null,createOnClick:!1},showMenu(){return th
                 `:void 0}
               </div>
               <div class="level-right">
-                ${this.createOnClick?s`
+                ${this.createOnClick?i`
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${s=>this.customNextClick.func(s,this.data[a],this.type)}>
+                    <button class="button is-small is-text" onclick=${i=>this.customNextClick.func(i,this.data[a],this.type)}>
                       <span>Copy</span>
                       <span is="ppsl-icon" icon="copy"></span>
                     </button>
                   </div>
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${s=>this.customNextClick.func(s,this.data[a],this.type,!0)}}>
+                    <button class="button is-small is-text" onclick=${i=>this.customNextClick.func(i,this.data[a],this.type,!0)}}>
                       <span>Clone</span>
                       <span is="ppsl-icon" icon="link-2"></span>
                     </button>
                   </div>
-                `:s`
+                `:i`
                   <div class="level-item">
                     <span is="ppsl-icon" icon="chevron-right"></span>
                   </div>
                 `}
               </div>
             </div>
-          </a>`:s`<a>Unknown entry labeled "${i.content.label||i._id}".</a>`}
+          </a>`:i`<a>Unknown entry labeled "${s.content.label||s._id}".</a>`}
         </li>
-      `)):s`
+      `)):i`
         <p class="has-text-centered">None available.</p>
-      `},showReturnButton(){if(void 0!==this.customPreviousClick)return s`
+      `},showReturnButton(){if(void 0!==this.customPreviousClick)return i`
           <a class="button is-fullwidth" onclick=${()=>this.customPreviousClick.func()}>
             <span is="ppsl-icon" icon="chevron-left"></span>
             <span>${this.customPreviousClick.label}</span>
           </a>
           <hr>
         `},showPagination(){if(!this.paginationClick)return
-const{currentPage:i,maxPages:a}=this.paginationClick
-return s`
+const{currentPage:s,maxPages:a}=this.paginationClick
+return i`
         <hr>
         <nav class="pagination" role="navigation" aria-label="pagination">
-          ${i>1?s`<a class="pagination-previous" onclick=${()=>this.paginationClick.func(this.paginationClick.entry,i-1)}>Previous</a>`:void 0}
-          ${i<a?s`<a class="pagination-next" onclick=${()=>this.paginationClick.func(this.paginationClick.entry,i+1)}>Next page</a>`:void 0}
+          ${s>1?i`<a class="pagination-previous" onclick=${()=>this.paginationClick.func(this.paginationClick.entry,s-1)}>Previous</a>`:void 0}
+          ${s<a?i`<a class="pagination-next" onclick=${()=>this.paginationClick.func(this.paginationClick.entry,s+1)}>Next page</a>`:void 0}
           <ul class="pagination-list">
             <li>
               <div class="field has-addons">
                 <div class="control">
-                  <input class="input" type="number" value="${i}" id="paginationsearch">
+                  <input class="input" type="number" value="${s}" id="paginationsearch">
                 </div>
                 <div class="control">
                   <a class="button is-info" onclick=${()=>{this.paginationClick.func(this.paginationClick.entry,Number(document.getElementById("paginationsearch").value||1))}}>
@@ -94,5 +94,5 @@ return s`
             <li><a class="pagination-link" aria-label="${`Goto page ${a}`}" onclick=${()=>this.paginationClick.func(this.paginationClick.entry,a)}>${a}</a></li>
           </ul>
         </nav>
-      `},setup(s){s.classList.add("menu")}}
+      `},setup(i){i.classList.add("menu")}}
 </script>
