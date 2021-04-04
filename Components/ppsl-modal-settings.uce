@@ -5,8 +5,6 @@
 </div>
 <div class=modal-card-body>
 {{ fields }}
-<hr>
-<p>If you've changed your Github token, make sure to reload the page to relogin.</p>
 </div>
 <div class=modal-card-foot>
 <button class="button is-success" onclick={{this.saveSettings.bind(this)}}>Save settings</button>
@@ -15,15 +13,15 @@
 </div>
 <script type=module>import{html as e}from"@uce"
 export default{saveSettings(){let{settings:e}=self.GlobalContext
-const t=this.querySelector(".form"),{pat:o,repo:s,commentsRepo:a}=t,l=s.value.split("/")
+const t=this.querySelector(".form"),{pat:o,repo:a,commentsRepo:s}=t,l=a.value.split("/")
 if(2===l.length){const[t,o]=l
-e.repo={owner:t,name:o}}const n=a.value.split("/")
+e.repo={owner:t,name:o}}const n=s.value.split("/")
 if(2===n.length){const[t,o]=n
 e.commentsRepo={owner:t,name:o}}self.saveDataToStorage("settings",e),self.savePersonalAccessToken(o.value)},deleteOfflineData(e){e.preventDefault(),self.saveDataToStorage("editedData",_emptyData),self.saveDataToStorage("prData",_emptyPRData),self.saveDataToStorage("settings",_defaultSettings),window.location.reload()},setup(t){t.classList.add("modal-card")
 const{settings:o}=self.GlobalContext
 return{fields:e`
         <form class="form">
-          <div is="ppsl-input" .props="${{type:"password",name:"pat",label:"Github Personal Access Token"}}" .value="${self.getPersonalAccessToken()}"></div>
+          <div is="ppsl-input" .props="${{type:"password",name:"pat",label:"Github Personal Access Token",helpMessage:"If you've changed your Github token, make sure to reload the page to relogin."}}" .value="${self.getPersonalAccessToken()}"></div>
           <div is="ppsl-input" .props="${{type:"text",name:"repo",label:"Data repository owner & name"}}" .value="${`${o.repo.owner}/${o.repo.name}`}"></div>
           <div is="ppsl-input" .props="${{type:"text",name:"commentsRepo",label:"Comments repository owner & name"}}" .value="${`${o.commentsRepo.owner}/${o.commentsRepo.name}`}"></div>
           <div class="field">

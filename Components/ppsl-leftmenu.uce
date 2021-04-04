@@ -1,16 +1,24 @@
 
 <div is=ppsl-leftmenu>
 <div class="menu is-dark">
-<p class="menu-label has-text-light">Products</p>
+<div class="menu-label has-text-light">
+<div class="level is-mobile">
+{{ this.menuLabelHTML }}
+</div>
+</div>
 <ul class=menu-list>
-{{this.contentHTML}}
+{{ this.contentHTML }}
 </ul>
 </div>
 </div>
 <script type=module>import{html as t,render as e}from"@uce"
-export default{props:{contentHTML:null},async loadProduct(t){const e=t.currentTarget.dataset.sha,o=t.currentTarget.innerText,n=await self.loadFromGithub("products",o,e)
-document.getElementById("product").setProduct(n)},async products(){let{offline:e,editedData:o}=self.GlobalContext
-this.contentHTML=t`<p>Logging into Github...</p>`
+export default{props:{contentHTML:null,menuLabelHTML:null},async loadProduct(t){const e=t.currentTarget.dataset.sha,o=t.currentTarget.innerText,n=await self.loadFromGithub("products",o,e)
+document.getElementById("product").setProduct(n)},toggleProductsMenuList(t){t.stopPropagation()
+const e=this.querySelector(".menu-list")
+e.classList.toggle("is-hidden")
+const o=t.currentTarget.querySelector('[is="ppsl-icon"')
+o.icon=e.classList.contains("is-hidden")?"chevron-up":"chevron-down",o.showIcon()},async products(){let{offline:e,editedData:o}=self.GlobalContext
+this.menuLabelHTML=t`Loading PPSL App...`,this.contentHTML=t`<p>Logging into Github...</p>`
 try{await self.loginToOctoKit(self.getPersonalAccessToken())}catch(o){e=o,document.getElementById("product").contentHTML=t`
           <p>Something went wrong while attempting to login to Github. Enabling offline mode.</p>
         `}this.contentHTML=document.getElementById("root").loaderTemplate(4)
@@ -21,5 +29,12 @@ return t`
               <a onclick=${this.loadProduct} data-sha="${e.sha}">${n}</a>
             </li>
           `}))}
+      `,this.menuLabelHTML=t`
+        <div class="level-left">
+          <a class="level-item" onclick=${this.toggleProductsMenuList.bind(this)} title="Hide products">
+            <span is="ppsl-icon" icon="chevron-down"></span>
+            <span>Products</span>
+          </a>
+        </div>
       `},setup(t){t.classList.add("column","is-2"),t.connected=t.products}}
 </script>

@@ -4,7 +4,10 @@
 <label class=label>{{this.props.label}}</label>
 <input type={{this.props.type}} class=input placeholder={{this.props.placeholder}} name={{this.props.name}}>
 </p>
+{{ this.helpMessageHTML }}
 </div>
 <script type=module>import{html as e}from"@uce"
-export default{props:{type:"text",label:"Input",placeholder:null,value:null,name:null},setup(e){return e.classList.add("field"),e.connected=()=>{e.querySelector("input").value=e.value||""},{props:this.props}}}
+export default{props:{type:"text",label:"Input",placeholder:null,value:null,name:null,helpMessageHTML:null},setup(l){return l.classList.add("field"),l.connected=()=>{l.querySelector("input").value=l.value||"",l.props.helpMessage&&(l.helpMessageHTML=e`
+            <p class="help">${l.props.helpMessage}</p>
+          `)},{props:this.props}}}
 </script>

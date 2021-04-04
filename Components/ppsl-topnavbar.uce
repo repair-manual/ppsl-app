@@ -22,7 +22,9 @@
 <script type=module>import{html as t}from"@uce"
 export default{props:{ratelimitTime:null,ratelimitMessage:null},setRatelimit(t){this.ratelimitTime=Number(t+"000"),this.ratelimit(0)},ratelimit(i){setTimeout((()=>{if(Date.now()>this.ratelimitTime)return this.ratelimitTime=null,void(this.ratelimitMessage=t``)
 let i=(this.ratelimitTime-Date.now())/1e3
-i=i>3600?(i/60/60).toFixed(0)+"h":i>60?(i/60).toFixed(0)+"m":i.toFixed(0)+"s",this.ratelimitMessage=t`<small class="navbar-item has-text-white has-background-danger">Ratelimited by Github! Remaining time: ${i}</small>`,this.ratelimit(1e3)}),i)},navbarItems:()=>t`
+i=i>3600?(i/60/60).toFixed(0)+"h":i>60?(i/60).toFixed(0)+"m":i.toFixed(0)+"s",this.ratelimitMessage=t`
+          <small class="navbar-item has-text-white has-background-danger" title="Please enter a Github Personal Access Token in settings if you haven't already!">Ratelimited by Github! Remaining time: ${i}</small>
+        `,this.ratelimit(1e3)}),i)},navbarItems:()=>t`
         <div class="navbar-item">
           <div class="buttons">
             <button class="button is-dark" onclick=${()=>document.getElementById("modal").openPRListModal()}>
