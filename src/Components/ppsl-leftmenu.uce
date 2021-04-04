@@ -1,9 +1,13 @@
 <!-- The HTML layout of the element -->
 <div is="ppsl-leftmenu">
   <div class="menu is-dark">
-    <p class="menu-label has-text-light">Products</p>
+    <div class="menu-label has-text-light">
+      <div class="level is-mobile">
+        {{ this.menuLabelHTML }}
+      </div>
+    </div>
     <ul class="menu-list">
-      {{this.contentHTML}}
+      {{ this.contentHTML }}
     </ul>
   </div>
 </div>
@@ -14,7 +18,8 @@
 
   export default {
     props: {
-      contentHTML: null
+      contentHTML: null,
+      menuLabelHTML: null
     },
 
     async loadProduct (ev) {
@@ -28,8 +33,21 @@
       productDiv.setProduct(productIndex)
     },
 
+
+    toggleProductsMenuList (ev) {
+      ev.stopPropagation()
+      const menuList = this.querySelector('.menu-list')
+      menuList.classList.toggle('is-hidden')
+
+      const iconElement = ev.currentTarget.querySelector('[is="ppsl-icon"')
+      iconElement.icon = menuList.classList.contains('is-hidden') ? 'chevron-up' : 'chevron-down'
+      iconElement.showIcon()
+    },
+
     async products () {
       let { offline, editedData } = self.GlobalContext
+
+      this.menuLabelHTML = html`Loading PPSL App...`
 
       this.contentHTML = html`<p>Logging into Github...</p>`
 
@@ -63,6 +81,15 @@
             </li>
           `
         })}
+      `
+
+      this.menuLabelHTML = html`
+        <div class="level-left">
+          <a class="level-item" onclick=${this.toggleProductsMenuList.bind(this)} title="Hide products">
+            <span is="ppsl-icon" icon="chevron-down"></span>
+            <span>Products</span>
+          </a>
+        </div>
       `
     },
 
