@@ -54,7 +54,9 @@
           remainingTime = remainingTime.toFixed(0) + 's'
         }
 
-        this.ratelimitMessage = html`<small class="navbar-item has-text-white has-background-danger">Ratelimited by Github! Remaining time: ${remainingTime}</small>`
+        this.ratelimitMessage = html`
+          <small class="navbar-item has-text-white has-background-danger" title="Please enter a Github Personal Access Token in settings if you haven't already!">Ratelimited by Github! Remaining time: ${remainingTime}</small>
+        `
 
         this.ratelimit(1000)
       }, timeoutMs)
