@@ -5,8 +5,6 @@
   </div>
   <div class="modal-card-body">
     {{ fields }}
-    <hr>
-    <p>If you've changed your Github token, make sure to reload the page to relogin.</p>
   </div>
   <div class="modal-card-foot">
     <button class="button is-success" onclick="{{this.saveSettings.bind(this)}}">Save settings</button>
@@ -21,7 +19,7 @@
   export default {
     saveSettings () {
       let { settings } = self.GlobalContext
-  
+
       const form = this.querySelector('.form')
 
       const { pat, repo, commentsRepo } = form
@@ -59,22 +57,33 @@
       window.location.reload()
     },
 
-    setup(element) {
+    setup (element) {
       element.classList.add('modal-card')
 
       const { settings } = self.GlobalContext
 
+      const patProps = {
+        type: 'password',
+        name: 'pat',
+        label: 'Github Personal Access Token',
+        helpMessage: 'If you\'ve changed your Github token, make sure to reload the page to relogin.'
+      }
+      const repoProps = {
+        type: 'text',
+        name: 'repo',
+        label: 'Data repository owner & name'
+      }
+      const commentsProps = {
+        type: 'text',
+        name: 'commentsRepo',
+        label: 'Comments repository owner & name'
+      }
+
       const fields = html`
         <form class="form">
-          <div is="ppsl-input" .props="${
-            { type: 'password', name: 'pat', label: 'Github Personal Access Token' }
-          }" .value="${self.getPersonalAccessToken()}"></div>
-          <div is="ppsl-input" .props="${
-            { type: 'text', name: 'repo', label: 'Data repository owner & name' }
-          }" .value="${`${settings.repo.owner}/${settings.repo.name}`}"></div>
-          <div is="ppsl-input" .props="${
-            { type: 'text', name: 'commentsRepo', label: 'Comments repository owner & name' }
-          }" .value="${`${settings.commentsRepo.owner}/${settings.commentsRepo.name}`}"></div>
+          <div is="ppsl-input" .props="${{ ...patProps }}" .value="${self.getPersonalAccessToken()}"></div>
+          <div is="ppsl-input" .props="${{ ...repoProps }}" .value="${`${settings.repo.owner}/${settings.repo.name}`}"></div>
+          <div is="ppsl-input" .props="${{ ...commentsProps }}" .value="${`${settings.commentsRepo.owner}/${settings.commentsRepo.name}`}"></div>
           <div class="field">
             <p class="control">
               <button class="button is-danger" onclick=${this.deleteOfflineData}>Delete all offline data</button>

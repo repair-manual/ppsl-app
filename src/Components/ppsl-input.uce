@@ -4,6 +4,7 @@
     <label class="label">{{this.props.label}}</label>
     <input type="{{this.props.type}}" class="input" placeholder="{{this.props.placeholder}}" name="{{this.props.name}}">
   </p>
+  {{ this.helpMessageHTML }}
 </div>
 
 <!-- The logic of the element -->
@@ -16,15 +17,21 @@
       label: 'Input',
       placeholder: null,
       value: null,
-      name: null
+      name: null,
+      helpMessageHTML: null
     },
 
-    setup(element) {
+    setup (element) {
       element.classList.add('field')
 
       element.connected = () => {
         const input = element.querySelector('input')
         input.value = element.value || ''
+        if (element.props.helpMessage) {
+          element.helpMessageHTML = html`
+            <p class="help">${element.props.helpMessage}</p>
+          `
+        }
       }
 
       return {
