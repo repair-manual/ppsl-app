@@ -6,7 +6,7 @@
 export default{props:{type:null,data:null,customPreviousClick:null},getData(){const t={_id:Date.now().toString(),content:{},new:!0},e=document.forms.create,{label:s,description:i,url:a}=e.elements
 t.content={label:s.value,description:i.value},a&&(t.content.url=a.value)
 const n=getChildType(this.type)
-return n&&(t.content[n]=[]),t},create(t){const{editedData:e,data:s}=self.GlobalContext,i=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct]
+return n&&(t.content[n+"s"]=[]),t},create(t){const{editedData:e,data:s}=self.GlobalContext,i=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct]
 t.preventDefault()
 const a=this.getData()
 if(0===a.content.label.length)return

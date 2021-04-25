@@ -10,19 +10,20 @@ export default{props:{contentHTML:null,selectedData:{product:null,problem:null,s
 const{editedData:i,data:n}=self.GlobalContext,o=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],l=getParentType(t),c=i[l+"s"].find((t=>t._id===o[l]))
 if(!e){let s
 try{s=await self.getBranchDirectoryContent(t)}catch(e){s=i[t]}e=s.map((t=>t.label))}c&&(e.push(...c.content[t]),e=[...new Set([...e])])
-const a=[],d=i[t],r=Math.ceil(e.length/25),u=e.length>25&&"number"==typeof s
+const a=[],d=i[t],r=Math.ceil(e.length/25),p=e.length>25&&"number"==typeof s
 e.sort(((t,e)=>e-t))
-for(let i=u?25*(s-1):0;(!u||i<25*s)&&i<e.length;i++){const s=e[i],o=d.find((t=>t._id===s))
+for(let i=p?25*(s-1):0;(!p||i<25*s)&&i<e.length;i++){const s=e[i],o=d.find((t=>t._id===s))
 if(o)a.push(o)
 else if(void 0===o||void 0===o.new){let e=await self.loadFromGithub(t,s)
-null!==e?a.push(n[t][e]):a.push({_id:s,content:{}})}}return u?{results:a,maxPages:r,currentPage:s}:a},create(e,s,i){const n=e+"s"
+null!==e?a.push(n[t][e]):a.push({_id:s,content:{}})}}return p?{results:a,maxPages:r,currentPage:s}:a},create(e,s,i){const n=e+"s",o=getParentType(n)
+let l
 this.titleHTML=t`
-        <p class="card-header-title">Creating new ${e} for "${s}"</p>
-      `,this.contentHTML=t`
+        <p class="card-header-title">Creating new ${e} for ${o} "${s}"</p>
+      `,l="problem"===e?{label:`Return to ${n} list`,func:()=>this.showPrevious(n)}:{label:`Return to ${o}`,func:()=>this.showPrevious(o)},this.contentHTML=t`
         <div is="ppsl-product-create"
           type="${n}"
           .data=${i}
-          .customPreviousClick=${{label:`Return to ${n} list`,func:()=>this.showPrevious(n)}}
+          .customPreviousClick=${l}
           .customNextClick=${{label:`Add from existing ${e}s`,func:this[n].bind(this)}}
         ></div>
       `},showPrevious(t,e){const{editedData:s,data:i}=self.GlobalContext,n=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],o=getParentType(t)
@@ -40,28 +41,27 @@ const i=n[d].push(t)
 n[d][i-1].edited=!0}else{const s=n[d][t]
 s.content[c].push(e._id)
 const i=new Set(s.content[c])
-s.content[c]=[...i],s.edited=!0}self.saveDataToStorage("editedData",n),this.showPrevious(c)}else this.create.bind(this)(s,l[a],e.content)},async problems(e,s){let i
-if(this.contentHTML=document.getElementById("root").loaderTemplate(3),e){this.titleHTML=t`
+s.content[c]=[...i],s.edited=!0}self.saveDataToStorage("editedData",n),this.showPrevious(c)}else this.create.bind(this)(s,l[a],e.content)},async getChildContent(t,e,s){const i=getParentChildType(t.content)+"s"
+return await this.loadLoop(i,s?null:t.content[i],e)},async problems(e,s){let i
+if(this.titleHTML=t`<p class="card-header-title">Loading problems...</p>`,this.contentHTML=document.getElementById("root").loaderTemplate(3),e){const n=await this.getChildContent(e,s)
+this.titleHTML=t`
           <p class="card-header-title">Problems for "${e._id}"</p>
           <a class="card-header-icon" onclick=${()=>this.create.bind(this)("problem",e._id)}>
             <span is="ppsl-icon" icon="plus-square"></span>
           </a>
-        `
-const n=await this.loadLoop("problems",e.content.problems,s)
-i=t`
+        `,i=t`
           <div is="ppsl-product-menu"
             .data="${n.results||n}"
             .customNextClick=${{func:this.problem.bind(this)}}
             .paginationClick=${n.results?{func:this.problems.bind(this),currentPage:n.currentPage,maxPages:n.maxPages}:void 0}
           ></div>
-        `}else{this.titleHTML=t`
+        `}else{const e=await this.loadLoop("problems",null,s)
+this.titleHTML=t`
           <p class="card-header-title">All problems</p>
           <a class="card-header-icon" onclick=${()=>this.showPrevious("problems")}>
             <span is="ppsl-icon" icon="x"></span>
           </a>
-        `
-const e=await this.loadLoop("problems",null,s)
-i=t`
+        `,i=t`
           <div is="ppsl-product-menu"
             .data="${e.results||e}"
             type="problem"
@@ -79,38 +79,23 @@ i=t`
           .data="${e}"
           type="problems"
           .customPreviousClick=${{label:"Return to problems list",func:()=>this.showPrevious("problems")}}
-          .customNextClick=${{label:"Show solutions",func:this.solutions.bind(this)}}
         ></div>
-      `},async solutions(e,s){let i
-if(this.contentHTML=document.getElementById("root").loaderTemplate(3),e){const s=await this.loadLoop("solutions",e.content.solutions)
+      `},async solutions(e,s){this.titleHTML=t`<p class="card-header-title">Loading solutions...</p>`,this.contentHTML=document.getElementById("root").loaderTemplate(3)
+const i=await this.loadLoop("solutions",null,s)
 this.titleHTML=t`
-          <p class="card-header-title">Solutions for "${e.content.label}"</p>
-          <a class="card-header-icon" onclick=${()=>this.create.bind(this)("solution",e.content.label)}>
-            <span is="ppsl-icon" icon="plus-square"></span>
-          </a>
-        `,i=t`
-          <div is="ppsl-product-menu"
-            .data="${s.results||s}"
-            .customPreviousClick=${{label:"Return to problem",func:()=>this.showPrevious("problem")}}
-            .customNextClick=${{func:this.solution.bind(this)}}
-            .paginationClick=${s.results?{func:this.solutions.bind(this),currentPage:s.currentPage,maxPages:s.maxPages}:void 0}
-          ></div>
-        `}else{this.titleHTML=t`
-          <p class="card-header-title">All solutions</p>
-          <a class="card-header-icon" onclick=${()=>this.showPrevious("solutions")}>
-            <span is="ppsl-icon" icon="x"></span>
-          </a>
-        `
-const e=await this.loadLoop("solutions",null,s)
-i=t`
-          <div is="ppsl-product-menu"
-            .data="${e.results||e}"
-            type="solution"
-            .createOnClick="${!0}"
-            .customNextClick=${{func:this.cloneOrCopy.bind(this)}}
-            .paginationClick=${e.results?{func:this.solutions.bind(this),currentPage:e.currentPage,maxPages:e.maxPages}:void 0}
-          ></div>
-        `}this.contentHTML=i},solution(e){this.titleHTML=t`
+        <p class="card-header-title">All solutions</p>
+        <a class="card-header-icon" onclick=${()=>this.showPrevious("problem")}>
+          <span is="ppsl-icon" icon="x"></span>
+        </a>
+      `,this.contentHTML=t`
+        <div is="ppsl-product-menu"
+          .data="${i.results||i}"
+          type="solution"
+          .createOnClick="${!0}"
+          .customNextClick=${{func:this.cloneOrCopy.bind(this)}}
+          .paginationClick=${i.results?{func:this.solutions.bind(this),currentPage:i.currentPage,maxPages:i.maxPages}:void 0}
+        ></div>
+      `},solution(e){this.titleHTML=t`
         <p class="card-header-title">Solution - "${e.content.label}"</p>
         <a class="card-header-icon" onclick=${this.toggleEdit.bind(this)}>
           <span is="ppsl-icon" icon="edit"></span>
@@ -119,40 +104,25 @@ i=t`
         <div is="ppsl-product-description"
           .data="${e}"
           type="solutions"
-          .customPreviousClick=${{label:"Return to solutions list",func:()=>this.showPrevious("solutions")}}
+          .customPreviousClick=${{label:"Return to problem",func:()=>this.showPrevious("problem")}}
           .customNextClick=${{label:"Show links",func:this.links.bind(this)}}
         ></div>
-      `},async links(e,s){let i
-if(this.contentHTML=document.getElementById("root").loaderTemplate(3),e){this.titleHTML=t`
-          <p class="card-header-title">Links for solution "${e.content.label}"</p>
-          <a class="card-header-icon" onclick=${()=>this.create.bind(this)("link",e.content.label)}>
-            <span is="ppsl-icon" icon="plus-square"></span>
-          </a>
-        `
-const s=await this.loadLoop("links",e.content.links)
-i=t`
-          <div is="ppsl-product-menu"
-            .data="${s}"
-            .customPreviousClick=${{label:"Return to solution",func:()=>this.showPrevious("solution")}}
-            .customNextClick=${{func:this.link.bind(this)}}
-            .paginationClick=${s.results?{func:this.links.bind(this),entry:e,currentPage:s.currentPage,maxPages:s.maxPages}:void 0}
-          ></div>
-        `}else{this.titleHTML=t`
-          <p class="card-header-title">All links</p>
-          <a class="card-header-icon" onclick=${()=>this.showPrevious("links")}>
-            <span is="ppsl-icon" icon="x"></span>
-          </a>
-        `
-const e=await this.loadLoop("links",null,s)
-i=t`
-          <div is="ppsl-product-menu"
-            .data="${e.results}"
-            type="link"
-            .createOnClick="${!0}"
-            .customNextClick=${{func:this.cloneOrCopy.bind(this)}}
-            .paginationClick=${e.results?{func:this.links.bind(this),currentPage:e.currentPage,maxPages:e.maxPages}:void 0}
-          ></div>
-        `}this.contentHTML=i},link(e){this.titleHTML=t`
+      `},async links(e,s){this.titleHTML=t`<p class="card-header-title">Loading links...</p>`,this.contentHTML=document.getElementById("root").loaderTemplate(3)
+const i=await this.loadLoop("links",null,s)
+this.titleHTML=t`
+        <p class="card-header-title">All links</p>
+        <a class="card-header-icon" onclick=${()=>this.showPrevious("solution")}>
+          <span is="ppsl-icon" icon="x"></span>
+        </a>
+      `,this.contentHTML=t`
+        <div is="ppsl-product-menu"
+          .data="${i.results}"
+          type="link"
+          .createOnClick="${!0}"
+          .customNextClick=${{func:this.cloneOrCopy.bind(this)}}
+          .paginationClick=${i.results?{func:this.links.bind(this),currentPage:i.currentPage,maxPages:i.maxPages}:void 0}
+        ></div>
+      `},link(e){this.titleHTML=t`
         <p class="card-header-title">Link - "${e.content.label}"</p>
         <a class="card-header-icon" onclick=${this.toggleEdit.bind(this)}>
           <span is="ppsl-icon" icon="edit"></span>
@@ -161,7 +131,7 @@ i=t`
         <div is="ppsl-product-description"
           .data="${e}"
           type="links"
-          .customPreviousClick=${{label:"Return to links list",func:()=>this.showPrevious("links")}}
+          .customPreviousClick=${{label:"Return to solution",func:()=>this.showPrevious("solution")}}
           .customNextClick=${{label:"Open link",func:t=>Object.assign(document.createElement("a"),{target:t.content.label,href:t.content.url}).click()}}
         ></div>
       `},toggleEdit(t){t&&(t.preventDefault(),t.stopPropagation())

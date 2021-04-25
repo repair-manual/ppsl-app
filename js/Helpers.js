@@ -1,19 +1,33 @@
-function getParentType (child) {
+function getParentType (child = '') {
   return child === 'solutions'
     ? 'problem'
     : child === 'problems'
       ? 'product'
       : child === 'links'
         ? 'solution'
-        : undefined
+        : child === 'urls'
+          ? 'link'
+          : undefined
 }
 
-function getChildType (parent) {
+function getChildType (parent = '') {
   return parent === 'solutions'
-    ? 'links'
+    ? 'link'
     : parent === 'problems'
-      ? 'solutions'
+      ? 'solution'
       : undefined
+}
+
+function getParentChildType (content = {}) {
+  if (content.problems) {
+    return 'problem'
+  } else if (content.solutions) {
+    return 'solution'
+  } else if (content.links) {
+    return 'link'
+  } else if (content.url) {
+    return 'url'
+  } else return undefined
 }
 
 // https://stackoverflow.com/a/30106551 CC-BY-SA 4.0
