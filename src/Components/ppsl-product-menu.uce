@@ -15,10 +15,30 @@
     props: {
       type: null,
       data: null,
+      defer: false,
       createOnClick: false
     },
 
+    async loadData () {
+      const data = await document.getElementById('productmain').getChildContent(this.data)
+
+      this.data = data
+
+      if (this.data.length > 0) {
+        const dataPluralType = getParentType(getParentChildType(data[0].content) + 's')
+        this.customNextClick = { func: document.getElementById('productmain')[dataPluralType].bind(document.getElementById('productmain')) }
+        // this.paginationClick = data.results ? { func: this[getChildType(data) + 's'].bind(this), currentPage: data.currentPage, maxPages: data.maxPages } : undefined
+      }
+
+      this.defer = false
+      return this.showMenu()
+    },
+
     showMenu () {
+      if (this.defer) {
+        return this.loadData()
+      }
+
       return this.data.length > 0 ? this.data.map((object, index) => html`
         <li>
           ${object.sha || object.new ? html`

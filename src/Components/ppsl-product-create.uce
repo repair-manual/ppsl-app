@@ -35,7 +35,7 @@
       const arrayToAdd = getChildType(this.type)
 
       if (arrayToAdd) {
-        data.content[arrayToAdd] = []
+        data.content[arrayToAdd + 's'] = []
       }
 
       return data

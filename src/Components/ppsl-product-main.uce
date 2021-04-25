@@ -89,15 +89,24 @@
 
     create (type, id, data) {
       const pluralType = type + 's'
+      const parentType = getParentType(pluralType)
+
       this.titleHTML = html`
-        <p class="card-header-title">Creating new ${type} for "${id}"</p>
+        <p class="card-header-title">Creating new ${type} for ${parentType} "${id}"</p>
       `
+
+      let customPreviousClick
+      if (type === 'problem') {
+        customPreviousClick = { label: `Return to ${pluralType} list`, func: () => this.showPrevious(pluralType) }
+      } else {
+        customPreviousClick = { label: `Return to ${parentType}`, func: () => this.showPrevious(parentType) }
+      }
 
       this.contentHTML = html`
         <div is="ppsl-product-create"
           type="${pluralType}"
           .data=${data}
-          .customPreviousClick=${{ label: `Return to ${pluralType} list`, func: () => this.showPrevious(pluralType) }}
+          .customPreviousClick=${customPreviousClick}
           .customNextClick=${{ label: `Add from existing ${type}s`, func: this[pluralType].bind(this) }}
         ></div>
       `
@@ -179,20 +188,27 @@
       }
     },
 
+    async getChildContent (parent, page, all) {
+      const pluralChildType = getParentChildType(parent.content) + 's'
+
+      return await this.loadLoop(pluralChildType, all ? null : parent.content[pluralChildType], page)
+    },
+  
     async problems (product, page) {
+      this.titleHTML = html`<p class="card-header-title">Loading problems...</p>`
       this.contentHTML = document.getElementById('root').loaderTemplate(3)
 
       let htmlContent
       if (product) {
         // Show menu with problems related to product.
+        const problems = await this.getChildContent(product, page)
+
         this.titleHTML = html`
           <p class="card-header-title">Problems for "${product._id}"</p>
           <a class="card-header-icon" onclick=${() => this.create.bind(this)('problem', product._id)}>
             <span is="ppsl-icon" icon="plus-square"></span>
           </a>
         `
-
-        const problems = await this.loadLoop('problems', product.content.problems, page)
 
         htmlContent = html`
           <div is="ppsl-product-menu"
@@ -203,14 +219,14 @@
         `
       } else {
         // Show ALL problems.
+        const problems = await this.loadLoop('problems', null, page)
+
         this.titleHTML = html`
           <p class="card-header-title">All problems</p>
           <a class="card-header-icon" onclick=${() => this.showPrevious('problems') }>
             <span is="ppsl-icon" icon="x"></span>
           </a>
         `
-
-        const problems = await this.loadLoop('problems', null, page)
 
         htmlContent = html`
           <div is="ppsl-product-menu"
@@ -243,57 +259,34 @@
           .data="${problem}"
           type="problems"
           .customPreviousClick=${{ label: 'Return to problems list', func: () => this.showPrevious('problems') }}
-          .customNextClick=${{ label: 'Show solutions', func: this.solutions.bind(this) }}
         ></div>
       `
     },
 
     async solutions (problem, page) {
+      this.titleHTML = html`<p class="card-header-title">Loading solutions...</p>`
       this.contentHTML = document.getElementById('root').loaderTemplate(3)
 
-      let htmlContent
-      if (problem) {
-        // Show menu with solutions related to problem.
-        const solutions = await this.loadLoop('solutions', problem.content.solutions)
+      // Show ALL solutions.
+      const solutions = await this.loadLoop('solutions', null, page)
 
-        this.titleHTML = html`
-          <p class="card-header-title">Solutions for "${problem.content.label}"</p>
-          <a class="card-header-icon" onclick=${() => this.create.bind(this)('solution', problem.content.label)}>
-            <span is="ppsl-icon" icon="plus-square"></span>
-          </a>
-        `
+      this.titleHTML = html`
+        <p class="card-header-title">All solutions</p>
+        <a class="card-header-icon" onclick=${() => this.showPrevious('problem') }>
+          <span is="ppsl-icon" icon="x"></span>
+        </a>
+      `
 
-        htmlContent = html`
-          <div is="ppsl-product-menu"
-            .data="${solutions.results || solutions}"
-            .customPreviousClick=${{ label: 'Return to problem', func: () => this.showPrevious('problem') }}
-            .customNextClick=${{ func: this.solution.bind(this) }}
-            .paginationClick=${solutions.results ? { func: this.solutions.bind(this), currentPage: solutions.currentPage, maxPages: solutions.maxPages } : undefined}
-          ></div>
-        `
-      } else {
-        // Show ALL solutions.
-        this.titleHTML = html`
-          <p class="card-header-title">All solutions</p>
-          <a class="card-header-icon" onclick=${() => this.showPrevious('solutions') }>
-            <span is="ppsl-icon" icon="x"></span>
-          </a>
-        `
 
-        const solutions = await this.loadLoop('solutions', null, page)
-
-        htmlContent = html`
-          <div is="ppsl-product-menu"
-            .data="${solutions.results || solutions}"
-            type="solution"
-            .createOnClick="${true}"
-            .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}
-            .paginationClick=${solutions.results ? { func: this.solutions.bind(this), currentPage: solutions.currentPage, maxPages: solutions.maxPages } : undefined}
-          ></div>
-        `
-      }
-
-      this.contentHTML = htmlContent
+      this.contentHTML = html`
+        <div is="ppsl-product-menu"
+          .data="${solutions.results || solutions}"
+          type="solution"
+          .createOnClick="${true}"
+          .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}
+          .paginationClick=${solutions.results ? { func: this.solutions.bind(this), currentPage: solutions.currentPage, maxPages: solutions.maxPages } : undefined}
+        ></div>
+      `
     },
 
     solution (solution) {
@@ -312,59 +305,35 @@
         <div is="ppsl-product-description"
           .data="${solution}"
           type="solutions"
-          .customPreviousClick=${{ label: 'Return to solutions list', func: () => this.showPrevious('solutions')}}
+          .customPreviousClick=${{ label: 'Return to problem', func: () => this.showPrevious('problem')}}
           .customNextClick=${{ label: 'Show links', func: this.links.bind(this) }}
         ></div>
       `
     },
 
     async links (solution, page) {
+      this.titleHTML = html`<p class="card-header-title">Loading links...</p>`
       this.contentHTML = document.getElementById('root').loaderTemplate(3)
 
-      let htmlContent
+      // Show ALL links.
+      const links = await this.loadLoop('links', null, page)
 
-      if (solution) {
-        // Show menu with links related to solution.
-        this.titleHTML = html`
-          <p class="card-header-title">Links for solution "${solution.content.label}"</p>
-          <a class="card-header-icon" onclick=${() => this.create.bind(this)('link', solution.content.label)}>
-            <span is="ppsl-icon" icon="plus-square"></span>
-          </a>
-        `
+      this.titleHTML = html`
+        <p class="card-header-title">All links</p>
+        <a class="card-header-icon" onclick=${() => this.showPrevious('solution') }>
+          <span is="ppsl-icon" icon="x"></span>
+        </a>
+      `
 
-        const links = await this.loadLoop('links', solution.content.links)
-
-        htmlContent = html`
-          <div is="ppsl-product-menu"
-            .data="${links}"
-            .customPreviousClick=${{ label: 'Return to solution', func: () => this.showPrevious('solution') }}
-            .customNextClick=${{ func: this.link.bind(this) }}
-            .paginationClick=${links.results ? { func: this.links.bind(this), entry: solution, currentPage: links.currentPage, maxPages: links.maxPages } : undefined}
-          ></div>
-        `
-      } else {
-        // Show ALL links.
-        this.titleHTML = html`
-          <p class="card-header-title">All links</p>
-          <a class="card-header-icon" onclick=${() => this.showPrevious('links') }>
-            <span is="ppsl-icon" icon="x"></span>
-          </a>
-        `
-
-        const links = await this.loadLoop('links', null, page)
-
-        htmlContent = html`
-          <div is="ppsl-product-menu"
-            .data="${links.results}"
-            type="link"
-            .createOnClick="${true}"
-            .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}
-            .paginationClick=${links.results ? { func: this.links.bind(this), currentPage: links.currentPage, maxPages: links.maxPages } : undefined}
-          ></div>
-        `
-      }
-
-      this.contentHTML = htmlContent
+      this.contentHTML = html`
+        <div is="ppsl-product-menu"
+          .data="${links.results}"
+          type="link"
+          .createOnClick="${true}"
+          .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}
+          .paginationClick=${links.results ? { func: this.links.bind(this), currentPage: links.currentPage, maxPages: links.maxPages } : undefined}
+        ></div>
+      `
     },
 
     link (link) {
@@ -383,7 +352,7 @@
         <div is="ppsl-product-description"
           .data="${link}"
           type="links"
-          .customPreviousClick=${{ label: 'Return to links list', func: () => this.showPrevious('links')}}
+          .customPreviousClick=${{ label: 'Return to solution', func: () => this.showPrevious('solution')}}
           .customNextClick=${{ label: 'Open link', func: (res) =>
             Object.assign(document.createElement('a'), { target: res.content.label, href: res.content.url}).click()
           }}

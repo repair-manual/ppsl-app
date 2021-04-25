@@ -1,6 +1,6 @@
 {
   "name": "ppsl-app",
-  "version": "1.0.0b",
+  "version": "1.1.0b",
   "private": true,
   "scripts": {
     "debug": "serve -p 8080 ./src",

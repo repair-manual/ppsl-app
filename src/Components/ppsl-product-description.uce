@@ -124,24 +124,13 @@
 
     showDescription () {
       const hasButton = this.data.content.solutions || this.data.content.links || this.data.content.url
+      const childType = getChildType(this.type)
 
       return html`
-        <div class="columns is-multiline">
-          <div class="column">
-            <a class="button is-fullwidth" onclick="${this.customPreviousClick.func}">
-              <span is="ppsl-icon" icon="chevron-left"></span>
-              <span>${this.customPreviousClick.label}</span>
-            </a>
-          </div>
-          ${hasButton ? html`
-            <div class="column">
-              <a class="button is-fullwidth" onclick="${() => this.customNextClick.func(this.data)}">
-                <span>${this.customNextClick.label}</span>
-                <span is="ppsl-icon" icon=${this.data.content.url === undefined ? 'chevron-right' : 'external-link'}></span>
-              </a>
-            </div>
-          ` : null}
-        </div>
+        <a class="button is-fullwidth" onclick="${this.customPreviousClick.func}">
+          <span is="ppsl-icon" icon="chevron-left"></span>
+          <span>${this.customPreviousClick.label}</span>
+        </a>
         <hr>
         ${this.editEnabled ? html`
           <form name="edit">
@@ -177,6 +166,25 @@
           <div class="content">
             <h3><small class="is-size-7">[${this.data._id}]</small> ${this.data.content.label}</h3>
             <p>${this.data.content.description}</p>
+          </div>
+          <div>
+            ${!this.data.content.url ? html`
+              <hr>
+              <div class="level is-mobile">
+                <div class="level-left">
+                  <h3 class="level-item is-size-4 has-text-weight-bold">${childType.substr(0, 1).toUpperCase() + childType.substr(1)}s</h3>
+                </div>
+                <div class="level-left">
+                  <a onclick=${() => document.getElementById('productmain').create.bind(document.getElementById('productmain'))(childType, this.data._id)}>
+                    <span is="ppsl-icon" icon="plus-square"></span>
+                  </a>
+                </div>
+              </div>
+              <div is="ppsl-product-menu"
+                .data="${this.data}"
+                .defer="${true}"
+              ></div>
+            ` : undefined}
           </div>
         `}
       `
