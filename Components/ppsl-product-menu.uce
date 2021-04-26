@@ -2,39 +2,39 @@
 <div is=ppsl-product-menu>
 {{ this.showReturnButton() }}
 <ul class=menu-list>
-{{ this.showMenu() }}
+{{ this.contentHTML }}
 </ul>
-{{ this.showPagination() }}
+{{ this.paginationContentHTML }}
 </div>
-<script type=module>import{html as i}from"@uce"
-export default{props:{type:null,data:null,defer:!1,createOnClick:!1},async loadData(){const i=await document.getElementById("productmain").getChildContent(this.data)
-if(this.data=i,this.data.length>0){const t=getParentType(getParentChildType(i[0].content)+"s")
-this.customNextClick={func:document.getElementById("productmain")[t].bind(document.getElementById("productmain"))}}return this.defer=!1,this.showMenu()},showMenu(){return this.defer?this.loadData():this.data.length>0?this.data.map(((t,s)=>i`
+<script type=module>import{html as t}from"@uce"
+export default{props:{type:null,data:null,menuData:null,page:1,defer:!1,createOnClick:!1,contentHTML:null,paginationContentHTML:null,customNextClick:null,paginationClick:null},async loadData(){let t
+if(t=this.data?await document.getElementById("productmain").getChildContent(this.data,this.page):await document.getElementById("productmain").loadLoop(this.type+"s",null,this.page),this.menuData=t.results||t,this.menuData.length>0){const a=getParentType(getParentChildType(this.menuData[0].content)+"s")
+null===this.customNextClick&&(this.customNextClick={func:document.getElementById("productmain")[a].bind(document.getElementById("productmain"))}),this.paginationClick=t.results?{func:this.paginate.bind(this),currentPage:t.currentPage,maxPages:t.maxPages}:void 0}return this.defer=!1,this.showMenu()},showMenu(){return this.defer?this.loadData():(this.paginationContentHTML=this.showPagination(),this.menuData.length>0?this.menuData.map(((a,i)=>t`
         <li>
-          ${t.sha||t.new?i`
-          <a onclick=${()=>this.createOnClick?void 0:this.customNextClick.func(this.data[s])}>
+          ${a.sha||a.new?t`
+          <a onclick=${()=>this.createOnClick?void 0:this.customNextClick.func(this.menuData[i])}>
             <div class="level is-mobile">
               <div class="level-left">
-                ${t.content.label.length>64?i`<small class="is-size-7 level-item" title="${t.content.label}">${`${this.paginationClick?`[${t._id}] `:""}${t.content.label.substr(0,70)}${t.content.label.length>72?"...":""}`}</small>`:i`<p class="level-item">${`${this.paginationClick?`[${t._id}] `:""}${t.content.label}`}</p>`}
-                ${t.new?i`
+                ${a.content.label.length>64?t`<small class="is-size-7 level-item" title="${a.content.label}">${`${this.paginationClick?`[${a._id}] `:""}${a.content.label.substr(0,70)}${a.content.label.length>72?"...":""}`}</small>`:t`<p class="level-item">${`${this.paginationClick?`[${a._id}] `:""}${a.content.label}`}</p>`}
+                ${a.new?t`
                   <small class="level-item tag is-success">New</small>
                 `:void 0}
-                ${t.edited?i`
+                ${a.edited?t`
                   <small class="level-item tag">Edited</small>
                 `:void 0}
-                ${"closed"!==t.state&&!t.closedAt||t.mergedAt?void 0:i`
+                ${"closed"!==a.state&&!a.closedAt||a.mergedAt?void 0:t`
                   <small class="level-item tag">
                     <span is="ppsl-icon" icon="git-pull-request" class="has-text-danger"></span>
                     <span>Closed</span>
                   </small>
                 `}
-                ${t.mergedAt?i`
+                ${a.mergedAt?t`
                   <small class="level-item tag">
                     <span is="ppsl-icon" icon="git-pull-request" class="has-text-success"></span>
                     <span>Merged</span>
                   </small>
                 `:void 0}
-                ${"open"===t.state?i`
+                ${"open"===a.state?t`
                   <small class="level-item tag">
                     <span is="ppsl-icon" icon="git-pull-request" class="has-text-info"></span>
                     <span>Open</span>
@@ -42,59 +42,59 @@ this.customNextClick={func:document.getElementById("productmain")[t].bind(docume
                 `:void 0}
               </div>
               <div class="level-right">
-                ${this.createOnClick?i`
+                ${this.createOnClick?t`
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${i=>this.customNextClick.func(i,this.data[s],this.type)}>
+                    <button class="button is-small is-text" onclick=${t=>this.customNextClick.func(t,this.menuData[i],this.type)}>
                       <span>Copy</span>
                       <span is="ppsl-icon" icon="copy"></span>
                     </button>
                   </div>
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${i=>this.customNextClick.func(i,this.data[s],this.type,!0)}}>
+                    <button class="button is-small is-text" onclick=${t=>this.customNextClick.func(t,this.menuData[i],this.type,!0)}}>
                       <span>Clone</span>
                       <span is="ppsl-icon" icon="link-2"></span>
                     </button>
                   </div>
-                `:i`
+                `:t`
                   <div class="level-item">
                     <span is="ppsl-icon" icon="chevron-right"></span>
                   </div>
                 `}
               </div>
             </div>
-          </a>`:i`<a>Unknown entry labeled "${t.content.label||t._id}".</a>`}
+          </a>`:t`<a>Unknown entry labeled "${a.content.label||a._id}".</a>`}
         </li>
-      `)):i`
+      `)):t`
         <p class="has-text-centered">None available.</p>
-      `},showReturnButton(){if(void 0!==this.customPreviousClick)return i`
+      `)},showReturnButton(){if(void 0!==this.customPreviousClick)return t`
           <a class="button is-fullwidth" onclick=${()=>this.customPreviousClick.func()}>
             <span is="ppsl-icon" icon="chevron-left"></span>
             <span>${this.customPreviousClick.label}</span>
           </a>
           <hr>
-        `},showPagination(){if(!this.paginationClick)return
-const{currentPage:t,maxPages:s}=this.paginationClick
-return i`
+        `},async paginate(t){this.page=t,this.contentHTML=document.getElementById("root").loaderTemplate(3),this.paginationContentHTML=null,this.contentHTML=await this.loadData()},showPagination(){if(!this.paginationClick)return
+const{currentPage:a,maxPages:i}=this.paginationClick
+return t`
         <hr>
         <nav class="pagination" role="navigation" aria-label="pagination">
-          ${t>1?i`<a class="pagination-previous" onclick=${()=>this.paginationClick.func(this.paginationClick.entry,t-1)}>Previous</a>`:void 0}
-          ${t<s?i`<a class="pagination-next" onclick=${()=>this.paginationClick.func(this.paginationClick.entry,t+1)}>Next page</a>`:void 0}
+          ${a>1?t`<a class="pagination-previous" onclick=${()=>this.paginationClick.func(a-1)}>Previous</a>`:void 0}
+          ${a<i?t`<a class="pagination-next" onclick=${()=>this.paginationClick.func(a+1)}>Next page</a>`:void 0}
           <ul class="pagination-list">
             <li>
               <div class="field has-addons">
                 <div class="control">
-                  <input class="input" type="number" value="${t}" id="paginationsearch">
+                  <input class="input" type="number" value="${a}" id="paginationsearch">
                 </div>
                 <div class="control">
-                  <a class="button is-info" onclick=${()=>{this.paginationClick.func(this.paginationClick.entry,Number(document.getElementById("paginationsearch").value||1))}}>
+                  <a class="button is-info" onclick=${()=>{this.paginationClick.func(Number(document.getElementById("paginationsearch").value||1))}}>
                     <span is="ppsl-icon" icon="search"></span>
                   </a>
                 </div>
               </div>
             </li>
             <li><span class="pagination-ellipsis">&hellip;</span></li>
-            <li><a class="pagination-link" aria-label="${`Goto page ${s}`}" onclick=${()=>this.paginationClick.func(this.paginationClick.entry,s)}>${s}</a></li>
+            <li><a class="pagination-link" aria-label="${`Goto page ${i}`}" onclick=${()=>this.paginationClick.func(i)}>${i}</a></li>
           </ul>
         </nav>
-      `},setup(i){i.classList.add("menu")}}
+      `},setup(t){t.classList.add("menu"),t.data&&t.data.length>0&&(t.menuData=t.data),t.connected=async()=>{t.contentHTML=await t.showMenu()},t.contentHTML=document.getElementById("root").loaderTemplate(3)}}
 </script>

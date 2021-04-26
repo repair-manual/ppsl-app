@@ -7,29 +7,40 @@ export default{props:{data:null,type:null,customNextClick:null,customPreviousCli
 return t.content.label=i.value,t.content.description=s.value,n&&(t.content.url=n.value),t},edit(t){t.preventDefault()
 const{editedData:e,data:i}=self.GlobalContext,s=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],n=this.getData(),a=i[this.type].find((t=>t._id===n._id))
 if(0===n.content.label.length)return
-const d=Object.values(n.content).join()
-if(d===Object.values(this.data.content).join())return
+const l=Object.values(n.content).join()
+if(l===Object.values(this.data.content).join())return
 if(!n.new){n.edited=!0
-d===Object.values(a.content).join()&&delete n.edited}const l=e[this.type].findIndex((t=>t._id===this.data._id))
-l>-1?e[this.type][l]=n:e[this.type].push(n)
+l===Object.values(a.content).join()&&delete n.edited}const d=e[this.type].findIndex((t=>t._id===this.data._id))
+d>-1?e[this.type][d]=n:e[this.type].push(n)
 const o=getParentType(this.type),c=o+"s"
 let p=e[c].findIndex((t=>t._id===s[o]))
 if(-1===p){const t=i[c].find((t=>t._id===s[o]))
 p=e[c].push(JSON.parse(JSON.stringify(t)))-1}e[c][p].content[this.type].includes(n._id)||e[c][p].content[this.type].push(n._id),this.data=n,self.saveDataToStorage("editedData",e),document.getElementById("productmain").toggleEdit()},unlink(t){t.preventDefault()
 const{editedData:e,data:i}=self.GlobalContext,s=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],n=getParentType(this.type),a=n+"s"
-let d=e[a].findIndex((t=>t._id===s[n]));-1===d&&(existingData=i[a].find((t=>t._id===s[n])),d=e[a].push(JSON.parse(JSON.stringify(existingData)))-1)
-const l=e[a][d].content[this.type].findIndex((t=>t===this.data._id))
-e[a][d].content[this.type].splice(l,1),e[a][d].edited=!0,self.saveDataToStorage("editedData",e),this.customPreviousClick.func()},showDescription(){this.data.content.solutions||this.data.content.links||this.data.content.url
-const e=getChildType(this.type)
+let l=e[a].findIndex((t=>t._id===s[n]));-1===l&&(existingData=i[a].find((t=>t._id===s[n])),l=e[a].push(JSON.parse(JSON.stringify(existingData)))-1)
+const d=e[a][l].content[this.type].findIndex((t=>t===this.data._id))
+e[a][l].content[this.type].splice(d,1),e[a][l].edited=!0,self.saveDataToStorage("editedData",e),this.customPreviousClick.func()},showDescription(){const e=getChildType(this.type)
 return t`
-        <a class="button is-fullwidth" onclick="${this.customPreviousClick.func}">
-          <span is="ppsl-icon" icon="chevron-left"></span>
-          <span>${this.customPreviousClick.label}</span>
-        </a>
+        <div class="columns is-multiline">
+          <div class="column">
+            <a class="button is-fullwidth" onclick="${this.customPreviousClick.func}">
+              <span is="ppsl-icon" icon="chevron-left"></span>
+              <span>${this.customPreviousClick.label}</span>
+            </a>
+          </div>
+          ${"string"==typeof this.data.content.url?t`
+            <div class="column">
+              <a class="button is-fullwidth" onclick="${()=>this.customNextClick.func(this.data)}">
+                <span>${this.customNextClick.label}</span>
+                <span is="ppsl-icon" icon=${void 0===this.data.content.url?"chevron-right":"external-link"}></span>
+              </a>
+            </div>
+          `:null}
+        </div>
         <hr>
         ${this.editEnabled?t`
           <form name="edit">
-            ${this.data.content.url?t`
+            ${"string"==typeof this.data.content.url?t`
               <div is="ppsl-input" .props=${{label:"URL",name:"url"}} .value="${this.data.content.url}"></div>
             `:void 0}
             <div is="ppsl-input" .props=${{label:"Label",name:"label"}} .value="${this.data.content.label}"></div>
@@ -61,7 +72,7 @@ return t`
             <p>${this.data.content.description}</p>
           </div>
           <div>
-            ${this.data.content.url?void 0:t`
+            ${"string"!=typeof this.data.content.url?t`
               <hr>
               <div class="level is-mobile">
                 <div class="level-left">
@@ -77,7 +88,7 @@ return t`
                 .data="${this.data}"
                 .defer="${!0}"
               ></div>
-            `}
+            `:void 0}
           </div>
         `}
       `},setup(t){t.id="productdescription"}}

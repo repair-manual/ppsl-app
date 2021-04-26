@@ -25,7 +25,7 @@ function getParentChildType (content = {}) {
     return 'solution'
   } else if (content.links) {
     return 'link'
-  } else if (content.url) {
+  } else if (typeof content.url === 'string') {
     return 'url'
   } else return undefined
 }
