@@ -9,7 +9,7 @@
 <script type=module>import{html as t}from"@uce"
 export default{props:{type:null,data:null,menuData:null,page:1,defer:!1,createOnClick:!1,contentHTML:null,paginationContentHTML:null,customNextClick:null,paginationClick:null},async loadData(){let t
 if(t=this.data?await document.getElementById("productmain").getChildContent(this.data,this.page):await document.getElementById("productmain").loadLoop(this.type+"s",null,this.page),this.menuData=t.results||t,this.menuData.length>0){const a=getParentType(getParentChildType(this.menuData[0].content)+"s")
-null===this.customNextClick&&(this.customNextClick={func:document.getElementById("productmain")[a].bind(document.getElementById("productmain"))}),this.paginationClick=t.results?{func:this.paginate.bind(this),currentPage:t.currentPage,maxPages:t.maxPages}:void 0}return this.defer=!1,this.showMenu()},showMenu(){return this.defer?this.loadData():(this.paginationContentHTML=this.showPagination(),this.menuData.length>0?this.menuData.map(((a,i)=>t`
+null===this.customNextClick&&(this.customNextClick={func:document.getElementById("productmain")[a].bind(document.getElementById("productmain"))}),this.paginationClick=t.results?{func:this.paginate.bind(this),currentPage:t.currentPage,maxPages:t.maxPages}:void 0}return this.defer=!1,this.showMenu()},showMenu(){return this.defer?this.loadData():(this.paginationContentHTML=this.showPagination(),this.menuData&&this.menuData.length>0?this.menuData.map(((a,i)=>t`
         <li>
           ${a.sha||a.new?t`
           <a onclick=${()=>this.createOnClick?void 0:this.customNextClick.func(this.menuData[i])}>
