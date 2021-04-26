@@ -60,7 +60,7 @@
       }
 
       this.paginationContentHTML = this.showPagination()
-      return this.menuData.length > 0 ? this.menuData.map((object, index) => html`
+      return this.menuData && this.menuData.length > 0 ? this.menuData.map((object, index) => html`
         <li>
           ${object.sha || object.new ? html`
           <a onclick=${() => this.createOnClick ? undefined : this.customNextClick.func(this.menuData[index])}>
