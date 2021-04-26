@@ -2,9 +2,9 @@
 <div is="ppsl-product-menu">
   {{ this.showReturnButton() }}
   <ul class="menu-list">
-    {{ this.showMenu() }}
+    {{ this.contentHTML }}
   </ul>
-  {{ this.showPagination() }}
+  {{ this.paginationContentHTML }}
 </div>
 
 <!-- The logic of the element -->
@@ -15,34 +15,55 @@
     props: {
       type: null,
       data: null,
+      menuData: null,
+      page: 1,
       defer: false,
-      createOnClick: false
+      createOnClick: false,
+      contentHTML: null,
+      paginationContentHTML: null,
+      customNextClick: null,
+      paginationClick: null
     },
 
-    async loadData () {
-      const data = await document.getElementById('productmain').getChildContent(this.data)
+    async loadData() {
+      let data
+      if (this.data) {
+        data = await document.getElementById('productmain').getChildContent(this.data, this.page)
+      } else {
+        data = await document.getElementById('productmain').loadLoop(this.type + 's', null, this.page)
+      }
 
-      this.data = data
+      this.menuData = data.results || data
 
-      if (this.data.length > 0) {
-        const dataPluralType = getParentType(getParentChildType(data[0].content) + 's')
-        this.customNextClick = { func: document.getElementById('productmain')[dataPluralType].bind(document.getElementById('productmain')) }
-        // this.paginationClick = data.results ? { func: this[getChildType(data) + 's'].bind(this), currentPage: data.currentPage, maxPages: data.maxPages } : undefined
+      if (this.menuData.length > 0) {
+        const dataParentType = getParentType(getParentChildType(this.menuData[0].content) + 's')
+        if (this.customNextClick === null) {
+          this.customNextClick = {
+            func: document.getElementById('productmain')[dataParentType].bind(document.getElementById('productmain'))
+          }
+        }
+
+        this.paginationClick = data.results ? {
+          func: this.paginate.bind(this),
+          currentPage: data.currentPage,
+          maxPages: data.maxPages
+        } : undefined
       }
 
       this.defer = false
       return this.showMenu()
     },
 
-    showMenu () {
+    showMenu() {
       if (this.defer) {
         return this.loadData()
       }
 
-      return this.data.length > 0 ? this.data.map((object, index) => html`
+      this.paginationContentHTML = this.showPagination()
+      return this.menuData.length > 0 ? this.menuData.map((object, index) => html`
         <li>
           ${object.sha || object.new ? html`
-          <a onclick=${() => this.createOnClick ? undefined : this.customNextClick.func(this.data[index])}>
+          <a onclick=${() => this.createOnClick ? undefined : this.customNextClick.func(this.menuData[index])}>
             <div class="level is-mobile">
               <div class="level-left">
                 ${object.content.label.length > 64
@@ -77,13 +98,13 @@
               <div class="level-right">
                 ${this.createOnClick ? html`
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.data[index], this.type)}>
+                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.menuData[index], this.type)}>
                       <span>Copy</span>
                       <span is="ppsl-icon" icon="copy"></span>
                     </button>
                   </div>
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.data[index], this.type, true) }}>
+                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.menuData[index], this.type, true)}}>
                       <span>Clone</span>
                       <span is="ppsl-icon" icon="link-2"></span>
                     </button>
@@ -102,7 +123,7 @@
       `
     },
 
-    showReturnButton () {
+    showReturnButton() {
       if (this.customPreviousClick !== undefined) {
         return html`
           <a class="button is-fullwidth" onclick=${() => this.customPreviousClick.func()}>
@@ -114,16 +135,23 @@
       }
     },
 
-    showPagination () {
+    async paginate (page) {
+      this.page = page
+      this.contentHTML = document.getElementById('root').loaderTemplate(3)
+      this.paginationContentHTML = null
+      this.contentHTML = await this.loadData()
+    },
+
+    showPagination() {
       if (!this.paginationClick) return
-  
+
       const { currentPage, maxPages } = this.paginationClick
 
       return html`
         <hr>
         <nav class="pagination" role="navigation" aria-label="pagination">
-          ${currentPage > 1 ? html`<a class="pagination-previous" onclick=${() => this.paginationClick.func(this.paginationClick.entry, currentPage - 1)}>Previous</a>` : undefined}
-          ${currentPage < maxPages ? html`<a class="pagination-next" onclick=${() => this.paginationClick.func(this.paginationClick.entry, currentPage + 1)}>Next page</a>` : undefined}
+          ${currentPage > 1 ? html`<a class="pagination-previous" onclick=${() => this.paginationClick.func(currentPage - 1)}>Previous</a>` : undefined}
+          ${currentPage < maxPages ? html`<a class="pagination-next" onclick=${() => this.paginationClick.func(currentPage + 1)}>Next page</a>` : undefined}
           <ul class="pagination-list">
             <li>
               <div class="field has-addons">
@@ -132,7 +160,7 @@
                 </div>
                 <div class="control">
                   <a class="button is-info" onclick=${() => {
-                    this.paginationClick.func(this.paginationClick.entry, Number(document.getElementById('paginationsearch').value || 1))
+                    this.paginationClick.func(Number(document.getElementById('paginationsearch').value || 1))
                   }}>
                     <span is="ppsl-icon" icon="search"></span>
                   </a>
@@ -140,14 +168,22 @@
               </div>
             </li>
             <li><span class="pagination-ellipsis">&hellip;</span></li>
-            <li><a class="pagination-link" aria-label="${`Goto page ${maxPages}`}" onclick=${() => this.paginationClick.func(this.paginationClick.entry, maxPages)}>${maxPages}</a></li>
+            <li><a class="pagination-link" aria-label="${`Goto page ${maxPages}`}" onclick=${() => this.paginationClick.func(maxPages)}>${maxPages}</a></li>
           </ul>
         </nav>
       `
     },
 
-    setup (element) {
+    setup(element) {
       element.classList.add('menu')
+
+      if (element.data && element.data.length > 0) element.menuData = element.data
+
+      element.connected = async () => {
+        element.contentHTML = await element.showMenu()
+      }
+
+      element.contentHTML = document.getElementById('root').loaderTemplate(3)
     }
   }
 //# sourceURL=ppsl-product-menu.js

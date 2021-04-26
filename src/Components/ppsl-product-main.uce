@@ -181,7 +181,7 @@
 
         self.saveDataToStorage('editedData', editedData)
 
-        this.showPrevious(typePlural)
+        this.showPrevious(parentType === 'product' ? 'problems' : parentType)
       } else {
         // Copy
         this.create.bind(this)(type, selectedData[parentType], resData.content)
@@ -201,8 +201,6 @@
       let htmlContent
       if (product) {
         // Show menu with problems related to product.
-        const problems = await this.getChildContent(product, page)
-
         this.titleHTML = html`
           <p class="card-header-title">Problems for "${product._id}"</p>
           <a class="card-header-icon" onclick=${() => this.create.bind(this)('problem', product._id)}>
@@ -212,15 +210,13 @@
 
         htmlContent = html`
           <div is="ppsl-product-menu"
-            .data="${problems.results || problems}"
+            .data="${product}"
+            .defer="${true}"
             .customNextClick=${{ func: this.problem.bind(this) }}
-            .paginationClick=${problems.results ? { func: this.problems.bind(this), currentPage: problems.currentPage, maxPages: problems.maxPages } : undefined}
           ></div>
         `
       } else {
         // Show ALL problems.
-        const problems = await this.loadLoop('problems', null, page)
-
         this.titleHTML = html`
           <p class="card-header-title">All problems</p>
           <a class="card-header-icon" onclick=${() => this.showPrevious('problems') }>
@@ -230,11 +226,10 @@
 
         htmlContent = html`
           <div is="ppsl-product-menu"
-            .data="${problems.results || problems}"
             type="problem"
+            .defer="${true}"
             .createOnClick="${true}"
             .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}
-            .paginationClick=${problems.results ? { func: this.problems.bind(this), currentPage: problems.currentPage, maxPages: problems.maxPages } : undefined}
           ></div>
         `
       }
@@ -268,8 +263,6 @@
       this.contentHTML = document.getElementById('root').loaderTemplate(3)
 
       // Show ALL solutions.
-      const solutions = await this.loadLoop('solutions', null, page)
-
       this.titleHTML = html`
         <p class="card-header-title">All solutions</p>
         <a class="card-header-icon" onclick=${() => this.showPrevious('problem') }>
@@ -277,14 +270,12 @@
         </a>
       `
 
-
       this.contentHTML = html`
         <div is="ppsl-product-menu"
-          .data="${solutions.results || solutions}"
           type="solution"
+          .defer="${true}"
           .createOnClick="${true}"
           .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}
-          .paginationClick=${solutions.results ? { func: this.solutions.bind(this), currentPage: solutions.currentPage, maxPages: solutions.maxPages } : undefined}
         ></div>
       `
     },
@@ -306,7 +297,6 @@
           .data="${solution}"
           type="solutions"
           .customPreviousClick=${{ label: 'Return to problem', func: () => this.showPrevious('problem')}}
-          .customNextClick=${{ label: 'Show links', func: this.links.bind(this) }}
         ></div>
       `
     },
@@ -316,8 +306,6 @@
       this.contentHTML = document.getElementById('root').loaderTemplate(3)
 
       // Show ALL links.
-      const links = await this.loadLoop('links', null, page)
-
       this.titleHTML = html`
         <p class="card-header-title">All links</p>
         <a class="card-header-icon" onclick=${() => this.showPrevious('solution') }>
@@ -327,11 +315,10 @@
 
       this.contentHTML = html`
         <div is="ppsl-product-menu"
-          .data="${links.results}"
           type="link"
+          .defer="${true}"
           .createOnClick="${true}"
           .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}
-          .paginationClick=${links.results ? { func: this.links.bind(this), currentPage: links.currentPage, maxPages: links.maxPages } : undefined}
         ></div>
       `
     },

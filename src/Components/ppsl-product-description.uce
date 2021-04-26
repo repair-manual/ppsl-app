@@ -123,18 +123,29 @@
     },
 
     showDescription () {
-      const hasButton = this.data.content.solutions || this.data.content.links || this.data.content.url
       const childType = getChildType(this.type)
 
       return html`
-        <a class="button is-fullwidth" onclick="${this.customPreviousClick.func}">
-          <span is="ppsl-icon" icon="chevron-left"></span>
-          <span>${this.customPreviousClick.label}</span>
-        </a>
+        <div class="columns is-multiline">
+          <div class="column">
+            <a class="button is-fullwidth" onclick="${this.customPreviousClick.func}">
+              <span is="ppsl-icon" icon="chevron-left"></span>
+              <span>${this.customPreviousClick.label}</span>
+            </a>
+          </div>
+          ${typeof this.data.content.url === 'string' ? html`
+            <div class="column">
+              <a class="button is-fullwidth" onclick="${() => this.customNextClick.func(this.data)}">
+                <span>${this.customNextClick.label}</span>
+                <span is="ppsl-icon" icon=${this.data.content.url === undefined ? 'chevron-right' : 'external-link'}></span>
+              </a>
+            </div>
+          ` : null}
+        </div>
         <hr>
         ${this.editEnabled ? html`
           <form name="edit">
-            ${this.data.content.url ? html`
+            ${typeof this.data.content.url === 'string' ? html`
               <div is="ppsl-input" .props=${{ label: 'URL', name: 'url' }} .value="${this.data.content.url}"></div>
             ` : undefined}
             <div is="ppsl-input" .props=${{ label: 'Label', name: 'label' }} .value="${this.data.content.label}"></div>
@@ -168,7 +179,7 @@
             <p>${this.data.content.description}</p>
           </div>
           <div>
-            ${!this.data.content.url ? html`
+            ${typeof this.data.content.url !== 'string' ? html`
               <hr>
               <div class="level is-mobile">
                 <div class="level-left">
