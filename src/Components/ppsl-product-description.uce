@@ -74,17 +74,15 @@
 
       const parentType = getParentType(this.type)
 
-      const parentTypePlural = parentType + 's'
-
       // Add parent to editedData
-      let indexOfParent = editedData[parentTypePlural].findIndex(res => res._id === selectedData[parentType])
+      let indexOfParent = editedData[parentType.plural].findIndex(res => res._id === selectedData[parentType.singular])
       if (indexOfParent === -1) {
-        const existingData = data[parentTypePlural].find(res => res._id === selectedData[parentType])
-        indexOfParent = editedData[parentTypePlural].push(JSON.parse(JSON.stringify(existingData))) - 1
+        const existingData = data[parentType.plural].find(res => res._id === selectedData[parentType.singular])
+        indexOfParent = editedData[parentType.plural].push(JSON.parse(JSON.stringify(existingData))) - 1
       }
 
-      if (!editedData[parentTypePlural][indexOfParent].content[this.type].includes(newData._id)) {
-        editedData[parentTypePlural][indexOfParent].content[this.type].push(newData._id)
+      if (!editedData[parentType.plural][indexOfParent].content[this.type].includes(newData._id)) {
+        editedData[parentType.plural][indexOfParent].content[this.type].push(newData._id)
       }
 
       this.data = newData
@@ -102,20 +100,18 @@
 
       const parentType = getParentType(this.type)
 
-      const parentTypePlural = parentType + 's'
-
       // Add parent to editedData
-      let indexOfParent = editedData[parentTypePlural].findIndex(res => res._id === selectedData[parentType])
+      let indexOfParent = editedData[parentType.plural].findIndex(res => res._id === selectedData[parentType.singular])
       if (indexOfParent === -1) {
-        existingData = data[parentTypePlural].find(res => res._id === selectedData[parentType])
-        indexOfParent = editedData[parentTypePlural].push(JSON.parse(JSON.stringify(existingData))) - 1
+        existingData = data[parentType.plural].find(res => res._id === selectedData[parentType.singular])
+        indexOfParent = editedData[parentType.plural].push(JSON.parse(JSON.stringify(existingData))) - 1
       }
 
-      const index = editedData[parentTypePlural][indexOfParent].content[this.type].findIndex(res => res === this.data._id)
+      const index = editedData[parentType.plural][indexOfParent].content[this.type].findIndex(res => res === this.data._id)
 
-      editedData[parentTypePlural][indexOfParent].content[this.type].splice(index, 1)
+      editedData[parentType.plural][indexOfParent].content[this.type].splice(index, 1)
 
-      editedData[parentTypePlural][indexOfParent].edited = true
+      editedData[parentType.plural][indexOfParent].edited = true
 
       self.saveDataToStorage('editedData', editedData)
 
@@ -183,7 +179,7 @@
               <hr>
               <div class="level is-mobile">
                 <div class="level-left">
-                  <h3 class="level-item is-size-4 has-text-weight-bold">${childType.substr(0, 1).toUpperCase() + childType.substr(1)}s</h3>
+                  <h3 class="level-item is-size-4 has-text-weight-bold">${childType.plural.substr(0, 1).toUpperCase() + childType.plural.substr(1)}</h3>
                 </div>
                 <div class="level-left">
                   <a onclick=${() => document.getElementById('productmain').create.bind(document.getElementById('productmain'))(childType, this.data._id)}>

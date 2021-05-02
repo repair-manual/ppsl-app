@@ -29,9 +29,7 @@
 
       const parentType = getParentType(type)
 
-      const parentTypePlural = parentType + 's'
-
-      const editedDataParent = editedData[parentTypePlural].find(res => res._id === selectedData[parentType])
+      const editedDataParent = editedData[parentType.plural].find(res => res._id === selectedData[parentType.singular])
 
       if (!arr) {
         // Get all in a branch.
@@ -90,26 +88,25 @@
     },
 
     create (type, id, data) {
-      const pluralType = type + 's'
-      const parentType = getParentType(pluralType)
+      const parentType = getParentType(type.plural)
 
       this.titleHTML = html`
-        <p class="card-header-title">Creating new ${type} for ${parentType} "${id}"</p>
+        <p class="card-header-title">Creating new ${type.singular} for ${parentType.singular} "${id}"</p>
       `
 
       let customPreviousClick
-      if (type === 'problem') {
-        customPreviousClick = { label: `Return to ${pluralType} list`, func: () => this.showPrevious(pluralType) }
+      if (type.singular === 'problem') {
+        customPreviousClick = { label: `Return to ${type.plural} list`, func: () => this.showPrevious(type.plural) }
       } else {
-        customPreviousClick = { label: `Return to ${parentType}`, func: () => this.showPrevious(parentType) }
+        customPreviousClick = { label: `Return to ${parentType.singular}`, func: () => this.showPrevious(parentType.singular) }
       }
 
       this.contentHTML = html`
         <div is="ppsl-product-create"
-          type="${pluralType}"
+          .type="${type}"
           .data=${data}
           .customPreviousClick=${customPreviousClick}
-          .customNextClick=${{ label: `Add from existing ${type}s`, func: this[pluralType].bind(this) }}
+          .customNextClick=${{ label: `Add from existing ${type.plural}`, func: this[type.plural].bind(this) }}
         ></div>
       `
     },
@@ -122,14 +119,12 @@
 
       let foundData
       if (parentType !== undefined) {
-        const parentTypePlural = parentType + 's'
+        const id = selectedData[parentType.singular]
 
-        const id = selectedData[parentType]
-
-        foundData = editedData[parentTypePlural].find(res => res._id === id)
+        foundData = editedData[parentType.plural].find(res => res._id === id)
 
         if (foundData === undefined) {
-          foundData = data[parentTypePlural].find(res => res._id === id)
+          foundData = data[parentType.plural].find(res => res._id === id)
         }
       } else {
         const typePlural = type + 's'
@@ -155,24 +150,23 @@
       const typePlural = type + 's'
 
       const parentType = getParentType(typePlural)
-      const parentTypePlural = parentType + 's'
 
       if (clone) {
         // Clone
-        const existingDataIndex = editedData[parentTypePlural].findIndex(res => res._id === selectedData[parentType])
+        const existingDataIndex = editedData[parentType.plural].findIndex(res => res._id === selectedData[parentType.singular])
 
         if (existingDataIndex === -1) {
-          const githubData = JSON.parse(JSON.stringify(data[parentTypePlural].find(res => res._id === selectedData[parentType])))
+          const githubData = JSON.parse(JSON.stringify(data[parentType.plural].find(res => res._id === selectedData[parentType.singular])))
           githubData.content[typePlural].push(resData._id)
 
           const arr = new Set(githubData.content[typePlural])
           githubData.content[typePlural] = [...arr]
 
-          const newDataIndex = editedData[parentTypePlural].push(githubData)
+          const newDataIndex = editedData[parentType.plural].push(githubData)
 
-          editedData[parentTypePlural][newDataIndex - 1].edited = true
+          editedData[parentType.plural][newDataIndex - 1].edited = true
         } else {
-          const existingData = editedData[parentTypePlural][existingDataIndex]
+          const existingData = editedData[parentType.plural][existingDataIndex]
           existingData.content[typePlural].push(resData._id)
 
           const arr = new Set(existingData.content[typePlural])
@@ -183,29 +177,31 @@
 
         self.saveDataToStorage('editedData', editedData)
 
-        this.showPrevious(parentType === 'product' ? 'problems' : parentType)
+        this.showPrevious(parentType.singular === 'product' ? 'problems' : parentType.singular)
       } else {
         // Copy
-        this.create.bind(this)(type, selectedData[parentType], resData.content)
+        this.create.bind(this)(type, selectedData[parentType.singular], resData.content)
       }
     },
 
     async getChildContent (parent, page, all) {
-      const pluralChildType = getParentChildType(parent.content) + 's'
+      const childType = getParentChildType(parent.content)
 
-      return await this.loadLoop(pluralChildType, all ? null : parent.content[pluralChildType], page)
+      return await this.loadLoop(childType.plural, all ? null : parent.content[childType.plural], page)
     },
   
     async problems (product, page) {
       this.titleHTML = html`<p class="card-header-title">Loading problems...</p>`
       this.contentHTML = document.getElementById('root').loaderTemplate(3)
 
+      const type = { singular: 'problem', plural: 'problems' }
+
       let htmlContent
       if (product) {
         // Show menu with problems related to product.
         this.titleHTML = html`
           <p class="card-header-title">Problems for "${product._id}"</p>
-          <a class="card-header-icon" onclick=${() => this.create.bind(this)('problem', product._id)}>
+          <a class="card-header-icon" onclick=${() => this.create.bind(this)(type, product._id)}>
             <span is="ppsl-icon" icon="plus-square"></span>
           </a>
         `
@@ -228,7 +224,7 @@
 
         htmlContent = html`
           <div is="ppsl-product-menu"
-            type="problem"
+            .type="${type}"
             .defer="${true}"
             .createOnClick="${true}"
             .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}
@@ -274,7 +270,7 @@
 
       this.contentHTML = html`
         <div is="ppsl-product-menu"
-          type="solution"
+          type="${{ singular: 'solution', plural: 'solutions' }}"
           .defer="${true}"
           .createOnClick="${true}"
           .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}
@@ -317,7 +313,7 @@
 
       this.contentHTML = html`
         <div is="ppsl-product-menu"
-          type="link"
+          .type="${{ singular: 'link', plural: 'links' }}"
           .defer="${true}"
           .createOnClick="${true}"
           .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}

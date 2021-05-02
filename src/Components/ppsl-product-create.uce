@@ -32,10 +32,10 @@
 
       if (url) data.content.url = url.value
 
-      const arrayToAdd = getChildType(this.type)
+      const childArrayToAdd = getChildType(this.type.plural)
 
-      if (arrayToAdd) {
-        data.content[arrayToAdd + 's'] = []
+      if (childArrayToAdd) {
+        data.content[childArrayToAdd.plural] = []
       }
 
       return data
@@ -53,25 +53,23 @@
         return
       }
 
-      const parentType = getParentType(this.type)
-
-      const parentTypePlural = parentType + 's'
+      const parentType = getParentType(this.type.plural)
 
       // Save locally first.
-      editedData[this.type].push(newData)
+      editedData[this.type.plural].push(newData)
 
       // Add parent to editedData
-      let indexOfParent = editedData[parentTypePlural].findIndex(res => res._id === selectedData[parentType])
+      let indexOfParent = editedData[parentType.plural].findIndex(res => res._id === selectedData[parentType.singular])
       if (indexOfParent === -1) {
-        const existingData = JSON.parse(JSON.stringify(data[parentTypePlural].find(res => res._id === selectedData[parentType])))
+        const existingData = JSON.parse(JSON.stringify(data[parentType.plural].find(res => res._id === selectedData[parentType.singular])))
         existingData.edited = true
         // TODO: What if parent has .pr tag?
-        indexOfParent = editedData[parentTypePlural].push(existingData) - 1
+        indexOfParent = editedData[parentType.plural].push(existingData) - 1
       }
 
-      editedData[parentTypePlural][indexOfParent].content[this.type].push(newData._id)
+      editedData[parentType.plural][indexOfParent].content[this.type.plural].push(newData._id)
 
-      editedData[parentTypePlural][indexOfParent].edited = true
+      editedData[parentType.plural][indexOfParent].edited = true
 
       self.saveDataToStorage('editedData', editedData)
 
@@ -79,7 +77,7 @@
     },
 
     showCreateFields (el) {
-      const showButton = this.type !== 'problems'
+      const showButton = this.type.plural !== 'problems'
 
       return html`
         <div class="columns">
@@ -98,7 +96,7 @@
         </div>
         <hr>
         <form name="create">
-          ${this.type === 'links' ? html`
+          ${this.type.plural === 'links' ? html`
             <div is="ppsl-input" .value=${this.data ? this.data.url : '' } .props=${{ label: 'URL', name: 'url' }}></div>
           ` : undefined}
           <div is="ppsl-input" .value=${this.data ? this.data.label : ''} .props=${{ label: 'Label', name: 'label' }}></div>

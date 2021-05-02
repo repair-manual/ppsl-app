@@ -1,5 +1,5 @@
 function getParentType (child = '') {
-  return child === 'solutions'
+  const value = child === 'solutions'
     ? 'problem'
     : child === 'problems'
       ? 'product'
@@ -8,26 +8,42 @@ function getParentType (child = '') {
         : child === 'urls'
           ? 'link'
           : undefined
+
+  if (value) {
+    return { singular: value, plural: value + 's' }
+  }
+  // Returns undefined otherwise
 }
 
 function getChildType (parent = '') {
-  return parent === 'solutions'
+  const value = parent === 'solutions'
     ? 'link'
     : parent === 'problems'
       ? 'solution'
       : undefined
+
+  if (value) {
+    return { singular: value, plural: value + 's' }
+  }
+  // Returns undefined otherwise
 }
 
 function getParentChildType (content = {}) {
+  let value
   if (content.problems) {
-    return 'problem'
+    value = 'problem'
   } else if (content.solutions) {
-    return 'solution'
+    value = 'solution'
   } else if (content.links) {
-    return 'link'
+    value = 'link'
   } else if (typeof content.url === 'string') {
-    return 'url'
-  } else return undefined
+    value = 'url'
+  }
+
+  if (value) {
+    return { singular: value, plural: value + 's' }
+  }
+  // Returns undefined otherwise
 }
 
 // https://stackoverflow.com/a/30106551 CC-BY-SA 4.0

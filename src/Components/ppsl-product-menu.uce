@@ -30,16 +30,16 @@
       if (this.data) {
         data = await document.getElementById('productmain').getChildContent(this.data, this.page)
       } else {
-        data = await document.getElementById('productmain').loadLoop(this.type + 's', null, this.page)
+        data = await document.getElementById('productmain').loadLoop(this.type.plural, null, this.page)
       }
 
       this.menuData = data.results || data
 
       if (this.menuData.length > 0) {
-        const dataParentType = getParentType(getParentChildType(this.menuData[0].content) + 's')
+        const dataParentType = getParentType(getParentChildType(this.menuData[0].content).plural)
         if (this.customNextClick === null) {
           this.customNextClick = {
-            func: document.getElementById('productmain')[dataParentType].bind(document.getElementById('productmain'))
+            func: document.getElementById('productmain')[dataParentType.singular].bind(document.getElementById('productmain'))
           }
         }
 
@@ -98,13 +98,13 @@
               <div class="level-right">
                 ${this.createOnClick ? html`
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.menuData[index], this.type)}>
+                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.menuData[index], this.type.singular)}>
                       <span>Copy</span>
                       <span is="ppsl-icon" icon="copy"></span>
                     </button>
                   </div>
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.menuData[index], this.type, true)}}>
+                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.menuData[index], this.type.singular, true)}}>
                       <span>Clone</span>
                       <span is="ppsl-icon" icon="link-2"></span>
                     </button>
