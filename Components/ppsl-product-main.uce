@@ -12,7 +12,9 @@ if(!e){let i
 try{i=await self.getBranchDirectoryContent(t)}catch(e){i=s[t]}e=i.map((t=>t.label))}c&&(e.push(...c.content[t]),e=[...new Set([...e])])
 const d=[],a=s[t],r=Math.ceil(e.length/25),p=e.length>25&&"number"==typeof i
 e.sort(((t,e)=>e-t))
-for(let s=p?25*(i-1):0;(!p||s<25*i)&&s<e.length;s++){const i=e[s],n=a.find((t=>t._id===i))
+for(let s=p?25*(i-1):0;(!p||s<25*i)&&s<e.length;s++){const i=e[s]
+if(!i)continue
+const n=a.find((t=>t._id===i))
 if(n)d.push(n)
 else if(void 0===n||void 0===n.new){let e=await self.loadFromGithub(t,i)
 null!==e?d.push(o[t][e]):d.push({_id:i,content:{}})}}return p?{results:d,maxPages:r,currentPage:i}:d},create(e,i,s){const o=e+"s",n=getParentType(o)
