@@ -17,19 +17,16 @@
   "dependencies": {
     "bulma": "^0.9.2",
     "diff": "^5.0.0",
-    "js-yaml": "^4.0.0",
+    "js-yaml": "^4.1.0",
     "uce-loader": "^2.0.0",
-    "uce-template": "^0.5.1"
+    "uce-template": "^0.6.0"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
     "node-sass": "^5.0.0",
-    "serve": "^11.3.2",
-    "eslint": "7.20.0",
-    "eslint-config-standard": "^16.0.2",
-    "eslint-plugin-import": "2.22.1",
-    "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-promise": "4.3.1"
+    "eslint-plugin-html": "^6.1.2",
+    "standard": "^16.0.3",
+    "serve": "^11.3.2"
   },
   "license": "MIT"
 }
