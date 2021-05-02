@@ -37,3 +37,8 @@ If you are using VS Code, you can Ctrl+Shift+P, type settings JSON, choose Open 
   }
 }
 ```
+If you are using Web Storm go into Settings `CTRL + ALT + S` and select *Editor | File Types.*
+
+Next select `HTML` under the `Recognized File Types` panel.
+
+Finally, next to the `File Name Patterns` panel click the Plus icon and add `*.uce` to this panel and click apply
