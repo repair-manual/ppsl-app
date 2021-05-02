@@ -70,6 +70,8 @@
       for (let index = (paginate ? ((page - 1) * entriesPerPage) : 0); (paginate ? (index < (page * entriesPerPage)) : true) && index < arr.length; index++) {
         const id = arr[index]
 
+        if (!id) continue
+
         const existingData = existingEditedData.find(res => res._id === id)
         if (existingData) {
           resultArr.push(existingData)
