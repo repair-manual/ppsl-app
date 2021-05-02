@@ -5,21 +5,21 @@
 <script type=module>import{html as t}from"@uce"
 export default{props:{data:null,type:null,customNextClick:null,customPreviousClick:null,editEnabled:!1},toggleEdit(){return this.editEnabled=!this.editEnabled,this.editEnabled},getData(){const t=JSON.parse(JSON.stringify(this.data)),e=document.forms.edit,{label:i,description:s,url:n}=e.elements
 return t.content.label=i.value,t.content.description=s.value,n&&(t.content.url=n.value),t},edit(t){t.preventDefault()
-const{editedData:e,data:i}=self.GlobalContext,s=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],n=this.getData(),a=i[this.type].find((t=>t._id===n._id))
+const{editedData:e,data:i}=self.GlobalContext,s=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],n=this.getData(),l=i[this.type].find((t=>t._id===n._id))
 if(0===n.content.label.length)return
-const l=Object.values(n.content).join()
-if(l===Object.values(this.data.content).join())return
+const a=Object.values(n.content).join()
+if(a===Object.values(this.data.content).join())return
 if(!n.new){n.edited=!0
-l===Object.values(a.content).join()&&delete n.edited}const d=e[this.type].findIndex((t=>t._id===this.data._id))
+a===Object.values(l.content).join()&&delete n.edited}const d=e[this.type].findIndex((t=>t._id===this.data._id))
 d>-1?e[this.type][d]=n:e[this.type].push(n)
-const o=getParentType(this.type),c=o+"s"
-let p=e[c].findIndex((t=>t._id===s[o]))
-if(-1===p){const t=i[c].find((t=>t._id===s[o]))
-p=e[c].push(JSON.parse(JSON.stringify(t)))-1}e[c][p].content[this.type].includes(n._id)||e[c][p].content[this.type].push(n._id),this.data=n,self.saveDataToStorage("editedData",e),document.getElementById("productmain").toggleEdit()},unlink(t){t.preventDefault()
-const{editedData:e,data:i}=self.GlobalContext,s=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],n=getParentType(this.type),a=n+"s"
-let l=e[a].findIndex((t=>t._id===s[n]));-1===l&&(existingData=i[a].find((t=>t._id===s[n])),l=e[a].push(JSON.parse(JSON.stringify(existingData)))-1)
-const d=e[a][l].content[this.type].findIndex((t=>t===this.data._id))
-e[a][l].content[this.type].splice(d,1),e[a][l].edited=!0,self.saveDataToStorage("editedData",e),this.customPreviousClick.func()},showDescription(){const e=getChildType(this.type)
+const o=getParentType(this.type)
+let c=e[o.plural].findIndex((t=>t._id===s[o.singular]))
+if(-1===c){const t=i[o.plural].find((t=>t._id===s[o.singular]))
+c=e[o.plural].push(JSON.parse(JSON.stringify(t)))-1}e[o.plural][c].content[this.type].includes(n._id)||e[o.plural][c].content[this.type].push(n._id),this.data=n,self.saveDataToStorage("editedData",e),document.getElementById("productmain").toggleEdit()},unlink(t){t.preventDefault()
+const{editedData:e,data:i}=self.GlobalContext,s=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],n=getParentType(this.type)
+let l=e[n.plural].findIndex((t=>t._id===s[n.singular]));-1===l&&(existingData=i[n.plural].find((t=>t._id===s[n.singular])),l=e[n.plural].push(JSON.parse(JSON.stringify(existingData)))-1)
+const a=e[n.plural][l].content[this.type].findIndex((t=>t===this.data._id))
+e[n.plural][l].content[this.type].splice(a,1),e[n.plural][l].edited=!0,self.saveDataToStorage("editedData",e),this.customPreviousClick.func()},showDescription(){const e=getChildType(this.type)
 return t`
         <div class="columns is-multiline">
           <div class="column">
@@ -76,7 +76,7 @@ return t`
               <hr>
               <div class="level is-mobile">
                 <div class="level-left">
-                  <h3 class="level-item is-size-4 has-text-weight-bold">${e.substr(0,1).toUpperCase()+e.substr(1)}s</h3>
+                  <h3 class="level-item is-size-4 has-text-weight-bold">${e.plural.substr(0,1).toUpperCase()+e.plural.substr(1)}</h3>
                 </div>
                 <div class="level-left">
                   <a onclick=${()=>document.getElementById("productmain").create.bind(document.getElementById("productmain"))(e,this.data._id)}>
