@@ -336,9 +336,7 @@
           .data="${link}"
           type="links"
           .customPreviousClick=${{ label: 'Return to solution', func: () => this.showPrevious('solution')}}
-          .customNextClick=${{ label: 'Open link', func: (res) =>
-            Object.assign(document.createElement('a'), { target: res.content.label, href: res.content.url}).click()
-          }}
+          .customNextClick=${{ label: 'Open link', func: (res) => openExternalURL(res.content.label, res.content.url) }}
         ></div>
       `
     },

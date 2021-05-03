@@ -54,6 +54,24 @@
       return this.showMenu()
     },
 
+    elementToggleCardContent (ev) {
+      ev.preventDefault()
+
+      const target = ev.currentTarget.dataset.target
+
+      const el = document.querySelector(`[data-id="${target}"]`)
+
+      el.classList.toggle('is-hidden')
+    },
+
+    formatTitle (object) {
+      if (object.content.label.length > 0) {
+        return `${this.paginationClick ? `[${object._id}] ` : ''}${object.content.label.substr(0, 70)}${object.content.label.length > 72 ? '...' : ''}`
+      } else {
+        return html`<span class="is-family-monospace">This entry has no label.</span>`
+      }
+    },
+
     showMenu() {
       if (this.defer) {
         return this.loadData()
@@ -61,41 +79,41 @@
 
       this.paginationContentHTML = this.showPagination()
       return this.menuData && this.menuData.length > 0 ? this.menuData.map((object, index) => html`
-        <li>
+        <li style="padding-bottom:.75rem;">
           ${object.sha || object.new ? html`
-          <a onclick=${() => this.createOnClick ? undefined : this.customNextClick.func(this.menuData[index])}>
-            <div class="level is-mobile">
-              <div class="level-left">
-                ${object.content.label.length > 64
-                  ? html`<small class="is-size-7 level-item" title="${object.content.label}">${`${this.paginationClick ? `[${object._id}] ` : ''}${object.content.label.substr(0, 70)}${object.content.label.length > 72 ? '...' : ''}`}</small>`
-                  : html`<p class="level-item">${`${this.paginationClick ? `[${object._id}] ` : ''}${object.content.label}`}</p>`
-                }
-                ${object.new ? html`
-                  <small class="level-item tag is-success">New</small>
-                ` : undefined}
-                ${object.edited ? html`
-                  <small class="level-item tag">Edited</small>
-                ` : undefined}
-                ${((object.state === 'closed') || object.closedAt) && !object.mergedAt ? html`
-                  <small class="level-item tag">
-                    <span is="ppsl-icon" icon="git-pull-request" class="has-text-danger"></span>
-                    <span>Closed</span>
-                  </small>
-                ` : undefined}
-                ${object.mergedAt ? html`
-                  <small class="level-item tag">
-                    <span is="ppsl-icon" icon="git-pull-request" class="has-text-success"></span>
-                    <span>Merged</span>
-                  </small>
-                ` : undefined}
-                ${object.state === 'open' ? html`
-                  <small class="level-item tag">
-                    <span is="ppsl-icon" icon="git-pull-request" class="has-text-info"></span>
-                    <span>Open</span>
-                  </small>
-                ` : undefined}
-              </div>
-              <div class="level-right">
+          <div class="card">
+            <div class="card-header">
+              <a class="card-header-title level is-mobile is-marginless is-clipped" title="Interact to show more..." data-target="${index}" onclick=${typeof object.content.description === 'string' ? this.elementToggleCardContent : undefined}>
+                <div class="level-left" title="${object.content.label}">
+                  <small class="is-size-7 level-item is-hidden-desktop">${this.formatTitle(object)}</small>
+                  <p class="level-item is-hidden-touch">${this.formatTitle(object)}</p>
+                  ${object.new ? html`
+                    <small class="level-item tag is-success">New</small>
+                  ` : undefined}
+                  ${object.edited ? html`
+                    <small class="level-item tag">Edited</small>
+                  ` : undefined}
+                  ${((object.state === 'closed') || object.closedAt) && !object.mergedAt ? html`
+                    <small class="level-item tag">
+                      <span is="ppsl-icon" icon="git-pull-request" class="has-text-danger"></span>
+                      <span>Closed</span>
+                    </small>
+                  ` : undefined}
+                  ${object.mergedAt ? html`
+                    <small class="level-item tag">
+                      <span is="ppsl-icon" icon="git-pull-request" class="has-text-success"></span>
+                      <span>Merged</span>
+                    </small>
+                  ` : undefined}
+                  ${object.state === 'open' ? html`
+                    <small class="level-item tag">
+                      <span is="ppsl-icon" icon="git-pull-request" class="has-text-info"></span>
+                      <span>Open</span>
+                    </small>
+                  ` : undefined}
+                </div>
+              </a>
+              <a class="card-header-icon level is-mobile" onclick=${() => this.createOnClick ? undefined : this.customNextClick.func(this.menuData[index])}>
                 ${this.createOnClick ? html`
                   <div class="level-item">
                     <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.menuData[index], this.type)}>
@@ -114,9 +132,20 @@
                     <span is="ppsl-icon" icon="chevron-right"></span>
                   </div>
                 `}
-              </div>
+              </a>
             </div>
-          </a>` : html`<a>Unknown entry labeled "${object.content.label || object._id}".</a>`}
+            ${typeof object.content.description === 'string' ? html`
+              <div class="card-content content is-hidden" data-id="${index}">
+                <p>${object.content.description || html`<small class="is-family-monospace">This entry has no description.</small>`}</p>
+                ${typeof object.content.url === 'string' ? html`
+                  <a class="button is-fullwidth" onclick="${() => openExternalURL(object.content.label, object.content.url)}">
+                    <span>Open link</span>
+                    <span is="ppsl-icon" icon="external-link"></span>
+                  </a>
+                ` : undefined}
+              </div>
+            ` : undefined}
+          </div>` : html`<a>Unknown entry labeled "${object.content.label || object._id}".</a>`}
         </li>
       `) : html`
         <p class="has-text-centered">None available.</p>
