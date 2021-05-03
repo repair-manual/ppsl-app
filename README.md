@@ -12,6 +12,7 @@ If you don't use the app with a Github Personal Access Token, you will have a li
 Eventually all entries inputted into **PPSL will be automatically formatted and put into the Wiki**. However that's not done and for now, you can browse all entries in raw format over at Github: <https://github.com/repair-manual/ppsl-data> or just use the PPSL app.
 
 * Why Github?
+
 Version control! Github is the platform that the PPSL data is hosted on, and the reason it's Github is because all data is version controlled. That means we can ponder over, revert and keep track of all changes to the data.
 
 * Show me some!
