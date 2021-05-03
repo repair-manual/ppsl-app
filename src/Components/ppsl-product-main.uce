@@ -147,9 +147,7 @@
       const { editedData, data } = self.GlobalContext
       const selectedData = document.getElementById('product').selectedData[document.getElementById('product').selectedProduct]
 
-      const typePlural = type + 's'
-
-      const parentType = getParentType(typePlural)
+      const parentType = getParentType(type.plural)
 
       if (clone) {
         // Clone
@@ -157,20 +155,20 @@
 
         if (existingDataIndex === -1) {
           const githubData = JSON.parse(JSON.stringify(data[parentType.plural].find(res => res._id === selectedData[parentType.singular])))
-          githubData.content[typePlural].push(resData._id)
+          githubData.content[type.plural].push(resData._id)
 
-          const arr = new Set(githubData.content[typePlural])
-          githubData.content[typePlural] = [...arr]
+          const arr = new Set(githubData.content[type.plural])
+          githubData.content[type.plural] = [...arr]
 
           const newDataIndex = editedData[parentType.plural].push(githubData)
 
           editedData[parentType.plural][newDataIndex - 1].edited = true
         } else {
           const existingData = editedData[parentType.plural][existingDataIndex]
-          existingData.content[typePlural].push(resData._id)
+          existingData.content[type.plural].push(resData._id)
 
-          const arr = new Set(existingData.content[typePlural])
-          existingData.content[typePlural] = [...arr]
+          const arr = new Set(existingData.content[type.plural])
+          existingData.content[type.plural] = [...arr]
 
           existingData.edited = true
         }
@@ -270,7 +268,7 @@
 
       this.contentHTML = html`
         <div is="ppsl-product-menu"
-          type="${{ singular: 'solution', plural: 'solutions' }}"
+          .type="${{ singular: 'solution', plural: 'solutions' }}"
           .defer="${true}"
           .createOnClick="${true}"
           .customNextClick=${{ func: this.cloneOrCopy.bind(this) }}

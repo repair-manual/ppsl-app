@@ -98,13 +98,13 @@
               <div class="level-right">
                 ${this.createOnClick ? html`
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.menuData[index], this.type.singular)}>
+                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.menuData[index], this.type)}>
                       <span>Copy</span>
                       <span is="ppsl-icon" icon="copy"></span>
                     </button>
                   </div>
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.menuData[index], this.type.singular, true)}}>
+                    <button class="button is-small is-text" onclick=${(ev) => this.customNextClick.func(ev, this.menuData[index], this.type, true)}}>
                       <span>Clone</span>
                       <span is="ppsl-icon" icon="link-2"></span>
                     </button>
