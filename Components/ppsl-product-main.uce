@@ -126,7 +126,7 @@ e?(this.titleHTML=t`
           .data="${e}"
           type="links"
           .customPreviousClick=${{label:"Return to solution",func:()=>this.showPrevious("solution")}}
-          .customNextClick=${{label:"Open link",func:t=>Object.assign(document.createElement("a"),{target:t.content.label,href:t.content.url}).click()}}
+          .customNextClick=${{label:"Open link",func:t=>openExternalURL(t.content.label,t.content.url)}}
         ></div>
       `},toggleEdit(t){t&&(t.preventDefault(),t.stopPropagation())
 const e=document.getElementById("productdescription").toggleEdit(),l=this.querySelector(".card-header-icon span")

@@ -9,48 +9,53 @@
 <script type=module>import{html as t}from"@uce"
 export default{props:{type:null,data:null,menuData:null,page:1,defer:!1,createOnClick:!1,contentHTML:null,paginationContentHTML:null,customNextClick:null,paginationClick:null},async loadData(){let t
 if(t=this.data?await document.getElementById("productmain").getChildContent(this.data,this.page):await document.getElementById("productmain").loadLoop(this.type.plural,null,this.page),this.menuData=t.results||t,this.menuData.length>0){const a=getParentType(getParentChildType(this.menuData[0].content).plural)
-null===this.customNextClick&&(this.customNextClick={func:document.getElementById("productmain")[a.singular].bind(document.getElementById("productmain"))}),this.paginationClick=t.results?{func:this.paginate.bind(this),currentPage:t.currentPage,maxPages:t.maxPages}:void 0}return this.defer=!1,this.showMenu()},showMenu(){return this.defer?this.loadData():(this.paginationContentHTML=this.showPagination(),this.menuData&&this.menuData.length>0?this.menuData.map(((a,i)=>t`
-        <li>
+null===this.customNextClick&&(this.customNextClick={func:document.getElementById("productmain")[a.singular].bind(document.getElementById("productmain"))}),this.paginationClick=t.results?{func:this.paginate.bind(this),currentPage:t.currentPage,maxPages:t.maxPages}:void 0}return this.defer=!1,this.showMenu()},elementToggleCardContent(t){t.preventDefault()
+const a=t.currentTarget.dataset.target
+document.querySelector(`[data-id="${a}"]`).classList.toggle("is-hidden")},formatTitle(a){return a.content.label.length>0?`${this.paginationClick?`[${a._id}] `:""}${a.content.label.substr(0,70)}${a.content.label.length>72?"...":""}`:t`<span class="is-family-monospace">This entry has no label.</span>`},showMenu(){return this.defer?this.loadData():(this.paginationContentHTML=this.showPagination(),this.menuData&&this.menuData.length>0?this.menuData.map(((a,n)=>t`
+        <li style="padding-bottom:.75rem;">
           ${a.sha||a.new?t`
-          <a onclick=${()=>this.createOnClick?void 0:this.customNextClick.func(this.menuData[i])}>
-            <div class="level is-mobile">
-              <div class="level-left">
-                ${a.content.label.length>64?t`<small class="is-size-7 level-item" title="${a.content.label}">${`${this.paginationClick?`[${a._id}] `:""}${a.content.label.substr(0,70)}${a.content.label.length>72?"...":""}`}</small>`:t`<p class="level-item">${`${this.paginationClick?`[${a._id}] `:""}${a.content.label}`}</p>`}
-                ${a.new?t`
-                  <small class="level-item tag is-success">New</small>
-                `:void 0}
-                ${a.edited?t`
-                  <small class="level-item tag">Edited</small>
-                `:void 0}
-                ${"closed"!==a.state&&!a.closedAt||a.mergedAt?void 0:t`
-                  <small class="level-item tag">
-                    <span is="ppsl-icon" icon="git-pull-request" class="has-text-danger"></span>
-                    <span>Closed</span>
-                  </small>
-                `}
-                ${a.mergedAt?t`
-                  <small class="level-item tag">
-                    <span is="ppsl-icon" icon="git-pull-request" class="has-text-success"></span>
-                    <span>Merged</span>
-                  </small>
-                `:void 0}
-                ${"open"===a.state?t`
-                  <small class="level-item tag">
-                    <span is="ppsl-icon" icon="git-pull-request" class="has-text-info"></span>
-                    <span>Open</span>
-                  </small>
-                `:void 0}
-              </div>
-              <div class="level-right">
+          <div class="card">
+            <div class="card-header">
+              <a class="card-header-title level is-mobile is-marginless is-clipped" title="Interact to show more..." data-target="${n}" onclick=${"string"==typeof a.content.description?this.elementToggleCardContent:void 0}>
+                <div class="level-left" title="${a.content.label}">
+                  <small class="is-size-7 level-item is-hidden-desktop">${this.formatTitle(a)}</small>
+                  <p class="level-item is-hidden-touch">${this.formatTitle(a)}</p>
+                  ${a.new?t`
+                    <small class="level-item tag is-success">New</small>
+                  `:void 0}
+                  ${a.edited?t`
+                    <small class="level-item tag">Edited</small>
+                  `:void 0}
+                  ${"closed"!==a.state&&!a.closedAt||a.mergedAt?void 0:t`
+                    <small class="level-item tag">
+                      <span is="ppsl-icon" icon="git-pull-request" class="has-text-danger"></span>
+                      <span>Closed</span>
+                    </small>
+                  `}
+                  ${a.mergedAt?t`
+                    <small class="level-item tag">
+                      <span is="ppsl-icon" icon="git-pull-request" class="has-text-success"></span>
+                      <span>Merged</span>
+                    </small>
+                  `:void 0}
+                  ${"open"===a.state?t`
+                    <small class="level-item tag">
+                      <span is="ppsl-icon" icon="git-pull-request" class="has-text-info"></span>
+                      <span>Open</span>
+                    </small>
+                  `:void 0}
+                </div>
+              </a>
+              <a class="card-header-icon level is-mobile" onclick=${()=>this.createOnClick?void 0:this.customNextClick.func(this.menuData[n])}>
                 ${this.createOnClick?t`
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${t=>this.customNextClick.func(t,this.menuData[i],this.type)}>
+                    <button class="button is-small is-text" onclick=${t=>this.customNextClick.func(t,this.menuData[n],this.type)}>
                       <span>Copy</span>
                       <span is="ppsl-icon" icon="copy"></span>
                     </button>
                   </div>
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${t=>this.customNextClick.func(t,this.menuData[i],this.type,!0)}}>
+                    <button class="button is-small is-text" onclick=${t=>this.customNextClick.func(t,this.menuData[n],this.type,!0)}}>
                       <span>Clone</span>
                       <span is="ppsl-icon" icon="link-2"></span>
                     </button>
@@ -60,9 +65,20 @@ null===this.customNextClick&&(this.customNextClick={func:document.getElementById
                     <span is="ppsl-icon" icon="chevron-right"></span>
                   </div>
                 `}
-              </div>
+              </a>
             </div>
-          </a>`:t`<a>Unknown entry labeled "${a.content.label||a._id}".</a>`}
+            ${"string"==typeof a.content.description?t`
+              <div class="card-content content is-hidden" data-id="${n}">
+                <p>${a.content.description||t`<small class="is-family-monospace">This entry has no description.</small>`}</p>
+                ${"string"==typeof a.content.url?t`
+                  <a class="button is-fullwidth" onclick="${()=>openExternalURL(a.content.label,a.content.url)}">
+                    <span>Open link</span>
+                    <span is="ppsl-icon" icon="external-link"></span>
+                  </a>
+                `:void 0}
+              </div>
+            `:void 0}
+          </div>`:t`<a>Unknown entry labeled "${a.content.label||a._id}".</a>`}
         </li>
       `)):t`
         <p class="has-text-centered">None available.</p>
@@ -73,12 +89,12 @@ null===this.customNextClick&&(this.customNextClick={func:document.getElementById
           </a>
           <hr>
         `},async paginate(t){this.page=t,this.contentHTML=document.getElementById("root").loaderTemplate(3),this.paginationContentHTML=null,this.contentHTML=await this.loadData()},showPagination(){if(!this.paginationClick)return
-const{currentPage:a,maxPages:i}=this.paginationClick
+const{currentPage:a,maxPages:n}=this.paginationClick
 return t`
         <hr>
         <nav class="pagination" role="navigation" aria-label="pagination">
           ${a>1?t`<a class="pagination-previous" onclick=${()=>this.paginationClick.func(a-1)}>Previous</a>`:void 0}
-          ${a<i?t`<a class="pagination-next" onclick=${()=>this.paginationClick.func(a+1)}>Next page</a>`:void 0}
+          ${a<n?t`<a class="pagination-next" onclick=${()=>this.paginationClick.func(a+1)}>Next page</a>`:void 0}
           <ul class="pagination-list">
             <li>
               <div class="field has-addons">
@@ -93,7 +109,7 @@ return t`
               </div>
             </li>
             <li><span class="pagination-ellipsis">&hellip;</span></li>
-            <li><a class="pagination-link" aria-label="${`Goto page ${i}`}" onclick=${()=>this.paginationClick.func(i)}>${i}</a></li>
+            <li><a class="pagination-link" aria-label="${`Goto page ${n}`}" onclick=${()=>this.paginationClick.func(n)}>${n}</a></li>
           </ul>
         </nav>
       `},setup(t){t.classList.add("menu"),t.data&&t.data.length>0&&(t.menuData=t.data),t.connected=async()=>{t.contentHTML=await t.showMenu()},t.contentHTML=document.getElementById("root").loaderTemplate(3)}}

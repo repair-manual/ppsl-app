@@ -32,7 +32,7 @@ return t`
             <div class="column">
               <a class="button is-fullwidth" onclick="${()=>this.customNextClick.func(this.data)}">
                 <span>${this.customNextClick.label}</span>
-                <span is="ppsl-icon" icon=${void 0===this.data.content.url?"chevron-right":"external-link"}></span>
+                <span is="ppsl-icon" icon="${void 0===this.data.content.url?"chevron-right":"external-link"}"></span>
               </a>
             </div>
           `:null}

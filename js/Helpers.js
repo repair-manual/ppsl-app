@@ -53,3 +53,7 @@ function b64DecodeUnicode (str) {
     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
   }).join(''))
 }
+
+function openExternalURL (label, url) {
+  Object.assign(document.createElement('a'), { target: label, href: url }).click()
+}
