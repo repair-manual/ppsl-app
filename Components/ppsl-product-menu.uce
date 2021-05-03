@@ -44,13 +44,13 @@ null===this.customNextClick&&(this.customNextClick={func:document.getElementById
               <div class="level-right">
                 ${this.createOnClick?t`
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${t=>this.customNextClick.func(t,this.menuData[i],this.type.singular)}>
+                    <button class="button is-small is-text" onclick=${t=>this.customNextClick.func(t,this.menuData[i],this.type)}>
                       <span>Copy</span>
                       <span is="ppsl-icon" icon="copy"></span>
                     </button>
                   </div>
                   <div class="level-item">
-                    <button class="button is-small is-text" onclick=${t=>this.customNextClick.func(t,this.menuData[i],this.type.singular,!0)}}>
+                    <button class="button is-small is-text" onclick=${t=>this.customNextClick.func(t,this.menuData[i],this.type,!0)}}>
                       <span>Clone</span>
                       <span is="ppsl-icon" icon="link-2"></span>
                     </button>

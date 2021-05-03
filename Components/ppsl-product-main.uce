@@ -6,53 +6,53 @@
 </div>
 </div>
 <script type=module>import{html as t}from"@uce"
-export default{props:{contentHTML:null,selectedData:{product:null,problem:null,solution:null,link:null}},async loadLoop(t,e,i=1){e=JSON.parse(JSON.stringify(e))
-const{editedData:s,data:l}=self.GlobalContext,n=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],o=getParentType(t),c=s[o.plural].find((t=>t._id===n[o.singular]))
-if(!e){let i
-try{i=await self.getBranchDirectoryContent(t)}catch(e){i=s[t]}e=i.map((t=>t.label))}c&&(e.push(...c.content[t]),e=[...new Set([...e])])
-const a=[],d=s[t],r=Math.ceil(e.length/25),p=e.length>25&&"number"==typeof i
+export default{props:{contentHTML:null,selectedData:{product:null,problem:null,solution:null,link:null}},async loadLoop(t,e,l=1){e=JSON.parse(JSON.stringify(e))
+const{editedData:i,data:s}=self.GlobalContext,n=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],o=getParentType(t),a=i[o.plural].find((t=>t._id===n[o.singular]))
+if(!e){let l
+try{l=await self.getBranchDirectoryContent(t)}catch(e){l=i[t]}e=l.map((t=>t.label))}a&&(e.push(...a.content[t]),e=[...new Set([...e])])
+const c=[],d=i[t],r=Math.ceil(e.length/25),p=e.length>25&&"number"==typeof l
 e.sort(((t,e)=>e-t))
-for(let s=p?25*(i-1):0;(!p||s<25*i)&&s<e.length;s++){const i=e[s]
-if(!i)continue
-const n=d.find((t=>t._id===i))
-if(n)a.push(n)
-else if(void 0===n||void 0===n.new){let e=await self.loadFromGithub(t,i)
-null!==e?a.push(l[t][e]):a.push({_id:i,content:{}})}}return p?{results:a,maxPages:r,currentPage:i}:a},create(e,i,s){const l=getParentType(e.plural)
+for(let i=p?25*(l-1):0;(!p||i<25*l)&&i<e.length;i++){const l=e[i]
+if(!l)continue
+const n=d.find((t=>t._id===l))
+if(n)c.push(n)
+else if(void 0===n||void 0===n.new){let e=await self.loadFromGithub(t,l)
+null!==e?c.push(s[t][e]):c.push({_id:l,content:{}})}}return p?{results:c,maxPages:r,currentPage:l}:c},create(e,l,i){const s=getParentType(e.plural)
 let n
 this.titleHTML=t`
-        <p class="card-header-title">Creating new ${e.singular} for ${l.singular} "${i}"</p>
-      `,n="problem"===e.singular?{label:`Return to ${e.plural} list`,func:()=>this.showPrevious(e.plural)}:{label:`Return to ${l.singular}`,func:()=>this.showPrevious(l.singular)},this.contentHTML=t`
+        <p class="card-header-title">Creating new ${e.singular} for ${s.singular} "${l}"</p>
+      `,n="problem"===e.singular?{label:`Return to ${e.plural} list`,func:()=>this.showPrevious(e.plural)}:{label:`Return to ${s.singular}`,func:()=>this.showPrevious(s.singular)},this.contentHTML=t`
         <div is="ppsl-product-create"
           .type="${e}"
-          .data=${s}
+          .data=${i}
           .customPreviousClick=${n}
           .customNextClick=${{label:`Add from existing ${e.plural}`,func:this[e.plural].bind(this)}}
         ></div>
-      `},showPrevious(t,e){const{editedData:i,data:s}=self.GlobalContext,l=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],n=getParentType(t)
+      `},showPrevious(t,e){const{editedData:l,data:i}=self.GlobalContext,s=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],n=getParentType(t)
 let o
-if(void 0!==n){const t=l[n.singular]
-o=i[n.plural].find((e=>e._id===t)),void 0===o&&(o=s[n.plural].find((e=>e._id===t)))}else{const e=t+"s",n=l[t]
-o=i[e].find((t=>t._id===n)),void 0===o&&(o=s[e].find((t=>t._id===n)))}return this[t](o)},cloneOrCopy(t,e,i,s=!1){t.preventDefault()
-const{editedData:l,data:n}=self.GlobalContext,o=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],c=i+"s",a=getParentType(c)
-if(s){const t=l[a.plural].findIndex((t=>t._id===o[a.singular]))
+if(void 0!==n){const t=s[n.singular]
+o=l[n.plural].find((e=>e._id===t)),void 0===o&&(o=i[n.plural].find((e=>e._id===t)))}else{const e=t+"s",n=s[t]
+o=l[e].find((t=>t._id===n)),void 0===o&&(o=i[e].find((t=>t._id===n)))}return this[t](o)},cloneOrCopy(t,e,l,i=!1){t.preventDefault()
+const{editedData:s,data:n}=self.GlobalContext,o=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct],a=getParentType(l.plural)
+if(i){const t=s[a.plural].findIndex((t=>t._id===o[a.singular]))
 if(-1===t){const t=JSON.parse(JSON.stringify(n[a.plural].find((t=>t._id===o[a.singular]))))
-t.content[c].push(e._id)
-const i=new Set(t.content[c])
-t.content[c]=[...i]
-const s=l[a.plural].push(t)
-l[a.plural][s-1].edited=!0}else{const i=l[a.plural][t]
-i.content[c].push(e._id)
-const s=new Set(i.content[c])
-i.content[c]=[...s],i.edited=!0}self.saveDataToStorage("editedData",l),this.showPrevious("product"===a.singular?"problems":a.singular)}else this.create.bind(this)(i,o[a.singular],e.content)},async getChildContent(t,e,i){const s=getParentChildType(t.content)
-return await this.loadLoop(s.plural,i?null:t.content[s.plural],e)},async problems(e,i){this.titleHTML=t`<p class="card-header-title">Loading problems...</p>`,this.contentHTML=document.getElementById("root").loaderTemplate(3)
-const s={singular:"problem",plural:"problems"}
-let l
+t.content[l.plural].push(e._id)
+const i=new Set(t.content[l.plural])
+t.content[l.plural]=[...i]
+const c=s[a.plural].push(t)
+s[a.plural][c-1].edited=!0}else{const i=s[a.plural][t]
+i.content[l.plural].push(e._id)
+const n=new Set(i.content[l.plural])
+i.content[l.plural]=[...n],i.edited=!0}self.saveDataToStorage("editedData",s),this.showPrevious("product"===a.singular?"problems":a.singular)}else this.create.bind(this)(l,o[a.singular],e.content)},async getChildContent(t,e,l){const i=getParentChildType(t.content)
+return await this.loadLoop(i.plural,l?null:t.content[i.plural],e)},async problems(e,l){this.titleHTML=t`<p class="card-header-title">Loading problems...</p>`,this.contentHTML=document.getElementById("root").loaderTemplate(3)
+const i={singular:"problem",plural:"problems"}
+let s
 e?(this.titleHTML=t`
           <p class="card-header-title">Problems for "${e._id}"</p>
-          <a class="card-header-icon" onclick=${()=>this.create.bind(this)(s,e._id)}>
+          <a class="card-header-icon" onclick=${()=>this.create.bind(this)(i,e._id)}>
             <span is="ppsl-icon" icon="plus-square"></span>
           </a>
-        `,l=t`
+        `,s=t`
           <div is="ppsl-product-menu"
             .data="${e}"
             .defer="${!0}"
@@ -63,14 +63,14 @@ e?(this.titleHTML=t`
           <a class="card-header-icon" onclick=${()=>this.showPrevious("problems")}>
             <span is="ppsl-icon" icon="x"></span>
           </a>
-        `,l=t`
+        `,s=t`
           <div is="ppsl-product-menu"
-            .type="${s}"
+            .type="${i}"
             .defer="${!0}"
             .createOnClick="${!0}"
             .customNextClick=${{func:this.cloneOrCopy.bind(this)}}
           ></div>
-        `),this.contentHTML=l},problem(e){this.titleHTML=t`
+        `),this.contentHTML=s},problem(e){this.titleHTML=t`
         <p class="card-header-title">Problem - "${e.content.label}"</p>
         <a class="card-header-icon" onclick=${this.toggleEdit.bind(this)}>
           <span is="ppsl-icon" icon="edit"></span>
@@ -81,14 +81,14 @@ e?(this.titleHTML=t`
           type="problems"
           .customPreviousClick=${{label:"Return to problems list",func:()=>this.showPrevious("problems")}}
         ></div>
-      `},async solutions(e,i){this.titleHTML=t`<p class="card-header-title">Loading solutions...</p>`,this.contentHTML=document.getElementById("root").loaderTemplate(3),this.titleHTML=t`
+      `},async solutions(e,l){this.titleHTML=t`<p class="card-header-title">Loading solutions...</p>`,this.contentHTML=document.getElementById("root").loaderTemplate(3),this.titleHTML=t`
         <p class="card-header-title">All solutions</p>
         <a class="card-header-icon" onclick=${()=>this.showPrevious("problem")}>
           <span is="ppsl-icon" icon="x"></span>
         </a>
       `,this.contentHTML=t`
         <div is="ppsl-product-menu"
-          type="${{singular:"solution",plural:"solutions"}}"
+          .type="${{singular:"solution",plural:"solutions"}}"
           .defer="${!0}"
           .createOnClick="${!0}"
           .customNextClick=${{func:this.cloneOrCopy.bind(this)}}
@@ -104,7 +104,7 @@ e?(this.titleHTML=t`
           type="solutions"
           .customPreviousClick=${{label:"Return to problem",func:()=>this.showPrevious("problem")}}
         ></div>
-      `},async links(e,i){this.titleHTML=t`<p class="card-header-title">Loading links...</p>`,this.contentHTML=document.getElementById("root").loaderTemplate(3),this.titleHTML=t`
+      `},async links(e,l){this.titleHTML=t`<p class="card-header-title">Loading links...</p>`,this.contentHTML=document.getElementById("root").loaderTemplate(3),this.titleHTML=t`
         <p class="card-header-title">All links</p>
         <a class="card-header-icon" onclick=${()=>this.showPrevious("solution")}>
           <span is="ppsl-icon" icon="x"></span>
@@ -129,6 +129,6 @@ e?(this.titleHTML=t`
           .customNextClick=${{label:"Open link",func:t=>Object.assign(document.createElement("a"),{target:t.content.label,href:t.content.url}).click()}}
         ></div>
       `},toggleEdit(t){t&&(t.preventDefault(),t.stopPropagation())
-const e=document.getElementById("productdescription").toggleEdit(),i=this.querySelector(".card-header-icon span")
-i.icon=e?"x":"edit",i.showIcon()},setup(t){t.id="productmain",t.showPrevious.bind(t)("problems")}}
+const e=document.getElementById("productdescription").toggleEdit(),l=this.querySelector(".card-header-icon span")
+l.icon=e?"x":"edit",l.showIcon()},setup(t){t.id="productmain",t.showPrevious.bind(t)("problems")}}
 </script>
