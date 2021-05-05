@@ -36,7 +36,7 @@ const t=e.products.findIndex((t=>t._id===s._id))
 t>-1&&(e.products[t]=s,this.product=s,self.saveDataToStorage("editedData",e))}return void this.toggleEdit()}s.new||(s.edited=!0)
 o===Object.values(i.content).join()&&delete s.edited
 const a=e.products.findIndex((t=>t._id===s._id))
-a>-1?e.products[a]=s:e.products.push(s),this.product=s,self.saveDataToStorage("editedData",e),this.toggleEdit()},productSettings(){const{settings:e}=self.GlobalContext,n=`https://github.com/${e.repo.owner}/${e.repo.name}/blob/main/Products/${this.product._id}.yaml`,s=`https://wiki2.rossmanngroup.com/index.php?title=${this.product._id}`
+a>-1?e.products[a]=s:e.products.push(s),this.product=s,self.saveDataToStorage("editedData",e),this.toggleEdit()},productSettings(){const{settings:e}=self.GlobalContext,n=`https://github.com/${e.repo.owner}/${e.repo.name}/blob/main/Products/${this.product._id}.yaml`,s=`https://wiki2.rossmanngroup.com/w/${this.product._id}`
 return t`
         ${this.editEnabled?t`
           <div is="ppsl-input" .props=${{label:"Product number",name:"number"}} .value="${this.product.content.number}"></div>
