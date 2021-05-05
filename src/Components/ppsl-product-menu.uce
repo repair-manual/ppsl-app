@@ -65,10 +65,12 @@
     },
 
     formatTitle (object) {
+      const showID = this.paginationClick ? `[${object._id}] ` : ''
+
       if (object.content.label.length > 0) {
-        return `${this.paginationClick ? `[${object._id}] ` : ''}${object.content.label.substr(0, 70)}${object.content.label.length > 72 ? '...' : ''}`
+        return `${showID}${object.content.label.substr(0, 70)}${object.content.label.length > 72 ? '...' : ''}`
       } else {
-        return html`<span class="is-family-monospace">This entry has no label.</span>`
+        return html`<span>${showID} <span class="is-family-monospace">This entry has no label.</span></span>`
       }
     },
 
