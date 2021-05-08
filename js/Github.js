@@ -52,7 +52,7 @@ self.loginToOctoKit = async (authentication) => {
         const ratelimit = await octokit.rateLimit.get()
 
         document.getElementById('topnavbar').setRatelimit(ratelimit.data.rate.reset)
-  
+
         if (options.request.retryCount === 0) {
           // only retries once
           octokit.log.info(`Retrying after ${retryAfter} seconds!`)
@@ -64,8 +64,8 @@ self.loginToOctoKit = async (authentication) => {
         octokit.log.warn(
           `Abuse detected for request ${options.method} ${options.url}`
         )
-      },
-    },
+      }
+    }
   })
 
   try {
@@ -152,7 +152,7 @@ self.createForkIfNotExists = async () => {
   try {
     await octokit.request('GET /repos/:owner/:repo', {
       owner: githubUser.login,
-      repo: settings.repo.name,
+      repo: settings.repo.name
     })
   } catch (error) {
     console.error(error)
@@ -162,7 +162,7 @@ self.createForkIfNotExists = async () => {
       // Create fork.
       await octokit.request('POST /repos/:owner/:repo/forks', {
         owner: settings.repo.owner,
-        repo: settings.repo.name,
+        repo: settings.repo.name
       })
     }
   }
@@ -175,7 +175,7 @@ self.getOrCreateBranchIfNotExists = async (branchName) => {
     const res = await octokit.request('GET /repos/:owner/:repo/branches/:branch', {
       owner: githubUser.login,
       repo: settings.repo.name,
-      branch: branchName,
+      branch: branchName
     })
 
     return res.data
@@ -187,7 +187,7 @@ self.getOrCreateBranchIfNotExists = async (branchName) => {
       // Create branch.
       const res = await octokit.request('GET /repos/:owner/:repo/git/refs/head', {
         owner: settings.repo.owner,
-        repo: settings.repo.name,
+        repo: settings.repo.name
       })
 
       const mainHead = res.data.find(branch => branch.ref === 'refs/heads/main')
@@ -196,7 +196,7 @@ self.getOrCreateBranchIfNotExists = async (branchName) => {
         owner: githubUser.login,
         repo: settings.repo.name,
         ref: `refs/heads/${branchName}`,
-        sha: mainHead.object.sha,
+        sha: mainHead.object.sha
       })
 
       return newBranch.data
@@ -205,13 +205,13 @@ self.getOrCreateBranchIfNotExists = async (branchName) => {
 }
 
 self.createCommit = async (branchSHA, branchName, dataArr) => {
-  const { githubUser, octokit, settings } = GlobalContext
+  const { githubUser, octokit, settings } = self.GlobalContext
 
   try {
     const res = await octokit.request('GET /repos/:owner/:repo/git/commits/:commit_sha', {
       owner: githubUser.login,
       repo: settings.repo.name,
-      commit_sha: branchSHA,
+      commit_sha: branchSHA
     })
 
     const treeSHA = res.data.tree.sha
@@ -221,7 +221,7 @@ self.createCommit = async (branchSHA, branchName, dataArr) => {
         path: data.fileName,
         type: 'blob',
         mode: '100644',
-        content: data.content,
+        content: data.content
       }
     })
 
@@ -239,7 +239,7 @@ self.createCommit = async (branchSHA, branchName, dataArr) => {
       repo: settings.repo.name,
       parents: [branchSHA],
       message: `uploading ${files.length} changes.\nUploaded via PPSL App.`,
-      tree: newTreeSHA,
+      tree: newTreeSHA
     })
 
     const newCommitSHA = newCommit.data.sha
@@ -248,7 +248,7 @@ self.createCommit = async (branchSHA, branchName, dataArr) => {
       owner: githubUser.login,
       repo: settings.repo.name,
       ref: `heads/${branchName}`,
-      sha: newCommitSHA,
+      sha: newCommitSHA
     })
 
     return pushToHead.data
@@ -259,7 +259,7 @@ self.createCommit = async (branchSHA, branchName, dataArr) => {
 }
 
 self.createPullRequest = async (branchName, data) => {
-  const { githubUser, octokit, settings } = GlobalContext
+  const { githubUser, octokit, settings } = self.GlobalContext
 
   try {
     const res = await octokit.request('POST /repos/:owner/:repo/pulls', {
@@ -268,19 +268,19 @@ self.createPullRequest = async (branchName, data) => {
       head: `${githubUser.login}:${branchName}`,
       base: 'main',
       title: `${data.length} changes`,
-      body: `**This change was uploaded via the PPSL App.**\n\`\`\`\nChanges:\n${data.map(res => res.fileName).join('\n')}\n\`\`\`\nPlease check me for errors.`,
+      body: `**This change was uploaded via the PPSL App.**\n\`\`\`\nChanges:\n${data.map(res => res.fileName).join('\n')}\n\`\`\`\nPlease check me for errors.`
     })
 
     return res.data
   } catch (error) {
     console.error(error)
     // TODO: POPUP ERROR MODAL.
-    window.open(`https://www.github.com/${settings.repo.owner}/${settings.repo.name}/pulls`, '_blank')
+    openExternalURL('_blank', `https://www.github.com/${settings.repo.owner}/${settings.repo.name}/pulls`)
   }
 }
 
 self.checkIfPRIsMergedOrClosed = async (prNumber) => {
-  const { octokit, settings } = GlobalContext
+  const { octokit, settings } = self.GlobalContext
 
   try {
     const res = await octokit.pulls.get({
@@ -295,8 +295,8 @@ self.checkIfPRIsMergedOrClosed = async (prNumber) => {
     return {
       body: res.data.body,
       sha: res.data.merge_commit_sha,
-      mergedAt: res.data['merged_at'],
-      closedAt: res.data['closed_at'],
+      mergedAt: res.data.merged_at,
+      closedAt: res.data.closed_at,
       state: res.data.state
     }
   } catch (error) {
