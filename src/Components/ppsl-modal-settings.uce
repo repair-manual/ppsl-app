@@ -22,9 +22,9 @@
 
       const form = this.querySelector('.form')
 
-      const { pat, repo, commentsRepo } = form
+      const { pat, repo, commentsRepo, wikiURL } = form
 
-      const repoArr = repo.value.split('/')
+      const repoArr = repo.value.trim().split('/')
       if (repoArr.length === 2) {
         const [owner, name] = repoArr
         settings.repo = {
@@ -33,7 +33,7 @@
         }
       }
 
-      const commentsRepoArr = commentsRepo.value.split('/')
+      const commentsRepoArr = commentsRepo.value.trim().split('/')
       if (commentsRepoArr.length === 2) {
         const [owner, name] = commentsRepoArr
         settings.commentsRepo = {
@@ -42,10 +42,12 @@
         }
       }
 
+      settings.wikiURL = wikiURL.value.length > 0 ? wikiURL.value.trim() : _defaultSettings.wikiURL
+
       self.saveDataToStorage('settings', settings)
 
       // TODO DISPLAY ERRORS
-      self.savePersonalAccessToken(pat.value)
+      self.savePersonalAccessToken(pat.value.trim())
     },
 
     deleteOfflineData (ev) {
@@ -78,12 +80,18 @@
         name: 'commentsRepo',
         label: 'Comments repository owner & name'
       }
+      const wikiURLProps = {
+        type: 'text',
+        name: 'wikiURL',
+        label: 'Wiki URL'
+      }
 
       const fields = html`
         <form class="form">
           <div is="ppsl-input" .props="${{ ...patProps }}" .value="${self.getPersonalAccessToken()}"></div>
           <div is="ppsl-input" .props="${{ ...repoProps }}" .value="${`${settings.repo.owner}/${settings.repo.name}`}"></div>
           <div is="ppsl-input" .props="${{ ...commentsProps }}" .value="${`${settings.commentsRepo.owner}/${settings.commentsRepo.name}`}"></div>
+          <div is="ppsl-input" .props="${{ ...wikiURLProps }}" .value="${`${settings.wikiURL}`}"></div>
           <div class="field">
             <p class="control">
               <button class="button is-danger" onclick=${this.deleteOfflineData}>Delete all offline data</button>

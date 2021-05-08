@@ -115,7 +115,7 @@
       const { settings } = self.GlobalContext
 
       const githubURL = `https://github.com/${settings.repo.owner}/${settings.repo.name}/blob/main/Products/${this.product._id}.yaml`
-      const wikiURL = `https://wiki2.rossmanngroup.com/w/${this.product._id}`
+      const wikiURL = `${settings.wikiURL}${this.product._id}`
 
       return html`
         ${this.editEnabled ? html`

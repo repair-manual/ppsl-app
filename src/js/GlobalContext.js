@@ -110,7 +110,7 @@ const _defaultSettings = {
     owner: 'repair-manual',
     name: 'ppsl-discussion'
   },
-  wikiURL: 'https://wiki2.rossmanngroup.com/'
+  wikiURL: 'https://wiki2.rossmanngroup.com/w/'
 }
 
 function loadSettings () {
