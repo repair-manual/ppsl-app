@@ -19,27 +19,33 @@ export default{props:{filesToUpload:null,prData:null,uploadData:null,contentHTML
 const t=this.querySelector(".button.is-success")
 if(t.disabled)return
 t.disabled=!0,t.firstElementChild.classList.add("loader")
-const{githubUser:s,prData:a,editedData:i}=self.GlobalContext
+const{githubUser:a,prData:s,editedData:i}=self.GlobalContext
 await self.createForkIfNotExists()
-const l=`${s.login}-${Date.now()}`,o=await self.getOrCreateBranchIfNotExists(l),n=(await self.createCommit(o.commit?branchData.commit.sha:o.object.sha,l,this.filesToUpload),await self.createPullRequest(l,this.filesToUpload))
-window.open(n.html_url,"_blank")
-for(let e=0;e<this.filesToUpload.length;e++){const t=this.filesToUpload[e],s=t.json._id
-i[t.type].find((e=>e._id===s)).pr=!0}self.saveDataToStorage("editedData",i),a.push({number:n.number,id:n.id,files:this.filesToUpload.map((e=>({type:e.type,id:e.json._id}))),url:n.html_url,createdAt:n.created_at}),self.saveDataToStorage("prData",a),document.getElementById("modal").openPRListModal()},parseData(){const{editedData:e,data:t}=self.GlobalContext,s=Object.entries(e),a=[],i=[]
-for(let e=0;e<s.length;e++){const[l,o]=s[e]
-for(let e=0;e<o.length;e++){const s=o[e]
-if(!0!==(s.edited||s.new))continue
-const n=t[l].find((e=>e._id===s._id))
-if(Object.values(s.content).join()===Object.values(n?n.content:{}).join())continue
-const d={type:l,...s}
-s.pr?i.push({type:d.type,json:d,fileName:`${d.type.substr(0,1).toUpperCase()}${d.type.substr(1)}/${d._id}.yaml`,content:window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:n?window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}):""}):a.push({type:d.type,json:d,fileName:`${d.type.substr(0,1).toUpperCase()}${d.type.substr(1)}/${d._id}.yaml`,content:window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:n?window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}):""})}}return this.uploadData=a,this.prData=i,this.filesToUpload=JSON.parse(JSON.stringify(a)),this.showData()},showData(){this.contentHTML=e`
+const l=`${a.login}-${Date.now()}`,o=await self.getOrCreateBranchIfNotExists(l),d=(await self.createCommit(o.commit?branchData.commit.sha:o.object.sha,l,this.filesToUpload),await self.createPullRequest(l,this.filesToUpload))
+openExternalURL("_blank",d.html_url)
+for(let e=0;e<this.filesToUpload.length;e++){const t=this.filesToUpload[e],a=t.json._id
+i[t.json.type].find((e=>e._id===a)).pr=!0}self.saveDataToStorage("editedData",i),s.push({number:d.number,id:d.id,files:this.filesToUpload.map((e=>({type:e.type,id:e.json._id}))),url:d.html_url,createdAt:d.created_at}),self.saveDataToStorage("prData",s),document.getElementById("modal").openPRListModal()},parseData(){const{editedData:e,data:t}=self.GlobalContext,a=Object.entries(e),s=[],i=[]
+for(let e=0;e<a.length;e++){const[l,o]=a[e]
+for(let e=0;e<o.length;e++){const a=o[e]
+if(!0!==(a.edited||a.new))continue
+const d=t[l].find((e=>e._id===a._id))
+if(Object.values(a.content).join()===Object.values(d?d.content:{}).join())continue
+const n={type:l,...a}
+a.pr?i.push({json:n,fileName:`${n.type.substr(0,1).toUpperCase()}${n.type.substr(1)}/${n._id}.yaml`,content:window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:d?window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}):""}):s.push({json:n,fileName:`${n.type.substr(0,1).toUpperCase()}${n.type.substr(1)}/${n._id}.yaml`,content:window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:d?window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}):""})}}return this.uploadData=s,this.prData=i,this.filesToUpload=JSON.parse(JSON.stringify(s)),this.showData()},showData(){this.contentHTML=e`
         ${this.showPRData()}
         ${this.showUploadData()}
         ${this.showFilesToUpload()}
       `},hideSection(e,t){e.stopPropagation()
-const s=document.getElementById(t)
-s.classList.toggle("is-hidden")
-const a=e.currentTarget.firstElementChild
-a.icon=s.classList.contains("is-hidden")?"chevron-up":"chevron-down",a.showIcon()},showPRData(){const t=e=>{e.stopPropagation()
+const a=document.getElementById(t)
+a.classList.toggle("is-hidden")
+const s=e.currentTarget.firstElementChild
+s.icon=a.classList.contains("is-hidden")?"chevron-up":"chevron-down",s.showIcon()},deleteChange(e){e.stopPropagation()
+const{type:t,id:a,fileName:s}=e.currentTarget.dataset,{editedData:i}=self.GlobalContext,l=i[t].findIndex((e=>e._id===a))
+i[t].splice(l,1),self.saveDataToStorage("editedData",i)
+const o=this.uploadData.findIndex((e=>e.fileName===s))
+this.uploadData.splice(o,1)
+const d=this.filesToUpload.findIndex((e=>e.fileName===s))
+this.filesToUpload.splice(d,1),this.showData()},showPRData(){const t=e=>{e.stopPropagation()
 const t=e.currentTarget
 if(t.checked){const e=this.prData.find((e=>e.fileName===t.dataset.fileName))
 this.filesToUpload.push(e)}else{const e=this.filesToUpload.findIndex((e=>e.fileName===t.dataset.fileName))
@@ -57,16 +63,16 @@ return this.prData.length>0?e.for(this.prData)`
         </div>
         <hr>
         <div id="prData">
-          ${this.prData.map(((s,a)=>e`
+          ${this.prData.map(((a,s)=>e`
             <div class="level is-mobile is-marginless">
               <div class="level-left">
-                <h4 class="is-size-4">${s.fileName}</h4>
+                <h4 class="is-size-4">${a.fileName}</h4>
               </div>
               <div class="level-right">
-                <input type="checkbox" data-file-name="${s.fileName}" onchange=${t}>
+                <input type="checkbox" data-file-name="${a.fileName}" onchange=${t}>
               </div>
             </div>
-            <div is="ppsl-diff" .oldChange="${s.oldContent}" .newChange="${s.content}"></div>
+            <div is="ppsl-diff" .oldChange="${a.oldContent}" .newChange="${a.content}"></div>
           `))}
           <hr>
         </div>
@@ -84,10 +90,24 @@ return this.prData.length>0?e.for(this.prData)`
         <hr>
         <div id="uploadData">
           ${this.uploadData.length>0?e`
-            ${this.uploadData.map(((t,s)=>e`
-              ${0!==s?e`<hr>`:void 0}
-              <h4 class="is-size-4">${t.fileName}</h4>
-              <div is="ppsl-diff" .oldChange="${t.oldContent}" .newChange="${t.content}"></div>
+            ${this.uploadData.map(((t,a)=>e`
+              ${0!==a?e`<hr>`:void 0}
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-header-title level is-mobile is-marginless is-clipped">
+                    <div class="level-left" title="${t.fileName}">
+                      <small class="is-size-7 level-item is-hidden-desktop">${t.fileName}</small>
+                      <p class="level-item is-hidden-touch">${t.fileName}</p>
+                    </div>
+                  </div>
+                  <div class="card-header-icon level is-mobile" title="Delete change" data-type="${t.json.type}" data-id="${t.json._id}" data-file-name="${t.fileName}" onclick=${this.deleteChange.bind(this)}>
+                    <span is="ppsl-icon" icon="trash" class="level-item"></span>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <div is="ppsl-diff" .oldChange="${t.oldContent}" .newChange="${t.content}"></div>
+                </div>
+              </div>
             `))}
           `:e`<p>Nothing here.</p>`}
           <hr>
@@ -98,7 +118,7 @@ return this.prData.length>0?e.for(this.prData)`
         <div class="content">
           ${this.filesToUpload.length>0?e`
             <ul>
-              ${this.filesToUpload.map(((t,s)=>e`
+              ${this.filesToUpload.map(((t,a)=>e`
                 <li><h4>${t.fileName}</h4></li>
               `))}
             </ul>
