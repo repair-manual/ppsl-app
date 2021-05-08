@@ -30,6 +30,7 @@
     async uploadPR (ev) {
       ev.preventDefault()
 
+      // TODO: Show modal if no files to upload.
       if (this.filesToUpload.length === 0) return
 
       const button = this.querySelector('.button.is-success')
@@ -51,13 +52,13 @@
       const pr = await self.createPullRequest(branchName, this.filesToUpload)
 
       // Open PR in new window.
-      window.open(pr.html_url, '_blank')
+      openExternalURL('_blank', pr.html_url)
 
       for (let index = 0; index < this.filesToUpload.length; index++) {
         const uploadedFile = this.filesToUpload[index]
 
         const id = uploadedFile.json._id
-        const typePlural = uploadedFile.type
+        const typePlural = uploadedFile.json.type
 
         const existingData = editedData[typePlural].find(res => res._id === id)
 
@@ -126,7 +127,6 @@
 
           if (value.pr) {
             pr.push({
-              type: dataObject.type,
               json: dataObject,
               fileName: `${dataObject.type.substr(0, 1).toUpperCase()}${dataObject.type.substr(1)}/${dataObject._id}.yaml`,
               content: window.jsyaml.dump(dataObject.content, { schema: window.jsyaml.JSON_SCHEMA }),
@@ -136,7 +136,6 @@
           }
 
           yaml.push({
-            type: dataObject.type,
             json: dataObject,
             fileName: `${dataObject.type.substr(0, 1).toUpperCase()}${dataObject.type.substr(1)}/${dataObject._id}.yaml`,
             content: window.jsyaml.dump(dataObject.content, { schema: window.jsyaml.JSON_SCHEMA }),
@@ -168,6 +167,30 @@
       const iconElement = ev.currentTarget.firstElementChild
       iconElement.icon = prData.classList.contains('is-hidden') ? 'chevron-up' : 'chevron-down'
       iconElement.showIcon()
+    },
+
+    deleteChange (ev) {
+      ev.stopPropagation()
+
+      const { type, id, fileName } = ev.currentTarget.dataset
+
+      // Remove entries from editedData.
+      const { editedData } = self.GlobalContext
+
+      const entryIndex = editedData[type].findIndex(res => res._id === id)
+      editedData[type].splice(entryIndex, 1)
+
+      self.saveDataToStorage('editedData', editedData)
+
+      // Remove entry from uploadData.
+      const uDataIndex = this.uploadData.findIndex(res => res.fileName === fileName)
+      this.uploadData.splice(uDataIndex, 1)
+
+      // Remove entry from filesToUpload.
+      const fDataIndex = this.filesToUpload.findIndex(res => res.fileName === fileName)
+      this.filesToUpload.splice(fDataIndex, 1)
+
+      this.showData()
     },
 
     showPRData() {
@@ -235,8 +258,22 @@
           ${this.uploadData.length > 0 ? html`
             ${this.uploadData.map((data, ind) => html`
               ${ind !== 0 ? html`<hr>` : undefined}
-              <h4 class="is-size-4">${data.fileName}</h4>
-              <div is="ppsl-diff" .oldChange="${data.oldContent}" .newChange="${data.content}"></div>
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-header-title level is-mobile is-marginless is-clipped">
+                    <div class="level-left" title="${data.fileName}">
+                      <small class="is-size-7 level-item is-hidden-desktop">${data.fileName}</small>
+                      <p class="level-item is-hidden-touch">${data.fileName}</p>
+                    </div>
+                  </div>
+                  <div class="card-header-icon level is-mobile" title="Delete change" data-type="${data.json.type}" data-id="${data.json._id}" data-file-name="${data.fileName}" onclick=${this.deleteChange.bind(this)}>
+                    <span is="ppsl-icon" icon="trash" class="level-item"></span>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <div is="ppsl-diff" .oldChange="${data.oldContent}" .newChange="${data.content}"></div>
+                </div>
+              </div>
             `)}
           ` : html`<p>Nothing here.</p>`}
           <hr>
