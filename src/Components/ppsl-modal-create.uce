@@ -1,0 +1,130 @@
+<!-- The HTML layout of the element -->
+<div is="ppsl-modal-create">
+  <div class="modal-card-head">
+    <p class="modal-card-title">Creating "{{ this.id }}"</p>
+  </div>
+  <div class="modal-card-body">
+    {{ fields }}
+    <hr>
+    <strong>Output:</strong>
+    <pre>{{ this.contentPRE }}</pre>
+  </div>
+  <div class="modal-card-foot">
+    <button class="button is-success" onclick="{{ this.create.bind(this) }}">Create</button>
+    <button class="button is-text" onclick="{{ this.closeModal }}">Close</button>
+  </div>
+</div>
+
+<!-- The logic of the element -->
+<script type="module">
+  import { html } from '@uce'
+
+  export default {
+    props: {
+      contentPRE: null,
+      timer: null,
+      id: null,
+      productObject: {
+        description: null,
+        number: null,
+        year: null,
+        modelNumber: null,
+        modelID: null,
+        emc: null,
+        problems: []
+      }
+    },
+
+    async create () {
+      this.parse()
+
+      const newData = {
+        _id: this.id,
+        content: this.productObject,
+        sha: null,
+        new: true
+      }
+
+      const { editedData, data } = self.GlobalContext
+
+      editedData['products'].push(newData)
+
+      self.saveDataToStorage('editedData', editedData)
+
+      await document.getElementById('leftmenu').products()
+
+      this.closeModal()
+    },
+
+    parse (ev) {
+      const { editedData, data } = self.GlobalContext
+      const form = this.querySelector('#createproductform')
+
+      const {
+        description,
+        number,
+        year,
+        modelNumber,
+        modelID,
+        emc
+      }  = form.elements
+
+      const product = {
+        description: String(description.value),
+        number: String(number.value),
+        year: String(year.value),
+        modelNumber: String(modelNumber.value),
+        modelID: String(modelID.value),
+        emc: String(emc.value)
+      }
+
+      if (form.elements.label.value.length === 0) this.id = `${[product.modelNumber, product.year].filter(s => s.length > 0).join(' ')}`
+      else this.id = form.elements.label.value
+
+      // Make sure it doesn't already exist
+      const count = 0
+      const productsIdArr = [...editedData['products'].map(p => p._id), ...data['products'].map(p => p._id)]
+      for (let index = 0; index < productsIdArr.length; index++) {
+        const id = productsIdArr[index]
+        if (this.id.toLowerCase() === id.toLowerCase()) count++
+      }
+
+      if (count > 0) this.id += count
+
+      this.productObject = { ...this.productObject, ...product }
+    },
+
+    onInput (ev) {
+      ev.preventDefault()
+      const target = ev.currentTarget
+
+      clearTimeout(this.timer)
+
+      // Parse product object.
+      this.parse(target)
+
+      this.timer = setTimeout(() => {
+        this.contentPRE = window.jsyaml.dump(this.productObject, { schema: window.jsyaml.JSON_SCHEMA })
+      }, 500)
+    },
+
+    setup (element) {
+      element.classList.add('modal-card')
+
+      const fields = html`
+        <form class="form" id="createproductform">
+          <div is="ppsl-input" .props=${{ onInput: () => element.onInput, label: 'Product number', name: 'number' }}></div>
+          <div is="ppsl-input" .props=${{ onInput: () => element.onInput, label: 'Product year', name: 'year' }}></div>
+          <div is="ppsl-input" .props=${{ onInput: () => element.onInput, label: 'Model number', name: 'modelNumber' }}></div>
+          <div is="ppsl-input" .props=${{ onInput: () => element.onInput, label: 'Model ID', name: 'modelID' }}></div>
+          <div is="ppsl-input" .props=${{ onInput: () => element.onInput, label: 'EMC', name: 'emc' }}></div>
+          <div is="ppsl-input" .props=${{ onInput: () => element.onInput, label: 'Product label', name: 'label', placeholder: 'ModelNumber Year Size Name' }}></div>
+          <div is="ppsl-textarea" .props=${{ onInput: () => element.onInput, label: 'Product description', name: 'description' }}></div>
+        </form>
+      `
+
+      return { fields }
+    }
+  }
+//# sourceURL=ppsl-modal-create.js
+</script>

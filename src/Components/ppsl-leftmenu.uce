@@ -24,15 +24,19 @@
 
     async loadProduct (ev) {
       const productSHA = ev.currentTarget.dataset.sha
-      const productLabel = ev.currentTarget.innerText
-      
-      const productIndex = await self.loadFromGithub('products', productLabel, productSHA)
+      const productId = ev.currentTarget.dataset.id
+
+      const res = await self.loadFromGithub('products', productId, productSHA)
 
       // Rehydrate ppsl-product
       const productDiv = document.getElementById('product')
-      productDiv.setProduct(productIndex)
+      productDiv.setProduct(productId)
     },
 
+    createProduct () {
+      // TODO: Use existing stuff, this is temporary.
+      document.getElementById('modal').openCreateModal()
+    },
 
     toggleProductsMenuList (ev) {
       ev.stopPropagation()
@@ -66,18 +70,32 @@
       try {
         // Online
         products = await self.getBranchDirectoryContent('products')
+
+        for (let index = 0; index < editedData.products.length; index++) {
+          const editedProduct = editedData.products[index]
+          
+          // Add all new ones.
+          if (editedProduct.new) products.push(editedProduct)
+        }
       } catch (error) {
         products = editedData.products
         // Offline
       }
 
       this.contentHTML = html`${
-        products.map((product, index) => {
+        products.sort((a, b) => { return (b.new || 0) - (a.new || 0) }).map((product, index) => {
           const label = product.label || product._id
 
           return html`
             <li>
-              <a onclick=${this.loadProduct} data-sha="${product.sha}">${label}</a>
+              <a onclick=${this.loadProduct} data-sha="${product.sha}" data-id="${label}">
+                <p title="${label}">
+                  ${product.new ? html`
+                    <small class="level-item tag is-success">New</small>
+                  ` : undefined}
+                  <span>${label}</span>
+                </p>
+              </a>
             </li>
           `
         })}
@@ -90,10 +108,16 @@
             <span>Products</span>
           </a>
         </div>
+        <div class="level-right">
+          <a class="level-item button is-small is-dark" onclick=${this.createProduct}>
+            <span is="ppsl-icon" icon="plus-square"></span>
+          </a>
+        </div>
       `
     },
 
     setup(element) {
+      element.id = 'leftmenu'
       element.classList.add('column', 'is-2')
 
       element.connected = element.products

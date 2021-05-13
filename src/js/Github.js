@@ -7,6 +7,7 @@ self.loadFromGithub = async (type, label, sha) => {
   if (cacheIndex === -1) {
     // Load the product from Github!
     let content
+
     try {
       if (sha) {
         content = await self.getFileContent(sha)
@@ -14,20 +15,16 @@ self.loadFromGithub = async (type, label, sha) => {
         content = await self.getBranchDirectoryContent(`${type}/${label}.yaml`)
       }
     } catch (error) {
-      content = editedData[type].find(res => (res._id === label) || (sha && (res.sha === sha)))
+      return null
     }
 
     const foundData = {
       _id: label,
-      content: content || {}
+      content: content || {},
+      sha: content.sha
     }
 
-    if (content) {
-      foundData.sha = foundData.content.sha
-      delete foundData.content.sha
-    } else {
-      return null
-    }
+    delete foundData.content.sha
 
     cacheIndex = data[type].push(foundData) - 1
   }

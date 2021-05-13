@@ -71,13 +71,13 @@
         if (!id) continue
 
         const existingData = existingEditedData.find(res => res._id === id)
+        let indexInDataCache = await self.loadFromGithub(type, id)
+
         if (existingData) {
           resultArr.push(existingData)
-        } else if (existingData === undefined || existingData.new === undefined) {
-          // Load from Github!
-          let indexInCache = await self.loadFromGithub(type, id)
-          if (indexInCache !== null) {
-            resultArr.push(data[type][indexInCache])
+        } else if (existingData === undefined) {
+          if (indexInDataCache !== null) {
+            resultArr.push(data[type][indexInDataCache])
           } else {
             resultArr.push({ _id: id, content: {} })
           }
