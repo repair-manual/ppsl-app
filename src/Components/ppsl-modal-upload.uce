@@ -154,8 +154,8 @@
 
     showData() {
       this.contentHTML = html`
-        ${this.showPRData()}
         ${this.showUploadData()}
+        ${this.showPRData()}
         ${this.showFilesToUpload()}
       `
     },
@@ -226,15 +226,25 @@
         <hr>
         <div id="prData">
           ${this.prData.map((data, ind) => html`
-            <div class="level is-mobile is-marginless">
-              <div class="level-left">
-                <h4 class="is-size-4">${data.fileName}</h4>
+            ${ind !== 0 ? html`<hr>` : undefined}
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-title level is-mobile is-marginless is-clipped">
+                  <div class="level-left" title="${data.fileName}">
+                    <small class="is-size-7 level-item is-hidden-desktop">${data.fileName}</small>
+                    <p class="level-item is-hidden-touch">${data.fileName}</p>
+                  </div>
+                </div>
+                <div class="card-header-icon level is-mobile" title="Upload change">
+                  <div class="level-item">
+                    <input type="checkbox" data-file-name="${data.fileName}" onchange=${checkboxOnChange}>
+                  </div>
+                </div>
               </div>
-              <div class="level-right">
-                <input type="checkbox" data-file-name="${data.fileName}" onchange=${checkboxOnChange}>
+              <div class="card-content">
+                <div is="ppsl-diff" .oldChange="${data.oldContent}" .newChange="${data.content}"></div>
               </div>
             </div>
-            <div is="ppsl-diff" .oldChange="${data.oldContent}" .newChange="${data.content}"></div>
           `)}
           <hr>
         </div>

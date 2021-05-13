@@ -87,8 +87,6 @@
             <div class="card-header">
               <a class="card-header-title level is-mobile is-marginless is-clipped" title="Interact to show more..." data-target="${index}" onclick=${typeof object.content.description === 'string' ? this.elementToggleCardContent : undefined}>
                 <div class="level-left" title="${object.content.label}">
-                  <small class="is-size-7 level-item is-hidden-desktop">${this.formatTitle(object)}</small>
-                  <p class="level-item is-hidden-touch">${this.formatTitle(object)}</p>
                   ${object.new ? html`
                     <small class="level-item tag is-success">New</small>
                   ` : undefined}
@@ -113,6 +111,8 @@
                       <span>Open</span>
                     </small>
                   ` : undefined}
+                  <small class="is-size-7 level-item is-hidden-desktop">${this.formatTitle(object)}</small>
+                  <p class="level-item is-hidden-touch">${this.formatTitle(object)}</p>
                 </div>
               </a>
               <a class="card-header-icon level is-mobile" onclick=${() => this.createOnClick ? undefined : this.customNextClick.func(this.menuData[index])}>
