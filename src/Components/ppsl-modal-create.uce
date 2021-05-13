@@ -87,8 +87,9 @@
         target.value = target.value.trim()
 
         if (target.name === 'newFieldName') {
-          // First character lowercase, replace all whitespace.
-          target.value = String(target.value.substr(0, 1).toLowerCase() + target.value.substr(1)).replace(/\s/g, '')
+          target.value = String(target.value.substr(0, 1).toLowerCase() + target.value.substr(1)) // First character lowercase
+            .replace(/^[0-9]+/, '') // Remove starting numerical character.
+            .replace(/[^\w]/g, '') // Replace any non-word characters.
           this.buttonsToggleDisable()
           return
         }
