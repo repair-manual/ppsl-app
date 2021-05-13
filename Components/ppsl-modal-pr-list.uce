@@ -24,8 +24,8 @@
 export default{props:{contentHTML:null,refreshPRListButton:null},async showPRList(){this.contentHTML=document.getElementById("root").loaderTemplate(1)
 const{prData:e}=self.GlobalContext
 let s=[]
-for(let t=0;t<e.length;t++){const n=e[t],o=await self.checkIfPRIsMergedOrClosed(n.number)
-s.push({...o,pr:n,content:{label:`#${n.number}`}})}this.contentHTML=t`
+for(let t=0;t<e.length;t++){const n=e[t],o=await self.checkIfPRIsMergedOrClosed(n.number,n.settings)
+s.push({...o,pr:n,content:{label:`${n.settings?`${n.settings.repo.owner}/${n.settings.repo.name} `:""}#${n.number}`}})}this.contentHTML=t`
         <div is="ppsl-product-menu"
           .data="${s}"
           .customNextClick=${{func:t=>document.getElementById("modal").openPRModal(t)}}

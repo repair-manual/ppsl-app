@@ -28,7 +28,7 @@ i=i>3600?(i/60/60).toFixed(0)+"h":i>60?(i/60).toFixed(0)+"m":i.toFixed(0)+"s",th
         <div class="navbar-item">
           <div class="buttons">
             <button class="button is-dark" onclick=${()=>document.getElementById("modal").openPRListModal()}>
-              <span is="ppsl-icon" icon="git-pull-request" title="Settings"></span>
+              <span is="ppsl-icon" icon="git-pull-request" title="Your PRs"></span>
             </button>
             <button class="button is-dark" onclick=${()=>document.getElementById("modal").openGithubUploadModal()}>
               <span is="ppsl-icon" icon="upload-cloud" title="Upload" ></span>

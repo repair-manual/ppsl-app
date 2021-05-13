@@ -17,7 +17,7 @@
 <script type=module>import{html as e}from"@uce"
 export default{props:{contentPRE:null,timer:null,id:null,productObject:{description:null,number:null,year:null,modelNumber:null,modelID:null,emc:null,problems:[]}},async create(){this.parse()
 const e={_id:this.id,content:this.productObject,sha:null,new:!0},{editedData:t,data:l}=self.GlobalContext
-t.products.push(e),self.saveDataToStorage("editedData",t),await document.getElementById("leftmenu").products(),this.closeModal()},parse(e){const{editedData:t,data:l}=self.GlobalContext,n=this.querySelector("#createproductform"),{description:o,number:r,year:i,modelNumber:a,modelID:p,emc:s}=n.elements,u={description:String(o.value),number:String(r.value),year:String(i.value),modelNumber:String(a.value),modelID:String(p.value),emc:String(s.value)}
+t.products.push(e),self.saveDataToStorage("editedData",t),this.closeModal(),await document.getElementById("leftmenu").products()},parse(e){const{editedData:t,data:l}=self.GlobalContext,n=this.querySelector("#createproductform"),{description:o,number:r,year:i,modelNumber:a,modelID:p,emc:s}=n.elements,u={description:String(o.value),number:String(r.value),year:String(i.value),modelNumber:String(a.value),modelID:String(p.value),emc:String(s.value)}
 0===n.elements.label.value.length?this.id=`${[u.modelNumber,u.year].filter((e=>e.length>0)).join(" ")}`:this.id=n.elements.label.value
 const d=0,m=[...t.products.map((e=>e._id)),...l.products.map((e=>e._id))]
 for(let e=0;e<m.length;e++){const t=m[e]
