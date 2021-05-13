@@ -89,7 +89,7 @@
         },
         files: this.filesToUpload.map(res => {
           return {
-            type: res.type,
+            type: res.json.type,
             id: res.json._id
           }
         }),
