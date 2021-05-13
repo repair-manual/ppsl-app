@@ -87,9 +87,11 @@
         target.value = target.value.trim()
 
         if (target.name === 'newFieldName') {
-          target.value = String(target.value.substr(0, 1).toLowerCase() + target.value.substr(1)) // First character lowercase
+          target.value = target.value
             .replace(/^[0-9]+/, '') // Remove starting numerical character.
             .replace(/[^\w]/g, '') // Replace any non-word characters.
+
+          target.value = String(target.value.substr(0, 1).toLowerCase() + target.value.substr(1)) // First character lowercase
           this.buttonsToggleDisable()
           return
         }
