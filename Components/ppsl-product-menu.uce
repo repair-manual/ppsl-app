@@ -19,8 +19,6 @@ return a.content.label.length>0?`${n}${a.content.label.substr(0,70)}${a.content.
             <div class="card-header">
               <a class="card-header-title level is-mobile is-marginless is-clipped" title="Interact to show more..." data-target="${n}" onclick=${"string"==typeof a.content.description?this.elementToggleCardContent:void 0}>
                 <div class="level-left" title="${a.content.label}">
-                  <small class="is-size-7 level-item is-hidden-desktop">${this.formatTitle(a)}</small>
-                  <p class="level-item is-hidden-touch">${this.formatTitle(a)}</p>
                   ${a.new?t`
                     <small class="level-item tag is-success">New</small>
                   `:void 0}
@@ -45,6 +43,8 @@ return a.content.label.length>0?`${n}${a.content.label.substr(0,70)}${a.content.
                       <span>Open</span>
                     </small>
                   `:void 0}
+                  <small class="is-size-7 level-item is-hidden-desktop">${this.formatTitle(a)}</small>
+                  <p class="level-item is-hidden-touch">${this.formatTitle(a)}</p>
                 </div>
               </a>
               <a class="card-header-icon level is-mobile" onclick=${()=>this.createOnClick?void 0:this.customNextClick.func(this.menuData[n])}>

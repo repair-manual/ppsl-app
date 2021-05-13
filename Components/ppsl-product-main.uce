@@ -15,9 +15,8 @@ e.sort(((t,e)=>e-t))
 for(let i=p?25*(l-1):0;(!p||i<25*l)&&i<e.length;i++){const l=e[i]
 if(!l)continue
 const n=d.find((t=>t._id===l))
-if(n)c.push(n)
-else if(void 0===n||void 0===n.new){let e=await self.loadFromGithub(t,l)
-null!==e?c.push(s[t][e]):c.push({_id:l,content:{}})}}return p?{results:c,maxPages:r,currentPage:l}:c},create(e,l,i){const s=getParentType(e.plural)
+let o=await self.loadFromGithub(t,l)
+n?c.push(n):void 0===n&&(null!==o?c.push(s[t][o]):c.push({_id:l,content:{}}))}return p?{results:c,maxPages:r,currentPage:l}:c},create(e,l,i){const s=getParentType(e.plural)
 let n
 this.titleHTML=t`
         <p class="card-header-title">Creating new ${e.singular} for ${s.singular} "${l}"</p>

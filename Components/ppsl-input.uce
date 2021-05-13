@@ -2,7 +2,7 @@
 <div is=ppsl-input>
 <p class=control>
 <label class=label>{{this.props.label}}</label>
-<input type={{this.props.type}} class=input placeholder={{this.props.placeholder}} name={{this.props.name}}>
+<input type={{this.props.type}} class=input oninput={{this.props.oninput}} placeholder={{this.props.placeholder}} name={{this.props.name}}>
 </p>
 {{ this.helpMessageHTML }}
 </div>

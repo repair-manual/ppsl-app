@@ -23,5 +23,9 @@ export default{props:{contentHTML:null},openSettingsModal(){this.contentHTML=s`
         <div class="modal-background"></div>
         <a class="modal-close" title="Close" onclick="${this.closeModal.bind(this)}"></a>
         <div is="ppsl-modal-pr" .data=${i} .closeModal=${this.closeModal.bind(this)}></div>
+      `,this.classList.add("is-active"),document.documentElement.classList.add("is-clipped")},openCreateModal(){this.contentHTML=s`
+        <div class="modal-background"></div>
+        <a class="modal-close" title="Close" onclick="${this.closeModal.bind(this)}"></a>
+        <div is="ppsl-modal-create" .closeModal=${this.closeModal.bind(this)}></div>
       `,this.classList.add("is-active"),document.documentElement.classList.add("is-clipped")},closeModal(){this.classList.remove("is-active"),document.documentElement.classList.remove("is-clipped"),this.contentHTML=s``},setup(s){s.id="modal",s.classList.add("modal")}}
 </script>

@@ -1,0 +1,38 @@
+
+<div is=ppsl-modal-create>
+<div class=modal-card-head>
+<p class=modal-card-title>Creating "{{ this.id }}"</p>
+</div>
+<div class=modal-card-body>
+{{ fields }}
+<hr>
+<strong>Output:</strong>
+<pre>{{ this.contentPRE }}</pre>
+</div>
+<div class=modal-card-foot>
+<button class="button is-success" onclick={{this.create.bind(this)}}>Create</button>
+<button class="button is-text" onclick={{this.closeModal}}>Close</button>
+</div>
+</div>
+<script type=module>import{html as e}from"@uce"
+export default{props:{contentPRE:null,timer:null,id:null,productObject:{description:null,number:null,year:null,modelNumber:null,modelID:null,emc:null,problems:[]}},async create(){this.parse()
+const e={_id:this.id,content:this.productObject,sha:null,new:!0},{editedData:t,data:l}=self.GlobalContext
+t.products.push(e),self.saveDataToStorage("editedData",t),await document.getElementById("leftmenu").products(),this.closeModal()},parse(e){const{editedData:t,data:l}=self.GlobalContext,n=this.querySelector("#createproductform"),{description:o,number:r,year:i,modelNumber:a,modelID:p,emc:s}=n.elements,u={description:String(o.value),number:String(r.value),year:String(i.value),modelNumber:String(a.value),modelID:String(p.value),emc:String(s.value)}
+0===n.elements.label.value.length?this.id=`${[u.modelNumber,u.year].filter((e=>e.length>0)).join(" ")}`:this.id=n.elements.label.value
+const d=0,m=[...t.products.map((e=>e._id)),...l.products.map((e=>e._id))]
+for(let e=0;e<m.length;e++){const t=m[e]
+this.id.toLowerCase()===t.toLowerCase()&&d++}d>0&&(this.id+=d),this.productObject={...this.productObject,...u}},onInput(e){e.preventDefault()
+const t=e.currentTarget
+clearTimeout(this.timer),this.parse(t),this.timer=setTimeout((()=>{this.contentPRE=window.jsyaml.dump(this.productObject,{schema:window.jsyaml.JSON_SCHEMA})}),500)},setup(t){t.classList.add("modal-card")
+return{fields:e`
+        <form class="form" id="createproductform">
+          <div is="ppsl-input" .props=${{onInput:()=>t.onInput,label:"Product number",name:"number"}}></div>
+          <div is="ppsl-input" .props=${{onInput:()=>t.onInput,label:"Product year",name:"year"}}></div>
+          <div is="ppsl-input" .props=${{onInput:()=>t.onInput,label:"Model number",name:"modelNumber"}}></div>
+          <div is="ppsl-input" .props=${{onInput:()=>t.onInput,label:"Model ID",name:"modelID"}}></div>
+          <div is="ppsl-input" .props=${{onInput:()=>t.onInput,label:"EMC",name:"emc"}}></div>
+          <div is="ppsl-input" .props=${{onInput:()=>t.onInput,label:"Product label",name:"label",placeholder:"ModelNumber Year Size Name"}}></div>
+          <div is="ppsl-textarea" .props=${{onInput:()=>t.onInput,label:"Product description",name:"description"}}></div>
+        </form>
+      `}}}
+</script>

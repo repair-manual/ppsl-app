@@ -12,21 +12,31 @@
 </div>
 </div>
 <script type=module>import{html as t,render as e}from"@uce"
-export default{props:{contentHTML:null,menuLabelHTML:null},async loadProduct(t){const e=t.currentTarget.dataset.sha,o=t.currentTarget.innerText,n=await self.loadFromGithub("products",o,e)
-document.getElementById("product").setProduct(n)},toggleProductsMenuList(t){t.stopPropagation()
+export default{props:{contentHTML:null,menuLabelHTML:null},async loadProduct(t){const e=t.currentTarget.dataset.sha,s=t.currentTarget.dataset.id
+await self.loadFromGithub("products",s,e)
+document.getElementById("product").setProduct(s)},createProduct(){document.getElementById("modal").openCreateModal()},toggleProductsMenuList(t){t.stopPropagation()
 const e=this.querySelector(".menu-list")
 e.classList.toggle("is-hidden")
-const o=t.currentTarget.querySelector('[is="ppsl-icon"')
-o.icon=e.classList.contains("is-hidden")?"chevron-up":"chevron-down",o.showIcon()},async products(){let{offline:e,editedData:o}=self.GlobalContext
+const s=t.currentTarget.querySelector('[is="ppsl-icon"')
+s.icon=e.classList.contains("is-hidden")?"chevron-up":"chevron-down",s.showIcon()},async products(){let{offline:e,editedData:s}=self.GlobalContext
 this.menuLabelHTML=t`Loading PPSL App...`,this.contentHTML=t`<p>Logging into Github...</p>`
-try{await self.loginToOctoKit(self.getPersonalAccessToken())}catch(o){e=o,document.getElementById("product").contentHTML=t`
+try{await self.loginToOctoKit(self.getPersonalAccessToken())}catch(s){e=s,document.getElementById("product").contentHTML=t`
           <p>Something went wrong while attempting to login to Github. Enabling offline mode.</p>
         `}this.contentHTML=document.getElementById("root").loaderTemplate(4)
-let n=[]
-try{n=await self.getBranchDirectoryContent("products")}catch(t){n=o.products}this.contentHTML=t`${n.map(((e,o)=>{const n=e.label||e._id
+let o=[]
+try{o=await self.getBranchDirectoryContent("products")
+for(let t=0;t<s.products.length;t++){const e=s.products[t]
+e.new&&o.push(e)}}catch(t){o=s.products}this.contentHTML=t`${o.sort(((t,e)=>(e.new||0)-(t.new||0))).map(((e,s)=>{const o=e.label||e._id
 return t`
             <li>
-              <a onclick=${this.loadProduct} data-sha="${e.sha}">${n}</a>
+              <a onclick=${this.loadProduct} data-sha="${e.sha}" data-id="${o}">
+                <p title="${o}">
+                  ${e.new?t`
+                    <small class="level-item tag is-success">New</small>
+                  `:void 0}
+                  <span>${o}</span>
+                </p>
+              </a>
             </li>
           `}))}
       `,this.menuLabelHTML=t`
@@ -36,5 +46,10 @@ return t`
             <span>Products</span>
           </a>
         </div>
-      `},setup(t){t.classList.add("column","is-2"),t.connected=t.products}}
+        <div class="level-right">
+          <a class="level-item button is-small is-dark" onclick=${this.createProduct}>
+            <span is="ppsl-icon" icon="plus-square"></span>
+          </a>
+        </div>
+      `},setup(t){t.id="leftmenu",t.classList.add("column","is-2"),t.connected=t.products}}
 </script>

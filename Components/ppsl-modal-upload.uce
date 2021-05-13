@@ -19,32 +19,32 @@ export default{props:{filesToUpload:null,prData:null,uploadData:null,contentHTML
 const t=this.querySelector(".button.is-success")
 if(t.disabled)return
 t.disabled=!0,t.firstElementChild.classList.add("loader")
-const{githubUser:a,prData:s,editedData:i}=self.GlobalContext
+const{githubUser:a,prData:i,editedData:s}=self.GlobalContext
 await self.createForkIfNotExists()
 const l=`${a.login}-${Date.now()}`,o=await self.getOrCreateBranchIfNotExists(l),d=(await self.createCommit(o.commit?branchData.commit.sha:o.object.sha,l,this.filesToUpload),await self.createPullRequest(l,this.filesToUpload))
 openExternalURL("_blank",d.html_url)
 for(let e=0;e<this.filesToUpload.length;e++){const t=this.filesToUpload[e],a=t.json._id
-i[t.json.type].find((e=>e._id===a)).pr=!0}self.saveDataToStorage("editedData",i),s.push({number:d.number,id:d.id,files:this.filesToUpload.map((e=>({type:e.type,id:e.json._id}))),url:d.html_url,createdAt:d.created_at}),self.saveDataToStorage("prData",s),document.getElementById("modal").openPRListModal()},parseData(){const{editedData:e,data:t}=self.GlobalContext,a=Object.entries(e),s=[],i=[]
+s[t.json.type].find((e=>e._id===a)).pr=!0}self.saveDataToStorage("editedData",s),i.push({number:d.number,id:d.id,files:this.filesToUpload.map((e=>({type:e.type,id:e.json._id}))),url:d.html_url,createdAt:d.created_at}),self.saveDataToStorage("prData",i),document.getElementById("modal").openPRListModal()},parseData(){const{editedData:e,data:t}=self.GlobalContext,a=Object.entries(e),i=[],s=[]
 for(let e=0;e<a.length;e++){const[l,o]=a[e]
 for(let e=0;e<o.length;e++){const a=o[e]
 if(!0!==(a.edited||a.new))continue
 const d=t[l].find((e=>e._id===a._id))
 if(Object.values(a.content).join()===Object.values(d?d.content:{}).join())continue
 const n={type:l,...a}
-a.pr?i.push({json:n,fileName:`${n.type.substr(0,1).toUpperCase()}${n.type.substr(1)}/${n._id}.yaml`,content:window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:d?window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}):""}):s.push({json:n,fileName:`${n.type.substr(0,1).toUpperCase()}${n.type.substr(1)}/${n._id}.yaml`,content:window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:d?window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}):""})}}return this.uploadData=s,this.prData=i,this.filesToUpload=JSON.parse(JSON.stringify(s)),this.showData()},showData(){this.contentHTML=e`
-        ${this.showPRData()}
+a.pr?s.push({json:n,fileName:`${n.type.substr(0,1).toUpperCase()}${n.type.substr(1)}/${n._id}.yaml`,content:window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:d?window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}):""}):i.push({json:n,fileName:`${n.type.substr(0,1).toUpperCase()}${n.type.substr(1)}/${n._id}.yaml`,content:window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:d?window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}):""})}}return this.uploadData=i,this.prData=s,this.filesToUpload=JSON.parse(JSON.stringify(i)),this.showData()},showData(){this.contentHTML=e`
         ${this.showUploadData()}
+        ${this.showPRData()}
         ${this.showFilesToUpload()}
       `},hideSection(e,t){e.stopPropagation()
 const a=document.getElementById(t)
 a.classList.toggle("is-hidden")
-const s=e.currentTarget.firstElementChild
-s.icon=a.classList.contains("is-hidden")?"chevron-up":"chevron-down",s.showIcon()},deleteChange(e){e.stopPropagation()
-const{type:t,id:a,fileName:s}=e.currentTarget.dataset,{editedData:i}=self.GlobalContext,l=i[t].findIndex((e=>e._id===a))
-i[t].splice(l,1),self.saveDataToStorage("editedData",i)
-const o=this.uploadData.findIndex((e=>e.fileName===s))
+const i=e.currentTarget.firstElementChild
+i.icon=a.classList.contains("is-hidden")?"chevron-up":"chevron-down",i.showIcon()},deleteChange(e){e.stopPropagation()
+const{type:t,id:a,fileName:i}=e.currentTarget.dataset,{editedData:s}=self.GlobalContext,l=s[t].findIndex((e=>e._id===a))
+s[t].splice(l,1),self.saveDataToStorage("editedData",s)
+const o=this.uploadData.findIndex((e=>e.fileName===i))
 this.uploadData.splice(o,1)
-const d=this.filesToUpload.findIndex((e=>e.fileName===s))
+const d=this.filesToUpload.findIndex((e=>e.fileName===i))
 this.filesToUpload.splice(d,1),this.showData()},showPRData(){const t=e=>{e.stopPropagation()
 const t=e.currentTarget
 if(t.checked){const e=this.prData.find((e=>e.fileName===t.dataset.fileName))
@@ -63,16 +63,26 @@ return this.prData.length>0?e.for(this.prData)`
         </div>
         <hr>
         <div id="prData">
-          ${this.prData.map(((a,s)=>e`
-            <div class="level is-mobile is-marginless">
-              <div class="level-left">
-                <h4 class="is-size-4">${a.fileName}</h4>
+          ${this.prData.map(((a,i)=>e`
+            ${0!==i?e`<hr>`:void 0}
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-title level is-mobile is-marginless is-clipped">
+                  <div class="level-left" title="${a.fileName}">
+                    <small class="is-size-7 level-item is-hidden-desktop">${a.fileName}</small>
+                    <p class="level-item is-hidden-touch">${a.fileName}</p>
+                  </div>
+                </div>
+                <div class="card-header-icon level is-mobile" title="Upload change">
+                  <div class="level-item">
+                    <input type="checkbox" data-file-name="${a.fileName}" onchange=${t}>
+                  </div>
+                </div>
               </div>
-              <div class="level-right">
-                <input type="checkbox" data-file-name="${a.fileName}" onchange=${t}>
+              <div class="card-content">
+                <div is="ppsl-diff" .oldChange="${a.oldContent}" .newChange="${a.content}"></div>
               </div>
             </div>
-            <div is="ppsl-diff" .oldChange="${a.oldContent}" .newChange="${a.content}"></div>
           `))}
           <hr>
         </div>
