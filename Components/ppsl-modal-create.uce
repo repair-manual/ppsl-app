@@ -31,7 +31,7 @@ export default{props:{contentPRE:null,fieldsHTML:null,timer:null,id:null,tempPro
 for(let s=0;s<t.length;s++){const i=t[s]
 document.getElementById(i).disabled=!!e||!document.getElementById(i).disabled}},async create(){if(this.buttonsToggleDisable(!0),await this.parse(),0===this.id.length)return
 const e={_id:this.id,content:{...this.productObject,problems:[]},sha:null,new:!0},{editedData:t,data:s}=self.GlobalContext
-t.products.push(e),self.saveDataToStorage("editedData",t),this.closeModal(),await document.getElementById("leftmenu").products()},async parse(e){if(e&&(e.value=e.value.trim(),"newFieldName"===e.name))return e.value=String(e.value.substr(0,1).toLowerCase()+e.value.substr(1)).replace(/^[0-9]+/,"").replace(/[^\w]/g,""),void this.buttonsToggleDisable()
+t.products.push(e),self.saveDataToStorage("editedData",t),this.closeModal(),await document.getElementById("leftmenu").products()},async parse(e){if(e&&(e.value=e.value.trim(),"newFieldName"===e.name))return e.value=e.value.replace(/^[0-9]+/,"").replace(/[^\w]/g,""),e.value=String(e.value.substr(0,1).toLowerCase()+e.value.substr(1)),void this.buttonsToggleDisable()
 const{editedData:t,data:s}=self.GlobalContext,i=this.querySelector("#createproductform"),a={}
 for(let e=0;e<this.fields.length;e++){const t=this.fields[e].name
 if("label"!==t){const e=i.elements[t]
