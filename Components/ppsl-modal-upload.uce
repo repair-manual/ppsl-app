@@ -24,7 +24,7 @@ await self.createForkIfNotExists()
 const o=`${a.login}-${Date.now()}`,d=await self.getOrCreateBranchIfNotExists(o),n=(await self.createCommit(d.commit?branchData.commit.sha:d.object.sha,o,this.filesToUpload),await self.createPullRequest(o,this.filesToUpload))
 openExternalURL("_blank",n.html_url)
 for(let e=0;e<this.filesToUpload.length;e++){const t=this.filesToUpload[e],a=t.json._id
-i[t.json.type].find((e=>e._id===a)).pr=!0}self.saveDataToStorage("editedData",i),s.push({number:n.number,id:n.id,settings:{repo:{owner:l.repo.owner,name:l.repo.name}},files:this.filesToUpload.map((e=>({type:e.type,id:e.json._id}))),url:n.html_url,createdAt:n.created_at}),self.saveDataToStorage("prData",s),document.getElementById("modal").openPRListModal()},parseData(){const{editedData:e,data:t}=self.GlobalContext,a=Object.entries(e),s=[],i=[]
+i[t.json.type].find((e=>e._id===a)).pr=!0}self.saveDataToStorage("editedData",i),s.push({number:n.number,id:n.id,settings:{repo:{owner:l.repo.owner,name:l.repo.name}},files:this.filesToUpload.map((e=>({type:e.json.type,id:e.json._id}))),url:n.html_url,createdAt:n.created_at}),self.saveDataToStorage("prData",s),document.getElementById("modal").openPRListModal()},parseData(){const{editedData:e,data:t}=self.GlobalContext,a=Object.entries(e),s=[],i=[]
 for(let e=0;e<a.length;e++){const[l,o]=a[e]
 for(let e=0;e<o.length;e++){const a=o[e]
 if(!0!==(a.edited||a.new))continue
