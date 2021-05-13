@@ -39,7 +39,7 @@
       button.firstElementChild.classList.add('loader')
 
 
-      const { githubUser, prData, editedData } = self.GlobalContext
+      const { githubUser, prData, editedData, settings } = self.GlobalContext
 
       await self.createForkIfNotExists()
 
@@ -81,6 +81,12 @@
       prData.push({
         number: pr.number,
         id: pr.id,
+        settings: {
+          repo: {
+            owner: settings.repo.owner,
+            name: settings.repo.name
+          }
+        },
         files: this.filesToUpload.map(res => {
           return {
             type: res.type,

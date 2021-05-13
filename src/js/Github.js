@@ -276,8 +276,12 @@ self.createPullRequest = async (branchName, data) => {
   }
 }
 
-self.checkIfPRIsMergedOrClosed = async (prNumber) => {
-  const { octokit, settings } = self.GlobalContext
+self.checkIfPRIsMergedOrClosed = async (prNumber, settings) => {
+  const { octokit } = self.GlobalContext
+
+  if (!settings) {
+    settings = self.GlobalContext.settings
+  }
 
   try {
     const res = await octokit.pulls.get({

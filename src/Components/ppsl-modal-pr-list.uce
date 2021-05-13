@@ -42,12 +42,12 @@
       for (let index = 0; index < prData.length; index++) {
         const pr = prData[index]
         
-        const data = await self.checkIfPRIsMergedOrClosed(pr.number)
+        const data = await self.checkIfPRIsMergedOrClosed(pr.number, pr.settings)
 
         prDataResult.push({
           ...data,
           pr,
-          content: { label: `#${pr.number}` }
+          content: { label: `${pr.settings ? `${pr.settings.repo.owner}/${pr.settings.repo.name} ` : ''}#${pr.number}` }
         })
       }
 

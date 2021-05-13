@@ -67,7 +67,7 @@
         <div class="navbar-item">
           <div class="buttons">
             <button class="button is-dark" onclick=${() => document.getElementById('modal').openPRListModal()}>
-              <span is="ppsl-icon" icon="git-pull-request" title="Settings"></span>
+              <span is="ppsl-icon" icon="git-pull-request" title="Your PRs"></span>
             </button>
             <button class="button is-dark" onclick=${() => document.getElementById('modal').openGithubUploadModal()}>
               <span is="ppsl-icon" icon="upload-cloud" title="Upload" ></span>

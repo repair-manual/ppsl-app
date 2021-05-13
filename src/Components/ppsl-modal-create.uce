@@ -50,10 +50,10 @@
       editedData['products'].push(newData)
 
       self.saveDataToStorage('editedData', editedData)
+      
+      this.closeModal()
 
       await document.getElementById('leftmenu').products()
-
-      this.closeModal()
     },
 
     parse (ev) {
