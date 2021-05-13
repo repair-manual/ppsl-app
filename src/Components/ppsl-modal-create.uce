@@ -4,13 +4,25 @@
     <p class="modal-card-title">Creating "{{ this.id }}"</p>
   </div>
   <div class="modal-card-body">
-    {{ fields }}
+    <p class="control">
+      <label class="label">New field name</label>
+      <input class="input" onInput="{{ this.onInput.bind(this) }}" placeholder="First character lowercase, no spaces" name="newFieldName">
+    </p>
+    <div class="field has-addons">
+      <p class="control is-expanded">
+        <button class="button is-fullwidth" onclick="{{ () => this.addField('input') }}" id="createinput">Add as input field</button>
+      </p>
+      <p class="control is-expanded">
+        <button class="button is-fullwidth" onclick="{{ () => this.addField('textarea') }}" id="createtextarea">Add as textarea field</button>
+      </p>
+    </div>
+    {{ this.fieldsHTML }}
     <hr>
-    <strong>Output:</strong>
+    <strong>Output for "{{ this.id }}":</strong>
     <pre>{{ this.contentPRE }}</pre>
   </div>
   <div class="modal-card-foot">
-    <button class="button is-success" onclick="{{ this.create.bind(this) }}">Create</button>
+    <button class="button is-success" onclick="{{ this.create.bind(this) }}" id="createbutton">Create</button>
     <button class="button is-text" onclick="{{ this.closeModal }}">Close</button>
   </div>
 </div>
@@ -22,25 +34,39 @@
   export default {
     props: {
       contentPRE: null,
+      fieldsHTML: null,
       timer: null,
       id: null,
-      productObject: {
-        description: null,
-        number: null,
-        year: null,
-        modelNumber: null,
-        modelID: null,
-        emc: null,
-        problems: []
+      tempProductNamesList: [],
+      fields: [
+        { type: 'input', name: 'number'},
+        { type: 'input', name: 'year'},
+        { type: 'input', name: 'label'},
+        { type: 'textarea', name: 'description'}
+      ],
+      _defaultFields: ['description', 'number', 'year', 'label'],
+      productObject: {}
+    },
+
+    buttonsToggleDisable (disable) {
+      const el = ['createinput', 'createtextarea', 'createbutton']
+      for (let index = 0; index < el.length; index++) {
+        const id = el[index]
+
+        document.getElementById(id).disabled = disable ? true : !document.getElementById(id).disabled
       }
     },
 
     async create () {
-      this.parse()
+      this.buttonsToggleDisable(true)
+
+      await this.parse()
+
+      if (this.id.length === 0) return
 
       const newData = {
         _id: this.id,
-        content: this.productObject,
+        content: { ...this.productObject, problems: [] },
         sha: null,
         new: true
       }
@@ -56,74 +82,135 @@
       await document.getElementById('leftmenu').products()
     },
 
-    parse (ev) {
+    async parse (target) {
+      if (target) {
+        target.value = target.value.trim()
+
+        if (target.name === 'newFieldName') {
+          // First character lowercase, replace all whitespace.
+          target.value = String(target.value.substr(0, 1).toLowerCase() + target.value.substr(1)).replace(/\s/g, '')
+          this.buttonsToggleDisable()
+          return
+        }
+      }
+
       const { editedData, data } = self.GlobalContext
       const form = this.querySelector('#createproductform')
 
-      const {
-        description,
-        number,
-        year,
-        modelNumber,
-        modelID,
-        emc
-      }  = form.elements
+      const product = {}
 
-      const product = {
-        description: String(description.value),
-        number: String(number.value),
-        year: String(year.value),
-        modelNumber: String(modelNumber.value),
-        modelID: String(modelID.value),
-        emc: String(emc.value)
+      for (let index = 0; index < this.fields.length; index++) {
+        const field = this.fields[index]
+        const fieldName = field.name
+
+        if (fieldName !== 'label') {
+          const formEl = form.elements[fieldName]
+
+          product[fieldName] = formEl.value
+        }
       }
 
-      if (form.elements.label.value.length === 0) this.id = `${[product.modelNumber, product.year].filter(s => s.length > 0).join(' ')}`
+      if (form.elements.label.value.length === 0) this.id = `${[product.modelNumber, product.year].filter(s => s && s.length > 0).join(' ')}`
       else this.id = form.elements.label.value
 
       // Make sure it doesn't already exist
-      const count = 0
-      const productsIdArr = [...editedData['products'].map(p => p._id), ...data['products'].map(p => p._id)]
+      let count = 0
+      const productsIdArr = [...editedData['products'].map(p => p._id), ...this.tempProductNamesList]
       for (let index = 0; index < productsIdArr.length; index++) {
         const id = productsIdArr[index]
         if (this.id.toLowerCase() === id.toLowerCase()) count++
       }
 
-      if (count > 0) this.id += count
+      if (count > 0) {
+        this.id += count
+        this.getElementsByTagName('input')['label'].value = this.id
+      }
 
       this.productObject = { ...this.productObject, ...product }
+
+      this.buttonsToggleDisable()
     },
 
-    onInput (ev) {
-      ev.preventDefault()
-      const target = ev.currentTarget
+    async onInput (ev) {
+      let target
+      if (ev) {
+        ev.preventDefault()
+        target = ev.target
+      }
 
+      this.buttonsToggleDisable(true)
       clearTimeout(this.timer)
 
-      // Parse product object.
-      this.parse(target)
+      this.timer = setTimeout(async () => {
+        // Parse product object.
+        await this.parse(target)
 
-      this.timer = setTimeout(() => {
         this.contentPRE = window.jsyaml.dump(this.productObject, { schema: window.jsyaml.JSON_SCHEMA })
       }, 500)
     },
 
-    setup (element) {
-      element.classList.add('modal-card')
+    addField (type) {
+      const field = this.getElementsByTagName('input')['newFieldName']
+      const fieldName = field.value
 
-      const fields = html`
+      if (fieldName.length === 0) return
+
+      const exists = this.fields.find(f => f.name === fieldName)
+      if (exists) return
+
+      this.fields.push({
+        type,
+        name: fieldName
+      })
+
+      this.showFields()
+    },
+
+    async removeField (ev) {
+      ev.preventDefault()
+      const target = ev.currentTarget
+      const fieldName = target.dataset.fieldName
+
+      if (this._defaultFields.includes(fieldName)) return
+
+      const index = this.fields.findIndex(f => f.name === fieldName)
+
+      if (index > -1) {
+        this.fields.splice(index, 1)
+        this.productObject[fieldName] = undefined
+        this.onInput()
+        this.showFields()
+      }
+    },
+
+    showFields () {
+      this.fieldsHTML = html`
         <form class="form" id="createproductform">
-          <div is="ppsl-input" .props=${{ onInput: () => element.onInput, label: 'Product number', name: 'number' }}></div>
-          <div is="ppsl-input" .props=${{ onInput: () => element.onInput, label: 'Product year', name: 'year' }}></div>
-          <div is="ppsl-input" .props=${{ onInput: () => element.onInput, label: 'Model number', name: 'modelNumber' }}></div>
-          <div is="ppsl-input" .props=${{ onInput: () => element.onInput, label: 'Model ID', name: 'modelID' }}></div>
-          <div is="ppsl-input" .props=${{ onInput: () => element.onInput, label: 'EMC', name: 'emc' }}></div>
-          <div is="ppsl-input" .props=${{ onInput: () => element.onInput, label: 'Product label', name: 'label', placeholder: 'ModelNumber Year Size Name' }}></div>
-          <div is="ppsl-textarea" .props=${{ onInput: () => element.onInput, label: 'Product description', name: 'description' }}></div>
+          ${this.fields.map((field, ind) => {
+            const label = field.name.substr(0, 1).toUpperCase() + field.name.substr(1)
+            const props = { onInput: this.onInput, label, name: field.name }
+            // TODO: I know what you're thinking, an anonymous IIFE? Why? (Replace later.)
+            return html`
+              ${ind !== 0 ? html`<hr>` : undefined}
+              ${(() => {
+                if (field.type === 'input') {
+                  return html`<div is="ppsl-input" .props=${{ ...props }} value="${field.name === 'label' ? this.id : this.productObject[field.name]}"></div>`
+                  } else if (field.type === 'textarea') {
+                    return html`<div is="ppsl-textarea" .props=${{ ...props }} value="${this.productObject[field.name]}"></div>`
+                  }
+                })()
+              }
+              ${!this._defaultFields.includes(field.name) ? html`<a class="button is-small" data-field-name="${field.name}" onclick=${this.removeField.bind(this)}>Delete ${field.name} field.</a>` : undefined}
+            `
+          })}
         </form>
       `
+    },
 
-      return { fields }
+    async setup (element) {
+      element.classList.add('modal-card')
+      element.connected = element.showFields
+      element.tempProductNamesList = (await self.getBranchDirectoryContent('products')).map(p => p.label)
     }
   }
 //# sourceURL=ppsl-modal-create.js
