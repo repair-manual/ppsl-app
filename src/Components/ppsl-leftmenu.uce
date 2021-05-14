@@ -117,7 +117,6 @@
     },
 
     setup(element) {
-      element.id = 'leftmenu'
       element.classList.add('column', 'is-2')
 
       element.connected = element.products

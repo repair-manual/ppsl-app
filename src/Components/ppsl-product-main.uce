@@ -246,7 +246,7 @@
       document.getElementById('product').selectedData[this.productId].problem = problem._id
 
       this.contentHTML = html`
-        <div is="ppsl-product-description"
+        <div is="ppsl-product-description" id="productdescription"
           .data="${problem}"
           type="problems"
           .customPreviousClick=${{ label: 'Return to problems list', func: () => this.showPrevious('problems') }}
@@ -289,7 +289,7 @@
       document.getElementById('product').selectedData[this.productId].solution = solution._id
 
       this.contentHTML = html`
-        <div is="ppsl-product-description"
+        <div is="ppsl-product-description" id="productdescription"
           .data="${solution}"
           type="solutions"
           .customPreviousClick=${{ label: 'Return to problem', func: () => this.showPrevious('problem')}}
@@ -332,7 +332,7 @@
       document.getElementById('product').selectedData[this.productId].link = link._id
 
       this.contentHTML = html`
-        <div is="ppsl-product-description"
+        <div is="ppsl-product-description" id="productdescription"
           .data="${link}"
           type="links"
           .customPreviousClick=${{ label: 'Return to solution', func: () => this.showPrevious('solution')}}
@@ -355,8 +355,6 @@
     },
 
     setup (element) {
-      element.id = 'productmain'
-
       // Show problems on setup.
       element.showPrevious.bind(element)('problems')
     }

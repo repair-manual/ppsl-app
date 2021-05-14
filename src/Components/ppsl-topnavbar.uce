@@ -81,7 +81,6 @@
     },
 
     setup (element) {
-      element.id = 'topnavbar'
       element.classList.add('hero-head')
     }
   }

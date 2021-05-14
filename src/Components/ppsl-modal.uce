@@ -86,7 +86,6 @@
     },
 
     setup (element) {
-      element.id = 'modal'
       element.classList.add('modal')
     }
   }

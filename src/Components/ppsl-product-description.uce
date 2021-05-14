@@ -195,10 +195,6 @@
           </div>
         `}
       `
-    },
-
-    setup (element) {
-      element.id = 'productdescription'
     }
   }
 //# sourceURL=ppsl-product-description.js
