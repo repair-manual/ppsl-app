@@ -1,11 +1,11 @@
 
 <div is=ppsl-root>
-<div is=ppsl-topnavbar></div>
+<div is=ppsl-topnavbar id=topnavbar></div>
 <div class="hero-body is-paddingless unalign">
 <div class=container>
 <div class="columns is-marginless">
-<div is=ppsl-leftmenu></div>
-<div is=ppsl-product></div>
+<div is=ppsl-leftmenu id=leftmenu></div>
+<div is=ppsl-product id=product></div>
 </div>
 </div>
 </div>
@@ -15,5 +15,5 @@ export default{githubError:e=>s`
       <strong class="has-text-light">There's been an issue connecting to Github.</strong>
       <p>${e.message} ${e.code}</p>
       <pre>${e.stack}</pre>
-    `,loaderTemplate:e=>s`<span class="${"loader"+(e?` is-size-${e}`:"")}"></span>`,setup(s){s.id="root",s.classList.add("hero","is-fullheight","is-dark","is-bold")}}
+    `,loaderTemplate:e=>s`<span class="${"loader"+(e?` is-size-${e}`:"")}"></span>`,setup(s){s.classList.add("hero","is-fullheight","is-dark","is-bold")}}
 </script>

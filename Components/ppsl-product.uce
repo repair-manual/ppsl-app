@@ -11,9 +11,9 @@ o>-1&&(i=e.products[o]),this.selectedData[i._id]||(this.selectedData[i._id]={pro
 let c=this.selectedData[i._id]
 this.selectedProduct=i._id,this.mainHTML=t.for(this.selectedData,i._id)`
         <div is="ppsl-product-settings" class="column is-12" .product=${i}></div>
-        <div is="ppsl-product-main" class="column is-12" .selectedData=${c} .productId=${i._id}></div>
+        <div is="ppsl-product-main" id="productmain" class="column is-12" .selectedData=${c} .productId=${i._id}></div>
         <div is="ppsl-product-comments" class="column is-12" .label="${i._id}" .repo=${l.commentsRepo}></div>
-      `,document.getElementById("root").scrollIntoView()},setup(s){s.id="product",s.classList.add("column"),s.mainHTML=t`
+      `,document.getElementById("root").scrollIntoView()},setup(s){s.classList.add("column"),s.mainHTML=t`
         <div class="column has-text-centered">
           <strong class="has-text-light">Select a product to display its information.</strong>
         </div>

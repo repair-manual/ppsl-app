@@ -38,5 +38,5 @@ i=i>3600?(i/60/60).toFixed(0)+"h":i>60?(i/60).toFixed(0)+"m":i.toFixed(0)+"s",th
             </button>
           </div>
         </div>
-      `,setup(t){t.id="topnavbar",t.classList.add("hero-head")}}
+      `,setup(t){t.classList.add("hero-head")}}
 </script>

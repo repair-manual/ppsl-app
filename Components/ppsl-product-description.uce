@@ -91,5 +91,5 @@ return t`
             `:void 0}
           </div>
         `}
-      `},setup(t){t.id="productdescription"}}
+      `}}
 </script>

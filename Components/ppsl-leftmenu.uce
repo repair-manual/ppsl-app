@@ -51,5 +51,5 @@ return t`
             <span is="ppsl-icon" icon="plus-square"></span>
           </a>
         </div>
-      `},setup(t){t.id="leftmenu",t.classList.add("column","is-2"),t.connected=t.products}}
+      `},setup(t){t.classList.add("column","is-2"),t.connected=t.products}}
 </script>
