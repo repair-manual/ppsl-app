@@ -40,13 +40,11 @@
           foundData = editedData[type]
         }
 
-        arr = foundData.map(res => res.label)
+        arr = [...new Set([...foundData.map(res => res.label), ...editedData[type].map(link => link._id)])]
       }
 
       if (editedDataParent) {
-        arr.push(...editedDataParent.content[type])
-
-        arr = [...new Set([...arr])]
+        arr = [...new Set([...arr, ...editedDataParent.content[type]])]
       }
 
       const resultArr = []
