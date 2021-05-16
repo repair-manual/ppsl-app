@@ -12,7 +12,7 @@ if(t=this.data?await document.getElementById("productmain").getChildContent(this
 null===this.customNextClick&&(this.customNextClick={func:document.getElementById("productmain")[a.singular].bind(document.getElementById("productmain"))}),this.paginationClick=t.results?{func:this.paginate.bind(this),currentPage:t.currentPage,maxPages:t.maxPages}:void 0}return this.defer=!1,this.showMenu()},elementToggleCardContent(t){t.preventDefault()
 const a=t.currentTarget.dataset.target
 document.querySelector(`[data-id="${a}"]`).classList.toggle("is-hidden")},formatTitle(a){const n=this.paginationClick?`[${a._id}] `:""
-return a.content.label.length>0?`${n}${a.content.label.substr(0,70)}${a.content.label.length>72?"...":""}`:t`<span>${n} <span class="is-family-monospace">This entry has no label.</span></span>`},showMenu(){return this.defer?this.loadData():(this.paginationContentHTML=this.showPagination(),this.menuData&&this.menuData.length>0?this.menuData.map(((a,n)=>t`
+return a.content.label.length>0?`${n}${a.content.label.substring(0,70)}${a.content.label.length>72?"...":""}`:t`<span>${n} <span class="is-family-monospace">This entry has no label.</span></span>`},showMenu(){return this.defer?this.loadData():(this.paginationContentHTML=this.showPagination(),this.menuData&&this.menuData.length>0?this.menuData.map(((a,n)=>t`
         <li style="padding-bottom:.75rem;">
           ${a.sha||a.new?t`
           <div class="card">
