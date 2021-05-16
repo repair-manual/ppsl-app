@@ -134,7 +134,7 @@
           if (value.pr) {
             pr.push({
               json: dataObject,
-              fileName: `${dataObject.type.substr(0, 1).toUpperCase()}${dataObject.type.substr(1)}/${dataObject._id}.yaml`,
+              fileName: `${dataObject.type.substring(0, 1).toUpperCase()}${dataObject.type.substring(1)}/${dataObject._id}.yaml`,
               content: window.jsyaml.dump(dataObject.content, { schema: window.jsyaml.JSON_SCHEMA }),
               oldContent: originalObject ? window.jsyaml.dump(originalObject.content, { schema: window.jsyaml.JSON_SCHEMA }) : ''
             })
@@ -143,7 +143,7 @@
 
           yaml.push({
             json: dataObject,
-            fileName: `${dataObject.type.substr(0, 1).toUpperCase()}${dataObject.type.substr(1)}/${dataObject._id}.yaml`,
+            fileName: `${dataObject.type.substring(0, 1).toUpperCase()}${dataObject.type.substring(1)}/${dataObject._id}.yaml`,
             content: window.jsyaml.dump(dataObject.content, { schema: window.jsyaml.JSON_SCHEMA }),
             oldContent: originalObject ? window.jsyaml.dump(originalObject.content, { schema: window.jsyaml.JSON_SCHEMA }) : ''
           })

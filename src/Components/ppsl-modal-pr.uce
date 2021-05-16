@@ -121,7 +121,7 @@
         <strong>Files in PR:</strong>
         <hr>
         ${data.map(res => html`
-          <p><strong>${res.content.label || res._id}</strong> (${res.type.substr(0, 1).toUpperCase()}${res.type.substr(1)}/${res._id}.yaml)</p>
+          <p><strong>${res.content.label || res._id}</strong> (${res.type.substring(0, 1).toUpperCase()}${res.type.substring(1)}/${res._id}.yaml)</p>
           <pre>${window.jsyaml.dump(res.content, { schema: window.jsyaml.JSON_SCHEMA })}</pre>
           <br>
         `)}

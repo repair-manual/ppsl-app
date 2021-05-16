@@ -91,7 +91,7 @@
             .replace(/^[0-9]+/, '') // Remove starting numerical character.
             .replace(/[^\w]/g, '') // Replace any non-word characters.
 
-          target.value = String(target.value.substr(0, 1).toLowerCase() + target.value.substr(1)) // First character lowercase
+          target.value = String(target.value.substring(0, 1).toLowerCase() + target.value.substring(1)) // First character lowercase
           this.buttonsToggleDisable()
           return
         }
@@ -190,7 +190,7 @@
       this.fieldsHTML = html`
         <form class="form" id="createproductform">
           ${this.fields.map((field, ind) => {
-            const label = field.name.substr(0, 1).toUpperCase() + field.name.substr(1)
+            const label = field.name.substring(0, 1).toUpperCase() + field.name.substring(1)
             const props = { onInput: this.onInput, label, name: field.name }
             // TODO: I know what you're thinking, an anonymous IIFE? Why? (Replace later.)
             return html`

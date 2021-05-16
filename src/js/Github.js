@@ -87,7 +87,7 @@ self.getBranchDirectoryContent = async (directory) => {
     const res = await octokit.request('GET /repos/:owner/:repo/contents/:path', {
       owner: settings.repo.owner,
       repo: settings.repo.name,
-      path: directory.substr(0, 1).toUpperCase() + directory.substr(1),
+      path: directory.substring(0, 1).toUpperCase() + directory.substring(1),
       headers: {
         'If-None-Match': ''
       }

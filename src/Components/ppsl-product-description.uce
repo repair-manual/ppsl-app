@@ -179,7 +179,7 @@
               <hr>
               <div class="level is-mobile">
                 <div class="level-left">
-                  <h3 class="level-item is-size-4 has-text-weight-bold">${childType.plural.substr(0, 1).toUpperCase() + childType.plural.substr(1)}</h3>
+                  <h3 class="level-item is-size-4 has-text-weight-bold">${childType.plural.substring(0, 1).toUpperCase() + childType.plural.substring(1)}</h3>
                 </div>
                 <div class="level-left">
                   <a onclick=${() => document.getElementById('productmain').create.bind(document.getElementById('productmain'))(childType, this.data._id)}>
