@@ -19,33 +19,38 @@ export default{props:{filesToUpload:null,prData:null,uploadData:null,contentHTML
 const t=this.querySelector(".button.is-success")
 if(t.disabled)return
 t.disabled=!0,t.firstElementChild.classList.add("loader")
-const{githubUser:i,prData:a,editedData:s,settings:l}=self.GlobalContext
+const{githubUser:a,prData:i,editedData:s,settings:l}=self.GlobalContext
 await self.createForkIfNotExists()
-const o=`${i.login}-${Date.now()}`,d=await self.getOrCreateBranchIfNotExists(o),n=(await self.createCommit(d.commit?branchData.commit.sha:d.object.sha,o,this.filesToUpload),await self.createPullRequest(o,this.filesToUpload))
+const o=`${a.login}-${Date.now()}`,d=await self.getOrCreateBranchIfNotExists(o),n=(await self.createCommit(d.commit?branchData.commit.sha:d.object.sha,o,this.filesToUpload),await self.createPullRequest(o,this.filesToUpload))
 openExternalURL("_blank",n.html_url)
-for(let e=0;e<this.filesToUpload.length;e++){const t=this.filesToUpload[e],i=t.json._id
-s[t.json.type].find((e=>e._id===i)).pr=!0}self.saveDataToStorage("editedData",s),a.push({number:n.number,id:n.id,settings:{repo:{owner:l.repo.owner,name:l.repo.name}},files:this.filesToUpload.map((e=>({type:e.json.type,id:e.json._id}))),url:n.html_url,createdAt:n.created_at}),self.saveDataToStorage("prData",a),document.getElementById("modal").openPRListModal()},parseData(){const{editedData:e,data:t}=self.GlobalContext,i=Object.entries(e),a=[],s=[]
-for(let e=0;e<i.length;e++){const[l,o]=i[e]
-for(let e=0;e<o.length;e++){const i=o[e]
-if(!0!==(i.edited||i.new))continue
-const d=t[l].find((e=>e._id===i._id))
-if(Object.values(i.content).join()===Object.values(d?d.content:{}).join())continue
-const n={type:l,...i}
-i.pr?s.push({json:n,fileName:`${n.type.substring(0,1).toUpperCase()}${n.type.substring(1)}/${n._id}.yaml`,content:window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:d?window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}):""}):a.push({json:n,fileName:`${n.type.substring(0,1).toUpperCase()}${n.type.substring(1)}/${n._id}.yaml`,content:window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:d?window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}):""})}}return this.uploadData=a,this.prData=s,this.filesToUpload=JSON.parse(JSON.stringify(a)),this.showData()},showData(){this.contentHTML=e`
+for(let e=0;e<this.filesToUpload.length;e++){const t=this.filesToUpload[e],a=t.json._id
+s[t.json.type].find((e=>e._id===a)).pr=!0}self.saveDataToStorage("editedData",s),i.push({number:n.number,id:n.id,settings:{repo:{owner:l.repo.owner,name:l.repo.name}},files:this.filesToUpload.map((e=>({type:e.json.type,id:e.json._id}))),url:n.html_url,createdAt:n.created_at}),self.saveDataToStorage("prData",i),document.getElementById("modal").openPRListModal()},parseData(){const{editedData:e,data:t}=self.GlobalContext,a=Object.entries(e),i=[],s=[]
+for(let e=0;e<a.length;e++){const[l,o]=a[e]
+for(let e=0;e<o.length;e++){const a=o[e]
+if(!0!==(a.edited||a.new))continue
+const d=t[l].find((e=>e._id===a._id))
+if(Object.values(a.content).join()===Object.values(d?d.content:{}).join())continue
+const n={type:l,...a}
+a.pr?s.push({json:n,fileName:`${n.type.substring(0,1).toUpperCase()}${n.type.substring(1)}/${n._id}.yaml`,content:window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:d?window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}):""}):i.push({json:n,fileName:`${n.type.substring(0,1).toUpperCase()}${n.type.substring(1)}/${n._id}.yaml`,content:window.jsyaml.dump(n.content,{schema:window.jsyaml.JSON_SCHEMA}),oldContent:d?window.jsyaml.dump(d.content,{schema:window.jsyaml.JSON_SCHEMA}):""})}}return this.uploadData=i,this.prData=s,this.filesToUpload=JSON.parse(JSON.stringify(i)),this.showData()},showData(){this.contentHTML=e`
         ${this.showUploadData()}
         ${this.showPRData()}
         ${this.showFilesToUpload()}
       `},hideSection(e,t){e.stopPropagation()
-const i=document.getElementById(t)
-i.classList.toggle("is-hidden")
-const a=e.currentTarget.firstElementChild
-a.icon=i.classList.contains("is-hidden")?"chevron-up":"chevron-down",a.showIcon()},deleteChange(e){e.stopPropagation()
-const{type:t,id:i,fileName:a}=e.currentTarget.dataset,{editedData:s}=self.GlobalContext,l=s[t].findIndex((e=>e._id===i))
-s[t].splice(l,1),self.saveDataToStorage("editedData",s)
-const o=this.uploadData.findIndex((e=>e.fileName===a))
-this.uploadData.splice(o,1)
-const d=this.filesToUpload.findIndex((e=>e.fileName===a))
-this.filesToUpload.splice(d,1),this.showData()},showPRData(){const t=e=>{e.stopPropagation()
+const a=document.getElementById(t)
+a.classList.toggle("is-hidden")
+const i=e.currentTarget.firstElementChild
+i.icon=a.classList.contains("is-hidden")?"chevron-up":"chevron-down",i.showIcon()},deleteChange(e){e.stopPropagation()
+const{type:t,id:a,fileName:i}=e.currentTarget.dataset,{data:s,editedData:l}=self.GlobalContext,o=l[t].findIndex((e=>e._id===a))
+l[t].splice(o,1)
+const d=this.uploadData.findIndex((e=>e.fileName===i))
+this.uploadData.splice(d,1)
+const n=this.filesToUpload.findIndex((e=>e.fileName===i))
+this.filesToUpload.splice(n,1)
+const c=getParentType(t)
+if(void 0===c)return self.saveDataToStorage("editedData",l),void this.parseData()
+for(let e=0;e<s[c.plural].length;e++){const i=s[c.plural][e],o=i.content[t].find((e=>e===a))
+if(!o)continue
+l[c.plural].find((e=>e._id===o._id))||l[c.plural].push(JSON.parse(JSON.stringify(i)))}for(let e=0;e<l[c.plural].length;e++){const i=l[c.plural][e],s=i.content[t].findIndex((e=>e===a));-1!==s&&(i.content[t].splice(s,1),i.edited=!0)}self.saveDataToStorage("editedData",l),this.parseData()},showPRData(){const t=e=>{e.stopPropagation()
 const t=e.currentTarget
 if(t.checked){const e=this.prData.find((e=>e.fileName===t.dataset.fileName))
 this.filesToUpload.push(e)}else{const e=this.filesToUpload.findIndex((e=>e.fileName===t.dataset.fileName))
@@ -63,24 +68,24 @@ return this.prData.length>0?e.for(this.prData)`
         </div>
         <hr>
         <div id="prData">
-          ${this.prData.map(((i,a)=>e`
-            ${0!==a?e`<hr>`:void 0}
+          ${this.prData.map(((a,i)=>e`
+            ${0!==i?e`<hr>`:void 0}
             <div class="card">
               <div class="card-header">
                 <div class="card-header-title level is-mobile is-marginless is-clipped">
-                  <div class="level-left" title="${i.fileName}">
-                    <small class="is-size-7 level-item is-hidden-desktop">${i.fileName}</small>
-                    <p class="level-item is-hidden-touch">${i.fileName}</p>
+                  <div class="level-left" title="${a.fileName}">
+                    <small class="is-size-7 level-item is-hidden-desktop">${a.fileName}</small>
+                    <p class="level-item is-hidden-touch">${a.fileName}</p>
                   </div>
                 </div>
                 <div class="card-header-icon level is-mobile" title="Upload change">
                   <div class="level-item">
-                    <input type="checkbox" data-file-name="${i.fileName}" onchange=${t}>
+                    <input type="checkbox" data-file-name="${a.fileName}" onchange=${t}>
                   </div>
                 </div>
               </div>
               <div class="card-content">
-                <div is="ppsl-diff" .oldChange="${i.oldContent}" .newChange="${i.content}"></div>
+                <div is="ppsl-diff" .oldChange="${a.oldContent}" .newChange="${a.content}"></div>
               </div>
             </div>
           `))}
@@ -100,8 +105,8 @@ return this.prData.length>0?e.for(this.prData)`
         <hr>
         <div id="uploadData">
           ${this.uploadData.length>0?e`
-            ${this.uploadData.map(((t,i)=>e`
-              ${0!==i?e`<hr>`:void 0}
+            ${this.uploadData.map(((t,a)=>e`
+              ${0!==a?e`<hr>`:void 0}
               <div class="card">
                 <div class="card-header">
                   <div class="card-header-title level is-mobile is-marginless is-clipped">
@@ -128,7 +133,7 @@ return this.prData.length>0?e.for(this.prData)`
         <div class="content">
           ${this.filesToUpload.length>0?e`
             <ul>
-              ${this.filesToUpload.map(((t,i)=>e`
+              ${this.filesToUpload.map(((t,a)=>e`
                 <li><h4>${t.fileName}</h4></li>
               `))}
             </ul>
