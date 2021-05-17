@@ -60,7 +60,117 @@
 
       element.mainHTML = html`
         <div class="column has-text-centered">
-          <strong class="has-text-light">Select a product to display its information.</strong>
+          <strong>Select a product to display its information.</strong>
+        </div>
+        <div class="column is-12 content">
+          <h1 class="has-text-light">Getting started guide</h1>
+          <strong>Contents:</strong>
+          <ol>
+            <li>
+              <span>I want to contribute!</span>
+              <ol>
+                <li><a class="has-text-warning" href="#gpat">Github Personal Access Token</a></li>
+                <li><a class="has-text-warning" href="#making_changes">How do I make changes?</a></li>
+                <li><a class="has-text-warning" href="#removing_changes">How do I remove a change?</a></li>
+                <li><a class="has-text-warning" href="#uploading_changes">How do I upload my changes?</a></li>
+                <li><a class="has-text-warning" href="#clear_storage">I want to clear all my local file changes!</a></li>
+              </ol>
+            </li>
+          </ol>
+          <br>
+          <h2 class="has-text-light">I want to contribute!</h2>
+          <ul>
+            <li>
+              <h3 class="has-text-light"><a id="gpat" href="#gpat">Github Personal Access Token</a></h3>
+              <h4 class="has-text-light">Creating a GPAT</h4>
+              <p>Create a Github Personal Access Token over at <a href="https://github.com/settings/tokens" class="has-text-warning">https://github.com/settings/tokens</a> with a <span><code>public_repo</code></span> scope to be able to edit files and upload them to Github.</p>
+              <figure class="image">
+                <img src="./assets/guides/CreateToken.png"/>
+                <figcaption>Make sure to keep your token safe, don't share it with anyone.</figcaption>
+              </figure>
+              <h4 class="has-text-light">Adding your GPAT</h4>
+              <p>To add your Github Personal Access Token, open up the "Settings" modal by clicking on the "<span is="ppsl-icon" icon="settings"></span>" button in the top right of the app page, copy-paste it in and click on save and reload the app page.</p>
+              <figure class="image">
+                <video controls muted autoplay loop>
+                  <source src="./assets/guides/AddToken.mp4" type="video/mp4"/>
+                </video>
+                <figcaption>PPSL-App currently works exclusively via your client, which means only you get to see and use your token.</figcaption>
+              </figure>
+            </li>
+            <li>
+              <h3 class="has-text-light"><a id="making_changes" href="#making_changes">How do I make changes?</a></h3>
+              <h4 class="has-text-light">Editing entries</h4>
+              <p>To edit entries, click on the "<span is="ppsl-icon" icon="edit"></span>" square on the top right of the entry.</p>
+              <figure class="image">
+                <video controls muted autoplay loop>
+                  <source src="./assets/guides/EditEntry.mp4" type="video/mp4"/>
+                </video>
+                <figcaption>Use the "Open diff" button to quickly see the changes you're about to apply.</figcaption>
+              </figure>
+              <h4 class="has-text-light">Adding entries</h4>
+              <p>To add entries, click on the "<span is="ppsl-icon" icon="plus-square"></span>" square on the top right of the parent entry.</p>
+              <p>You can also add an existing entry, by using the "Add from existing" button. Copying creates a new copy of the entry and "cloning" uses the entry as-is. <strong><span class="has-text-danger">Important note:</span> Editing cloned entries will cascade-change the contents of all parent entries that also have it cloned.</strong></p>
+              <figure class="image">
+                <video controls muted autoplay loop>
+                  <source src="./assets/guides/AddEntry.mp4" type="video/mp4"/>
+                </video>
+                <figcaption>All entries have IDs to uniquely identify them.</figcaption>
+              </figure>
+              <p>Any changes done will only be done locally, to make them available publicly you must upload them to Github for further review. Read more under <a class="has-text-warning" href="#uploading_changes">"How do I upload my changes?"</a>.</p>
+            </li>
+            <li>
+              <h3 class="has-text-light"><a id="removing_changes" href="#removing_changes">How do I remove a change?</a></h3>
+              <h4 class="has-text-light">Unlinking</h4>
+              <p>When editing an entry, you can click on the "Unlink" button to unlink the entry from the current parent entry. This will not delete it, as the entry may still be used as a clone in different entries.</p>
+              <h4 class="has-text-light">Deleting unsynchronized changes</h4>
+              <p>In the "Upload" modal, which you can access by clicking on the "<span is="ppsl-icon" icon="upload-cloud"></span>" button in the top right of the app page, you can reset, and/or delete, any changes that haven't been uploaded to a PR yet via the "Delete change" action that appears as a "<span is="ppsl-icon" icon="trash"></span>" icon.</p>
+              <figure class="image">
+                <img src="./assets/guides/DeleteChange.png"/>
+                <figcaption>Marked in the red box.</figcaption>
+              </figure>
+              <h4 class="has-text-light"><a id="delete_synchronized_changes" href="#delete_synchronized_changes">Deleting synchronized changes</a></h4>
+              <p>If you've uploaded your change as a PR, you can reset your changes under the "Your PRs" modal which you can access by clicking on the "<span is="ppsl-icon" icon="git-pull-request"></span>" button in the top right of the app page.</p>
+              <p>Next, open up the specific PR with your changes and click on "Rest PR files".</p>
+              <figure class="image">
+                <img src="./assets/guides/ResetPR.png"/>
+                <figcaption>This is also how you refresh your edited files when your PR change is accepted.</figcaption>
+              </figure>
+            </li>
+            <li>
+              <h3 class="has-text-light"><a id="uploading_changes" href="#uploading_changes">How do I upload my changes?</a></h3>
+              <h4 class="has-text-light">Upload modal</h4>
+              <p>After you've added your Github Personal Access Token in the settings modal, and done your changes, click on the "Upload" modal, which you can access by clicking on the "<span is="ppsl-icon" icon="upload-cloud"></span>" button in the top right of the app page to start the upload process.</p>
+              <p>In here you can select which files to upload as well as delete. <strong><span class="has-text-danger">Important note:</span> If you've done any additional changes to files that are already in a PR you have to select them manually in the "Files already in a PR" list.</strong></p>
+              <p>After you're done selecting your changes, click on the "Upload to PR" button and wait. <strong>This may take some time depending on the amount of changes done.</strong> After it is done, you will be sent to Github to take a look at your PR and/or you will see the "Your PRs" modal.</p>
+              <figure class="image">
+                <img src="./assets/guides/UploadChanges.png"/>
+                <figcaption>Before uploading, you can also scroll all the way down to see the names of the files that will be uploaded.</figcaption>
+              </figure>
+              <h4 class="has-text-light">Track status of changes</h4>
+              <p>In the "Your PRs" modal, which you can access by clicking on the "<span is="ppsl-icon" icon="git-pull-request"></span>" button in the top right of the app page, you can see the status of your changes.</p>
+              <ul>
+                <li>
+                  <strong>Closed tag</strong>
+                  <p>The "Closed" tag means your request for changes have been declined and you may have to start over by <a class="has-text-warning" href="#delete_synchronized_changes">"resetting the PR files".</a></p>
+                </li>
+                <li>
+                  <strong>Open tag</strong>
+                  <p>The "Open" tag means your request for changes are still being looked at. Sometimes reviewers ask for additional information and/or changes which you can see in the comments section of your PR.</p>
+                </li>
+                <li>
+                  <strong>Merged tag</strong>
+                  <p>The "Merged" tag means your request for changes have been accepted and are now available on the wiki and on PPSL-App. You can now refresh your PR files by <a class="has-text-warning" href="#delete_synchronized_changes">following the same steps described here.</a></p>
+                </li>
+              </ul>
+              <figure class="image">
+                <img src="./assets/guides/TrackPRs.png"/>
+              </figure>
+            </li>
+            <li>
+              <h3 class="has-text-light"><a id="clear_storage" href="#clear_storage">I want to clear all my local file changes!</a></h3>
+              <p>Simply open up the "Settting" modal by clicking on the "<span is="ppsl-icon" icon="settings"></span>" button in the top right of the app page and click on the big red button.</p>
+            </li>
+          </ul>
         </div>
       `
 
