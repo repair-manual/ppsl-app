@@ -181,12 +181,10 @@
       const { type, id, fileName } = ev.currentTarget.dataset
 
       // Remove entries from editedData.
-      const { editedData } = self.GlobalContext
+      const { data, editedData } = self.GlobalContext
 
       const entryIndex = editedData[type].findIndex(res => res._id === id)
       editedData[type].splice(entryIndex, 1)
-
-      self.saveDataToStorage('editedData', editedData)
 
       // Remove entry from uploadData.
       const uDataIndex = this.uploadData.findIndex(res => res.fileName === fileName)
@@ -196,7 +194,43 @@
       const fDataIndex = this.filesToUpload.findIndex(res => res.fileName === fileName)
       this.filesToUpload.splice(fDataIndex, 1)
 
-      this.showData()
+      const parentType = getParentType(type)
+
+      if (parentType === undefined) {
+        self.saveDataToStorage('editedData', editedData)
+        this.parseData()
+        return
+      }
+
+      for (let index = 0; index < data[parentType.plural].length; index++) {
+        const parent = data[parentType.plural][index]
+
+        const existsInArray = parent.content[type].find(res => res === id)
+
+        if (!existsInArray) continue
+
+        const existsInEditedData = editedData[parentType.plural].find(res => res._id === existsInArray._id)
+
+        if (existsInEditedData) continue
+
+        editedData[parentType.plural].push(JSON.parse(JSON.stringify(parent))) - 1
+      }
+
+      // Add parent to editedData
+      for (let index = 0; index < editedData[parentType.plural].length; index++) {
+        const editParent = editedData[parentType.plural][index]
+  
+        const existsInArrayIndex = editParent.content[type].findIndex(res => res === id)
+
+        if (existsInArrayIndex === -1) continue
+
+        editParent.content[type].splice(existsInArrayIndex, 1)
+        editParent.edited = true
+      }
+
+      self.saveDataToStorage('editedData', editedData)
+
+      this.parseData()
     },
 
     showPRData() {
