@@ -144,8 +144,8 @@
             ${typeof this.data.content.url === 'string' ? html`
               <div is="ppsl-input" .props=${{ label: 'URL', name: 'url' }} .value="${this.data.content.url}"></div>
             ` : undefined}
-            <div is="ppsl-input" .props=${{ label: 'Label', name: 'label' }} .value="${this.data.content.label}"></div>
-            <div is="ppsl-textarea" .props=${{ label: 'Description', name: 'description' }} .value="${this.data.content.description}"></div>
+            <div is="ppsl-input" .props=${{ label: `${this.type.substring(0, 1).toUpperCase()}${this.type.substring(1, this.type.length - 1)} title`, name: 'label' }} .value="${this.data.content.label}"></div>
+            <div is="ppsl-textarea" .props=${{ label: `Describe the ${this.type.substring(0, this.type.length - 1)}`, name: 'description' }} .value="${this.data.content.description}"></div>
             <div class="columns is-multiline">
               <div class="column">
                 <button class="button is-fullwidth is-success" onclick=${this.edit.bind(this)}>

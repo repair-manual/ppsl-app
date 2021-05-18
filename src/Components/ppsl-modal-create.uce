@@ -190,7 +190,7 @@
       this.fieldsHTML = html`
         <form class="form" id="createproductform">
           ${this.fields.map((field, ind) => {
-            const label = field.name.substring(0, 1).toUpperCase() + field.name.substring(1)
+            const label = field.name === 'label' ? `${field.name.substring(0, 1).toUpperCase()}${field.name.substring(1)} (Title)`: field.name.substring(0, 1).toUpperCase() + field.name.substring(1)
             const props = { onInput: this.onInput, label, name: field.name }
             // TODO: I know what you're thinking, an anonymous IIFE? Why? (Replace later.)
             return html`

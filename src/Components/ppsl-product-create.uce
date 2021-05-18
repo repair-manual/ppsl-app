@@ -99,8 +99,8 @@
           ${this.type.plural === 'links' ? html`
             <div is="ppsl-input" .value=${this.data ? this.data.url : '' } .props=${{ label: 'URL', name: 'url' }}></div>
           ` : undefined}
-          <div is="ppsl-input" .value=${this.data ? this.data.label : ''} .props=${{ label: 'Label', name: 'label' }}></div>
-          <div is="ppsl-textarea" .value=${this.data ? this.data.description : ''} .props=${{ label: 'Description', name: 'description' }}></div>
+          <div is="ppsl-input" .value=${this.data ? this.data.label : ''} .props=${{ label: `${this.type.singular.substring(1, 0).toUpperCase()}${this.type.singular.substring(1)} title`, name: 'label' }}></div>
+          <div is="ppsl-textarea" .value=${this.data ? this.data.description : ''} .props=${{ label: `Describe the ${this.type.singular}`, name: 'description' }}></div>
           <button class="button is-success is-fullwidth" onclick=${this.create.bind(this)}>
             <span is="ppsl-icon" icon="plus-square"></span>
             <span>Create</span>
