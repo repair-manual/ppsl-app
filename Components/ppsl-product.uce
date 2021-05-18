@@ -134,7 +134,7 @@ this.selectedProduct=n._id,this.mainHTML=e.for(this.selectedData,n._id)`
       `,document.getElementById("root").scrollIntoView()},setup(t){t.classList.add("column"),t.mainHTML=e`
         <div class="column has-text-centered">
           <p class="is-size-3">Welcome to PPSL-App v1!</p>
-          <p class="is-size-4">This project requires you to register a free Github account to upload your changes. <a class="has-text-warning" onclick=${t.toggleGettingStartedGuide.bind(t)} href="#gpat">Read more here.</a></p>
+          <p class="is-size-4">This application/website requires you to register a free Github account to upload your changes. <a class="has-text-warning" onclick=${t.toggleGettingStartedGuide.bind(t)} href="#gpat">Read more here.</a></p>
           <br>
           <strong class="is-size-4">After you've setup your Github account:</strong>
           <p class="is-size-5">Click on a product name in the left menu start editing!</p>
