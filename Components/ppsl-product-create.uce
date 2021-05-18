@@ -3,18 +3,18 @@
 {{ this.showCreateFields() }}
 </div>
 <script type=module>import{html as t}from"@uce"
-export default{props:{type:null,data:null,customPreviousClick:null},getData(){const t={_id:Date.now().toString(),content:{},new:!0},e=document.forms.create,{label:l,description:s,url:a}=e.elements
-t.content={label:l.value,description:s.value},a&&(t.content.url=a.value)
-const i=getChildType(this.type.plural)
-return i&&(t.content[i.plural]=[]),t},create(t){const{editedData:e,data:l}=self.GlobalContext,s=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct]
+export default{props:{type:null,data:null,customPreviousClick:null},getData(){const t={_id:Date.now().toString(),content:{},new:!0},e=document.forms.create,{label:s,description:l,url:i}=e.elements
+t.content={label:s.value,description:l.value},i&&(t.content.url=i.value)
+const a=getChildType(this.type.plural)
+return a&&(t.content[a.plural]=[]),t},create(t){const{editedData:e,data:s}=self.GlobalContext,l=document.getElementById("product").selectedData[document.getElementById("product").selectedProduct]
 t.preventDefault()
-const a=this.getData()
-if(0===a.content.label.length)return
-const i=getParentType(this.type.plural)
-e[this.type.plural].push(a)
-let n=e[i.plural].findIndex((t=>t._id===s[i.singular]))
-if(-1===n){const t=JSON.parse(JSON.stringify(l[i.plural].find((t=>t._id===s[i.singular]))))
-t.edited=!0,n=e[i.plural].push(t)-1}e[i.plural][n].content[this.type.plural].push(a._id),e[i.plural][n].edited=!0,self.saveDataToStorage("editedData",e),this.customPreviousClick.func()},showCreateFields(e){this.type.plural
+const i=this.getData()
+if(0===i.content.label.length)return
+const a=getParentType(this.type.plural)
+e[this.type.plural].push(i)
+let n=e[a.plural].findIndex((t=>t._id===l[a.singular]))
+if(-1===n){const t=JSON.parse(JSON.stringify(s[a.plural].find((t=>t._id===l[a.singular]))))
+t.edited=!0,n=e[a.plural].push(t)-1}e[a.plural][n].content[this.type.plural].push(i._id),e[a.plural][n].edited=!0,self.saveDataToStorage("editedData",e),this.customPreviousClick.func()},showCreateFields(e){this.type.plural
 return t`
         <div class="columns">
           <div class="column">
@@ -35,8 +35,8 @@ return t`
           ${"links"===this.type.plural?t`
             <div is="ppsl-input" .value=${this.data?this.data.url:""} .props=${{label:"URL",name:"url"}}></div>
           `:void 0}
-          <div is="ppsl-input" .value=${this.data?this.data.label:""} .props=${{label:"Label",name:"label"}}></div>
-          <div is="ppsl-textarea" .value=${this.data?this.data.description:""} .props=${{label:"Description",name:"description"}}></div>
+          <div is="ppsl-input" .value=${this.data?this.data.label:""} .props=${{label:`${this.type.singular.substring(1,0).toUpperCase()}${this.type.singular.substring(1)} title`,name:"label"}}></div>
+          <div is="ppsl-textarea" .value=${this.data?this.data.description:""} .props=${{label:`Describe the ${this.type.singular}`,name:"description"}}></div>
           <button class="button is-success is-fullwidth" onclick=${this.create.bind(this)}>
             <span is="ppsl-icon" icon="plus-square"></span>
             <span>Create</span>

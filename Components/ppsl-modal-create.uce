@@ -48,7 +48,7 @@ if(this._defaultFields.includes(t))return
 const s=this.fields.findIndex((e=>e.name===t))
 s>-1&&(this.fields.splice(s,1),this.productObject[t]=void 0,this.onInput(),this.showFields())},showFields(){this.fieldsHTML=e`
         <form class="form" id="createproductform">
-          ${this.fields.map(((t,s)=>{const i=t.name.substring(0,1).toUpperCase()+t.name.substring(1),a={onInput:this.onInput,label:i,name:t.name}
+          ${this.fields.map(((t,s)=>{const i="label"===t.name?`${t.name.substring(0,1).toUpperCase()}${t.name.substring(1)} (Title)`:t.name.substring(0,1).toUpperCase()+t.name.substring(1),a={onInput:this.onInput,label:i,name:t.name}
 return e`
               ${0!==s?e`<hr>`:void 0}
               ${(()=>"input"===t.type?e`<div is="ppsl-input" .props=${{...a}} value="${"label"===t.name?this.id:this.productObject[t.name]}"></div>`:"textarea"===t.type?e`<div is="ppsl-textarea" .props=${{...a}} value="${this.productObject[t.name]}"></div>`:void 0)()}
