@@ -44,6 +44,7 @@
                   <li><a class="has-text-warning" href="#removing_changes">How do I remove a change?</a></li>
                   <li><a class="has-text-warning" href="#uploading_changes">How do I upload my changes?</a></li>
                   <li><a class="has-text-warning" href="#clear_storage">I want to clear all my local file changes!</a></li>
+                  <li><a class="has-text-warning" href="#wiki_formatting">How does this look like in the wiki?</a></li>
                 </ol>
               </li>
             </ol>
@@ -140,6 +141,13 @@
                 <h3 class="has-text-light"><a id="clear_storage" href="#clear_storage">I want to clear all my local file changes!</a></h3>
                 <p>Simply open up the "Settting" modal by clicking on the "<span is="ppsl-icon" icon="settings"></span>" button in the top right of the website and click on the big red button.</p>
               </li>
+              <li>
+                <h3 class="has-text-light"><a id="wiki_formatting" href="#wiki_formatting">How does this look like in the wiki?</a></h3>
+                <figure class="image">
+                  <img src="./assets/guides/WikiFormatting.png"/>
+                  <figcaption>Open in new tab for a better preview.</figcaption>
+                </figure>
+              </li>
             </ul>
           </div>
         </div>
@@ -183,6 +191,31 @@
 
     setup (element) {
       element.classList.add('column')
+
+      element.connected = () => {
+        if (window.location.hash.length > 0) {
+          element.toggleGettingStartedGuide()
+
+          const elCountEl = document.querySelectorAll('#getting-started-guide img')
+          let count = 0
+
+          elCountEl.forEach(el => {
+            el.addEventListener('load', () => {
+              count++
+              if (count === elCountEl.length) {
+                setTimeout(() => document.getElementById(window.location.hash.replace('#', '')).scrollIntoView(), 100)
+              }
+            }, false)
+            el.addEventListener('error', () => {
+              count++
+              if (count === elCountEl.length) {
+                setTimeout(() => document.getElementById(window.location.hash.replace('#', '')).scrollIntoView(), 100)
+              }
+            }, false)
+          })
+        }
+      }
+
 
       element.mainHTML = html`
         <div class="column has-text-centered">
