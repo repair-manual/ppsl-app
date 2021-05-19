@@ -31,7 +31,8 @@
     showGuides () {
       return html`
         <div class="column is-12 content">
-          <button class="button is-size-5 is-warning" onclick=${this.toggleGettingStartedGuide.bind(this)} href="#getting-started-guide">Click here to show/hide the getting started guide.</button>
+          <button class="button is-size-5 is-warning is-hidden-touch" onclick=${this.toggleGettingStartedGuide.bind(this)} href="#getting-started-guide">Hide/Show me the getting started guide.</button>
+          <button class="button is-warning is-hidden-desktop" onclick=${this.toggleGettingStartedGuide.bind(this)} href="#getting-started-guide">Hide/Show me the getting started guide.</button>
           <div id="getting-started-guide" class="is-hidden">
             <hr>
             <strong>Getting started guide content:</strong>
