@@ -11,9 +11,9 @@
 <script type=module>import{html as e}from"@uce"
 export default{props:{settingsHTML:null,mainHTML:null,commentsHTML:null,selectedProduct:null,selectedData:{}},toggleGettingStartedGuide(){document.getElementById("getting-started-guide").classList.toggle("is-hidden")},showGuides(){return e`
         <div class="column is-12 content">
-          <p class="is-size-5 has-text-warning"><a onclick=${this.toggleGettingStartedGuide.bind(this)} href="#getting-started-guide">Click here to show/hide the getting started guide.</a></p>
-
+          <button class="button is-size-5 is-warning" onclick=${this.toggleGettingStartedGuide.bind(this)} href="#getting-started-guide">Click here to show/hide the getting started guide.</button>
           <div id="getting-started-guide" class="is-hidden">
+            <hr>
             <strong>Getting started guide content:</strong>
             <ol>
               <li>
