@@ -218,9 +218,9 @@
 
 
       element.mainHTML = html`
-        <div class="column has-text-centered">
+        <div class="column">
           <p class="is-size-3">Welcome to PPSL-App v1!</p>
-          <p class="is-size-4">This application/website requires you to register a free Github account to upload your changes. <a class="has-text-warning" onclick=${element.toggleGettingStartedGuide.bind(element)} href="#gpat">Read more here.</a></p>
+          <p class="is-size-4">This application/website requires you to register a free Github account to upload your changes. <br><a class="has-text-warning" onclick=${element.toggleGettingStartedGuide.bind(element)} href="#gpat">Read more here.</a></p>
           <br>
           <strong class="is-size-4">After you've setup your Github account:</strong>
           <p class="is-size-5">Click on a product name in the left menu start editing!</p>
