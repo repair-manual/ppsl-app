@@ -11,7 +11,8 @@
 <script type=module>import{html as e}from"@uce"
 export default{props:{settingsHTML:null,mainHTML:null,commentsHTML:null,selectedProduct:null,selectedData:{}},toggleGettingStartedGuide(){document.getElementById("getting-started-guide").classList.toggle("is-hidden")},showGuides(){return e`
         <div class="column is-12 content">
-          <button class="button is-size-5 is-warning" onclick=${this.toggleGettingStartedGuide.bind(this)} href="#getting-started-guide">Click here to show/hide the getting started guide.</button>
+          <button class="button is-size-5 is-warning is-hidden-touch" onclick=${this.toggleGettingStartedGuide.bind(this)} href="#getting-started-guide">Hide/Show me the getting started guide.</button>
+          <button class="button is-warning is-hidden-desktop" onclick=${this.toggleGettingStartedGuide.bind(this)} href="#getting-started-guide">Hide/Show me the getting started guide.</button>
           <div id="getting-started-guide" class="is-hidden">
             <hr>
             <strong>Getting started guide content:</strong>
@@ -131,14 +132,14 @@ export default{props:{settingsHTML:null,mainHTML:null,commentsHTML:null,selected
             </ul>
           </div>
         </div>
-      `},setProduct(t){const{editedData:s,data:a,settings:i}=self.GlobalContext
-let n=a.products.find((e=>e._id===t)),o=s.products.findIndex((e=>e._id===t))
+      `},setProduct(t){const{editedData:s,data:i,settings:a}=self.GlobalContext
+let n=i.products.find((e=>e._id===t)),o=s.products.findIndex((e=>e._id===t))
 o>-1&&(n=s.products[o]),this.selectedData[n._id]||(this.selectedData[n._id]={product:n._id,problem:null,solution:null,link:null})
 let l=this.selectedData[n._id]
 this.selectedProduct=n._id,this.mainHTML=e.for(this.selectedData,n._id)`
         <div is="ppsl-product-settings" class="column is-12" .product=${n}></div>
         <div is="ppsl-product-main" id="productmain" class="column is-12" .selectedData=${l} .productId=${n._id}></div>
-        <div is="ppsl-product-comments" class="column is-12" .label="${n._id}" .repo=${i.commentsRepo}></div>
+        <div is="ppsl-product-comments" class="column is-12" .label="${n._id}" .repo=${a.commentsRepo}></div>
       `,document.getElementById("root").scrollIntoView()},setup(t){t.classList.add("column"),t.connected=()=>{if(window.location.hash.length>0){t.toggleGettingStartedGuide()
 const e=document.querySelectorAll("#getting-started-guide img")
 let s=0
