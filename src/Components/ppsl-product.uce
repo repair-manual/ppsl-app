@@ -187,7 +187,7 @@
         <div is="ppsl-product-comments" class="column is-12" .label="${product._id}" .repo=${settings.commentsRepo}></div>
       `
       // this.commentsHTML = html``
-      document.getElementById('root').scrollIntoView()
+      document.querySelector('[is="ppsl-product"]').scrollIntoView()
     },
 
     setup (element) {
