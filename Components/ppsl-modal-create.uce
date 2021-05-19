@@ -4,6 +4,8 @@
 <p class=modal-card-title>Creating "{{ this.id }}"</p>
 </div>
 <div class=modal-card-body>
+<p class=is-size-5>Before creating this, please double-check <a class=has-text-weight-bold href="{{ this.githubURL }}" target=_blank>Github PRs currently awaiting synchronization</a> to make sure this data hasn't already been contributed.</p>
+<hr>
 <p class=control>
 <label class=label>New field name</label>
 <input class=input oninput={{this.onInput.bind(this)}} placeholder="First character lowercase, no spaces" name=newFieldName>
@@ -55,5 +57,7 @@ return e`
               ${this._defaultFields.includes(t.name)?void 0:e`<a class="button is-small" data-field-name="${t.name}" onclick=${this.removeField.bind(this)}>Delete ${t.name} field.</a>`}
             `}))}
         </form>
-      `},async setup(e){e.classList.add("modal-card"),e.connected=e.showFields,e.tempProductNamesList=(await self.getBranchDirectoryContent("products")).map((e=>e.label))}}
+      `},async setup(e){e.classList.add("modal-card"),e.connected=e.showFields,e.tempProductNamesList=(await self.getBranchDirectoryContent("products")).map((e=>e.label))
+const{settings:t}=self.GlobalContext
+e.githubURL=`https://github.com/${t.repo.owner}/${t.repo.name}/pulls`}}
 </script>
