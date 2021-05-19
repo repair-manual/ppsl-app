@@ -106,12 +106,12 @@
           ` : undefined}
           <div is="ppsl-input" .value=${this.data ? this.data.label : ''} .props=${{ label: `${this.type.singular.substring(1, 0).toUpperCase()}${this.type.singular.substring(1)} title`, name: 'label' }}></div>
           <div is="ppsl-textarea" .value=${this.data ? this.data.description : ''} .props=${{ label: `Describe the ${this.type.singular}`, name: 'description' }}></div>
-          <br>
+          <hr>
           <p class="is-size-5">
             <span>Before creating this, please double-check the <a class="has-text-weight-bold" href="${wikiURL}" target="_blank">Wiki page</a> and <a class="has-text-weight-bold" href="${githubURL}" target="_blank">Github PRs currently awaiting synchronization</a> to make sure this data hasn't already been contributed.</span>
             <br><small>Please also see whether you can clone an existing ${this.type.singular} by <a class="has-text-weight-bold" onclick="${() => this.customNextClick.func()}">clicking on the "${this.customNextClick.label}" button</a>.</small>
           </p>
-          <br>
+          <hr>
           <button class="button is-success is-fullwidth" onclick=${this.create.bind(this)}>
             <span is="ppsl-icon" icon="plus-square"></span>
             <span>Create</span>

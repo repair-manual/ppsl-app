@@ -4,6 +4,8 @@
     <p class="modal-card-title">Creating "{{ this.id }}"</p>
   </div>
   <div class="modal-card-body">
+    <p class="is-size-5">Before creating this, please double-check <a class="has-text-weight-bold" href="{{ this.githubURL }}" target="_blank">Github PRs currently awaiting synchronization</a> to make sure this data hasn't already been contributed.</p>
+    <hr>
     <p class="control">
       <label class="label">New field name</label>
       <input class="input" onInput="{{ this.onInput.bind(this) }}" placeholder="First character lowercase, no spaces" name="newFieldName">
@@ -214,6 +216,9 @@
       element.classList.add('modal-card')
       element.connected = element.showFields
       element.tempProductNamesList = (await self.getBranchDirectoryContent('products')).map(p => p.label)
+
+      const { settings } = self.GlobalContext
+      element.githubURL = `https://github.com/${settings.repo.owner}/${settings.repo.name}/pulls`
     }
   }
 //# sourceURL=ppsl-modal-create.js
